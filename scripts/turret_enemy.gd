@@ -36,11 +36,11 @@ func _physics_process(delta: float) -> void:
 			modulate = Color(1.0, 0.5, 0.0)  # Orange
 	
 	# --- Turret Logic ---
-	var player := get_tree().get_first_node_in_group("player")
+	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D
 	if not player or not is_instance_valid(player):
 		return
 	
-	var distance := global_position.distance_to(player.global_position)
+	var distance: float = global_position.distance_to(player.global_position)
 	if distance > detection_range:
 		return
 	
@@ -51,13 +51,13 @@ func _physics_process(delta: float) -> void:
 		_fire_at(player)
 
 func _fire_at(target: Node2D) -> void:
-	var direction := (target.global_position - global_position).normalized()
+	var direction: Vector2 = (target.global_position - global_position).normalized()
 	
 	var bullet := bullet_scene.instantiate()
 	bullet.global_position = global_position
 	bullet.setup(direction, true)  # true = enemy bullet
 	
-	var container := get_tree().get_first_node_in_group("projectiles_container")
+	var container: Node = get_tree().get_first_node_in_group("projectiles_container")
 	if container:
 		container.add_child(bullet)
 	else:

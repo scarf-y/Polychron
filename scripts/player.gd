@@ -105,7 +105,7 @@ func _shoot() -> void:
 	bullet.setup(direction, false)  # false = player bullet
 	
 	# Add bullet to the Projectiles container if it exists, else to parent
-	var projectile_container := get_tree().get_first_node_in_group("projectiles_container")
+	var projectile_container: Node = get_tree().get_first_node_in_group("projectiles_container")
 	if projectile_container:
 		projectile_container.add_child(bullet)
 	else:

@@ -42,11 +42,11 @@ func _physics_process(delta: float) -> void:
 			modulate = Color.RED
 	
 	# --- Chase Logic ---
-	var player := get_tree().get_first_node_in_group("player")
+	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D
 	
 	if player and is_instance_valid(player):
-		var direction := (player.global_position - global_position).normalized()
-		var distance := global_position.distance_to(player.global_position)
+		var direction: Vector2 = (player.global_position - global_position).normalized()
+		var distance: float = global_position.distance_to(player.global_position)
 		
 		if distance > 12.0:
 			velocity = direction * speed

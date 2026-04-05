@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		return
 	
-	var player := get_tree().get_first_node_in_group("player")
+	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D
 	if not player or not is_instance_valid(player):
 		return
 	
@@ -79,13 +79,13 @@ func _physics_process(delta: float) -> void:
 			_handle_stunned(delta)
 
 func _handle_idle(delta: float, player: Node2D) -> void:
-	var distance := global_position.distance_to(player.global_position)
+	var distance: float = global_position.distance_to(player.global_position)
 	if distance < 300.0:
 		current_boss_state = BossState.CHASE
 
 func _handle_chase(delta: float, player: Node2D, speed: float) -> void:
-	var direction := (player.global_position - global_position).normalized()
-	var distance := global_position.distance_to(player.global_position)
+	var direction: Vector2 = (player.global_position - global_position).normalized()
+	var distance: float = global_position.distance_to(player.global_position)
 	
 	velocity = direction * speed
 	move_and_slide()
@@ -138,17 +138,17 @@ func _start_spread_shot() -> void:
 
 func _handle_spread_shot(player: Node2D) -> void:
 	# Fire bullets in a spread pattern
-	var base_angle := (player.global_position - global_position).angle()
+	var base_angle: float = (player.global_position - global_position).angle()
 	
 	for i in SPREAD_COUNT:
-		var angle := base_angle + (TAU / SPREAD_COUNT) * i
-		var direction := Vector2.from_angle(angle)
+		var angle: float = base_angle + (TAU / SPREAD_COUNT) * i
+		var direction: Vector2 = Vector2.from_angle(angle)
 		
 		var bullet := bullet_scene.instantiate()
 		bullet.global_position = global_position
 		bullet.setup(direction, true)
 		
-		var container := get_tree().get_first_node_in_group("projectiles_container")
+		var container: Node = get_tree().get_first_node_in_group("projectiles_container")
 		if container:
 			container.add_child(bullet)
 		else:

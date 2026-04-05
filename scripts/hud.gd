@@ -29,7 +29,7 @@ func _ready() -> void:
 	
 	# Find player and connect health signal
 	await get_tree().process_frame
-	var player := get_tree().get_first_node_in_group("player")
+	var player: Node = get_tree().get_first_node_in_group("player")
 	if player and player.has_signal("player_damaged"):
 		player.player_damaged.connect(_on_player_damaged)
 		_update_health(player.health)
