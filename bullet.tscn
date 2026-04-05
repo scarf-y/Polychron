@@ -1,8 +1,0 @@
-[gd_scene format=3 uid="uid://bmoy3l1wq228c"]
-
-[node name="bullet" type="CharacterBody2D" unique_id=2037713706]
-
-[node name="ColorRect" type="ColorRect" parent="." unique_id=321930268]
-offset_right = 34.0
-offset_bottom = 52.0
-color = Color(1, 0.92941177, 0.50980395, 1)
