@@ -48,7 +48,7 @@ func _physics_process(delta: float) -> void:
 		var direction: Vector2 = (player.global_position - global_position).normalized()
 		var distance: float = global_position.distance_to(player.global_position)
 		
-		if distance > 12.0:
+		if distance > 20.0:
 			velocity = direction * speed
 		else:
 			velocity = Vector2.ZERO
