@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/stalker.tscn" id="2_stalker"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/levels/crusher_hazard.tscn" id="5_crusher"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/turret.tscn" id="6_turret"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/time_warden.tscn" id="7_boss"]
+[ext_resource type="PackedScene" path="res://scenes/effects/time_effect.tscn" id="8_time_fx"]
 
 [sub_resource type="RectangleShape2D" id="wall_h_short"]
 size = Vector2(160, 8)
@@ -364,3 +365,8 @@ position = Vector2(560, 160)
 ; PROJECTILES CONTAINER
 ; ===========================
 [node name="Projectiles" type="Node2D" parent="." groups=["projectiles_container"]]
+
+; ===========================
+; TIME VISUAL EFFECTS
+; ===========================
+[node name="TimeEffect" parent="." instance=ExtResource("8_time_fx")]

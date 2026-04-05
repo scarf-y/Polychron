@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/time_effect.gd" id="1_script"]
+[ext_resource type="Shader" path="res://assets/shaders/time_stop_inversion.gdshader" id="2_stop_shader"]
+[ext_resource type="Shader" path="res://assets/shaders/time_slow_tint.gdshader" id="3_slow_shader"]
+[ext_resource type="Shader" path="res://assets/shaders/time_erase_ghost.gdshader" id="4_erase_shader"]
+
+[sub_resource type="ShaderMaterial" id="stop_mat"]
+shader = ExtResource("2_stop_shader")
+shader_parameter/intensity = 0.0
+shader_parameter/tint_color = Color(0.2, 0.8, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="slow_mat"]
+shader = ExtResource("3_slow_shader")
+shader_parameter/intensity = 0.0
+shader_parameter/time_val = 0.0
+
+[sub_resource type="ShaderMaterial" id="erase_mat"]
+shader = ExtResource("4_erase_shader")
+shader_parameter/intensity = 0.0
+shader_parameter/time_val = 0.0
+
+[node name="TimeEffect" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_script")
+
+[node name="StopEffect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("stop_mat")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SlowEffect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("slow_mat")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="EraseEffect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("erase_mat")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
