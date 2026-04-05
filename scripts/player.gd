@@ -71,17 +71,17 @@ func _handle_time_abilities() -> void:
 	if Input.is_action_just_pressed("time_erase") and TimeManager.can_use_ability():
 		_active_ability = TimeManager.TimeState.ERASED
 		TimeManager.change_time_state(TimeManager.TimeState.ERASED)
-		# Ghost mode — phase through enemies
-		set_collision_mask_value(2, false)
+		# Ghost mode — phase through enemies (layer 3)
+		set_collision_mask_value(3, false)
 		modulate = Color(0.5, 0.5, 1.0, 0.3)
 	elif Input.is_action_just_released("time_erase") and _active_ability == TimeManager.TimeState.ERASED:
-		set_collision_mask_value(2, true)
+		set_collision_mask_value(3, true)
 		_return_to_normal()
 	
 	# Auto-return when gauge depletes
 	if TimeManager.time_gauge <= 0.0 and _active_ability != TimeManager.TimeState.NORMAL:
 		if _active_ability == TimeManager.TimeState.ERASED:
-			set_collision_mask_value(2, true)
+			set_collision_mask_value(3, true)
 		_active_ability = TimeManager.TimeState.NORMAL
 		modulate = Color.WHITE
 
