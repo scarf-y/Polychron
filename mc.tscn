@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://b6nkaj6mqsbpk"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_hk2bv"]
+
+[node name="MC" type="CharacterBody2D" unique_id=2037713706]
+script = ExtResource("1_hk2bv")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=321930268]
+offset_right = 78.0
+offset_bottom = 76.0
+color = Color(0, 1, 1, 1)

@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/stalker.tscn" id="2_stalker"]
 [ext_resource type="Script" path="res://scripts/room_manager.gd" id="3_room_mgr"]
 [ext_resource type="PackedScene" path="res://scenes/levels/laser_hazard.tscn" id="4_laser"]
 [ext_resource type="PackedScene" path="res://scenes/levels/crusher_hazard.tscn" id="5_crusher"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/turret.tscn" id="6_turret"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/time_warden.tscn" id="7_boss"]
 
 [sub_resource type="RectangleShape2D" id="wall_h_short"]
 size = Vector2(160, 8)
@@ -13,10 +15,10 @@ size = Vector2(160, 8)
 size = Vector2(8, 160)
 
 [sub_resource type="RectangleShape2D" id="wall_h_long"]
-size = Vector2(336, 8)
+size = Vector2(660, 8)
 
 [sub_resource type="RectangleShape2D" id="wall_v_long"]
-size = Vector2(8, 336)
+size = Vector2(8, 340)
 
 [sub_resource type="RectangleShape2D" id="wall_h_mid"]
 size = Vector2(64, 8)
@@ -33,6 +35,15 @@ size = Vector2(140, 140)
 [sub_resource type="RectangleShape2D" id="trigger_shape_r3"]
 size = Vector2(280, 140)
 
+[sub_resource type="RectangleShape2D" id="trigger_shape_r4"]
+size = Vector2(140, 300)
+
+[sub_resource type="RectangleShape2D" id="wall_v_tall"]
+size = Vector2(8, 320)
+
+[sub_resource type="RectangleShape2D" id="wall_h_full"]
+size = Vector2(640, 8)
+
 [node name="Level_01" type="Node2D"]
 
 ; ===========================
@@ -41,7 +52,7 @@ size = Vector2(280, 140)
 [node name="Floor" type="ColorRect" parent="."]
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 480.0
+offset_right = 640.0
 offset_bottom = 320.0
 color = Color(0.1, 0.1, 0.15, 1)
 
@@ -52,7 +63,7 @@ color = Color(0.1, 0.1, 0.15, 1)
 
 ; --- Top Wall (full width) ---
 [node name="TopWall" type="StaticBody2D" parent="Walls"]
-position = Vector2(240, -4)
+position = Vector2(320, -4)
 collision_layer = 1
 collision_mask = 0
 
@@ -60,15 +71,15 @@ collision_mask = 0
 shape = SubResource("wall_h_long")
 
 [node name="Vis" type="ColorRect" parent="Walls/TopWall"]
-offset_left = -168.0
+offset_left = -330.0
 offset_top = -4.0
-offset_right = 168.0
+offset_right = 330.0
 offset_bottom = 4.0
 color = Color(0.35, 0.35, 0.35, 1)
 
 ; --- Bottom Wall ---
 [node name="BottomWall" type="StaticBody2D" parent="Walls"]
-position = Vector2(240, 324)
+position = Vector2(320, 324)
 collision_layer = 1
 collision_mask = 0
 
@@ -76,9 +87,9 @@ collision_mask = 0
 shape = SubResource("wall_h_long")
 
 [node name="Vis" type="ColorRect" parent="Walls/BottomWall"]
-offset_left = -168.0
+offset_left = -330.0
 offset_top = -4.0
-offset_right = 168.0
+offset_right = 330.0
 offset_bottom = 4.0
 color = Color(0.35, 0.35, 0.35, 1)
 
@@ -100,7 +111,7 @@ color = Color(0.35, 0.35, 0.35, 1)
 
 ; --- Right Wall ---
 [node name="RightWall" type="StaticBody2D" parent="Walls"]
-position = Vector2(484, 160)
+position = Vector2(644, 160)
 collision_layer = 1
 collision_mask = 0
 
@@ -109,9 +120,9 @@ shape = SubResource("wall_v_long")
 
 [node name="Vis" type="ColorRect" parent="Walls/RightWall"]
 offset_left = -4.0
-offset_top = -168.0
+offset_top = -170.0
 offset_right = 4.0
-offset_bottom = 168.0
+offset_bottom = 170.0
 color = Color(0.35, 0.35, 0.35, 1)
 
 ; ===========================
@@ -229,7 +240,11 @@ color = Color(0.7, 0.5, 0.1, 1)
 position = Vector2(250, 50)
 
 [node name="Stalker_R2_2" parent="Room2" groups=["enemies"] instance=ExtResource("2_stalker")]
-position = Vector2(400, 100)
+position = Vector2(350, 100)
+
+; Turret in Room 2
+[node name="Turret_R2" parent="Room2" groups=["enemies"] instance=ExtResource("6_turret")]
+position = Vector2(420, 40)
 
 ; ===========================
 ; ROOM 3 — Hazard Room (right-bottom, full width)
@@ -271,6 +286,79 @@ position = Vector2(440, 290)
 
 [node name="Player" parent="Entities" groups=["player"] instance=ExtResource("1_player")]
 position = Vector2(80, 160)
+
+; ===========================
+; ROOM 4 — BOSS ROOM (far right)
+; ===========================
+[node name="Room4" type="Node2D" parent="."]
+script = ExtResource("3_room_mgr")
+
+[node name="RoomTrigger" type="Area2D" parent="Room4"]
+position = Vector2(560, 160)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Col" type="CollisionShape2D" parent="Room4/RoomTrigger"]
+shape = SubResource("trigger_shape_r4")
+
+; Divider wall between Room 3 and Boss Room
+[node name="Divider3_Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(480, 60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Col" type="CollisionShape2D" parent="Walls/Divider3_Top"]
+shape = SubResource("wall_v_short")
+
+[node name="Vis" type="ColorRect" parent="Walls/Divider3_Top"]
+offset_left = -4.0
+offset_top = -80.0
+offset_right = 4.0
+offset_bottom = -20.0
+color = Color(0.35, 0.35, 0.35, 1)
+
+[node name="Divider3_Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(480, 260)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Col" type="CollisionShape2D" parent="Walls/Divider3_Bottom"]
+shape = SubResource("wall_v_short")
+
+[node name="Vis" type="ColorRect" parent="Walls/Divider3_Bottom"]
+offset_left = -4.0
+offset_top = 20.0
+offset_right = 4.0
+offset_bottom = 80.0
+color = Color(0.35, 0.35, 0.35, 1)
+
+; Door to Boss Room
+[node name="Door4" type="StaticBody2D" parent="Room4"]
+position = Vector2(480, 160)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Col" type="CollisionShape2D" parent="Room4/Door4"]
+shape = SubResource("door_shape")
+
+[node name="Vis" type="ColorRect" parent="Room4/Door4"]
+offset_left = -4.0
+offset_top = -16.0
+offset_right = 4.0
+offset_bottom = 16.0
+color = Color(0.8, 0.2, 0.2, 1)
+
+; Boss Floor (darker for atmosphere)
+[node name="BossFloor" type="ColorRect" parent="Room4"]
+offset_left = 488.0
+offset_top = 4.0
+offset_right = 636.0
+offset_bottom = 316.0
+color = Color(0.08, 0.05, 0.12, 1)
+
+; THE TIME WARDEN
+[node name="TimeWarden" parent="Room4" groups=["enemies"] instance=ExtResource("7_boss")]
+position = Vector2(560, 160)
 
 ; ===========================
 ; PROJECTILES CONTAINER
