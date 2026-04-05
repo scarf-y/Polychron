@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/laser_hazard.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="beam_shape"]
+size = Vector2(80, 4)
+
+[sub_resource type="RectangleShape2D" id="emitter_shape"]
+size = Vector2(6, 8)
+
+[node name="LaserHazard" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0, 80, 0)
+width = 2.0
+default_color = Color(1, 0, 0, 1)
+
+[node name="HitArea" type="Area2D" parent="."]
+position = Vector2(40, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitArea"]
+shape = SubResource("beam_shape")
+
+[node name="Emitter" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Emitter"]
+shape = SubResource("emitter_shape")
+
+[node name="Sprite" type="ColorRect" parent="Emitter"]
+offset_left = -3.0
+offset_top = -4.0
+offset_right = 3.0
+offset_bottom = 4.0
+color = Color(0.8, 0.2, 0.2, 1)
