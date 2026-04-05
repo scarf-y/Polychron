@@ -1,6 +1,20 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_script"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 32
+font_color = Color(0.4, 0.8, 1, 1)
+outline_size = 3
+outline_color = Color(0.1, 0.2, 0.4, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_sub"]
+font_size = 14
+font_color = Color(0.6, 0.7, 0.8, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_controls"]
+font_size = 10
+font_color = Color(0.5, 0.5, 0.6, 1)
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -43,12 +57,6 @@ vertical_alignment = 1
 text = "CHRONOS BOUND"
 label_settings = SubResource("LabelSettings_title")
 
-[sub_resource type="LabelSettings" id="LabelSettings_title"]
-font_size = 32
-font_color = Color(0.4, 0.8, 1, 1)
-outline_size = 3
-outline_color = Color(0.1, 0.2, 0.4, 1)
-
 [node name="SubtitleLabel" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 5
@@ -62,10 +70,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text = "The Frozen Sector"
 label_settings = SubResource("LabelSettings_sub")
-
-[sub_resource type="LabelSettings" id="LabelSettings_sub"]
-font_size = 14
-font_color = Color(0.6, 0.7, 0.8, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -104,7 +108,3 @@ text = "WASD - Move  |  LMB - Shoot
 SPACE - Time Stop  |  SHIFT - Time Slow
 E - Time Erase"
 label_settings = SubResource("LabelSettings_controls")
-
-[sub_resource type="LabelSettings" id="LabelSettings_controls"]
-font_size = 10
-font_color = Color(0.5, 0.5, 0.6, 1)
