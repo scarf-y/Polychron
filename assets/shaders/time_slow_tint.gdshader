@@ -1,13 +1,13 @@
 shader_type canvas_item;
 
 // Time Slow tint shader — applies a golden/amber slow-motion feel
-// Applied via a full-screen ColorRect on a CanvasLayer
 
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
 uniform float intensity : hint_range(0.0, 1.0) = 0.0;
 uniform float time_val : hint_range(0.0, 1000.0) = 0.0;
 
 void fragment() {
-    vec4 screen_color = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0);
+    vec4 screen_color = textureLod(screen_texture, SCREEN_UV, 0.0);
     
     // Amber/golden tint
     vec3 amber = vec3(1.0, 0.85, 0.4);

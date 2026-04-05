@@ -74,7 +74,7 @@ func _clear_room() -> void:
 func _set_door_collision(door: StaticBody2D, enabled: bool) -> void:
 	for child in door.get_children():
 		if child is CollisionShape2D:
-			child.disabled = not enabled
+			child.set_deferred("disabled", not enabled)
 
 ## Register an enemy spawned at runtime
 func register_enemy(enemy: Node) -> void:

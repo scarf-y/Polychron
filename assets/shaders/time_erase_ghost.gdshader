@@ -1,8 +1,8 @@
 shader_type canvas_item;
 
 // Time Erase ghost shader — ghostly blue transparency with wave distortion
-// Applied via a full-screen ColorRect on a CanvasLayer
 
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
 uniform float intensity : hint_range(0.0, 1.0) = 0.0;
 uniform float time_val : hint_range(0.0, 1000.0) = 0.0;
 
@@ -12,7 +12,7 @@ void fragment() {
     uv.x += sin(uv.y * 20.0 + time_val * 3.0) * 0.002 * intensity;
     uv.y += cos(uv.x * 15.0 + time_val * 2.0) * 0.002 * intensity;
     
-    vec4 screen_color = textureLod(SCREEN_TEXTURE, uv, 0.0);
+    vec4 screen_color = textureLod(screen_texture, uv, 0.0);
     
     // Ghostly blue-purple tint
     vec3 ghost_color = vec3(0.4, 0.5, 0.9);

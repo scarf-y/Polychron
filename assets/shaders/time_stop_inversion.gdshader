@@ -1,13 +1,13 @@
 shader_type canvas_item;
 
 // Time Stop inversion shader — inverts all colors on screen
-// Applied via a full-screen ColorRect on a CanvasLayer
 
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
 uniform float intensity : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 tint_color : source_color = vec4(0.2, 0.8, 1.0, 1.0);
 
 void fragment() {
-    vec4 screen_color = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0);
+    vec4 screen_color = textureLod(screen_texture, SCREEN_UV, 0.0);
     
     // Invert colors
     vec3 inverted = vec3(1.0) - screen_color.rgb;
