@@ -6,6 +6,7 @@ extends CanvasLayer
 @onready var stop_rect: ColorRect = $StopEffect
 @onready var slow_rect: ColorRect = $SlowEffect 
 @onready var erase_rect: ColorRect = $EraseEffect
+@onready var chromatic_rect: ColorRect = $ChromaticEffect
 
 var _transition_speed: float = 6.0
 var _target_stop_intensity: float = 0.0
@@ -21,6 +22,7 @@ func _ready() -> void:
 	_set_intensity(stop_rect, 0.0)
 	_set_intensity(slow_rect, 0.0)
 	_set_intensity(erase_rect, 0.0)
+	_set_intensity(chromatic_rect, 0.0)
 
 func _process(delta: float) -> void:
 	_time_accumulator += delta
@@ -29,12 +31,15 @@ func _process(delta: float) -> void:
 	_lerp_effect(stop_rect, _target_stop_intensity, delta)
 	_lerp_effect(slow_rect, _target_slow_intensity, delta)
 	_lerp_effect(erase_rect, _target_erase_intensity, delta)
+	_lerp_effect(chromatic_rect, _target_erase_intensity, delta)
 	
 	# Update time uniforms for animated shaders
 	if slow_rect and slow_rect.material:
 		(slow_rect.material as ShaderMaterial).set_shader_parameter("time_val", _time_accumulator)
 	if erase_rect and erase_rect.material:
 		(erase_rect.material as ShaderMaterial).set_shader_parameter("time_val", _time_accumulator)
+	if chromatic_rect and chromatic_rect.material:
+		(chromatic_rect.material as ShaderMaterial).set_shader_parameter("time_val", _time_accumulator)
 
 func _on_time_state_changed(new_state: TimeManager.TimeState) -> void:
 	# Reset all

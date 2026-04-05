@@ -66,10 +66,12 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player") and is_enemy_bullet:
 		if body.has_method("take_damage"):
 			body.take_damage(1)
+		GameJuice.screen_shake(3.0, 1.2)
 		queue_free()
 	elif body.is_in_group("enemies") and not is_enemy_bullet:
 		if body.has_method("take_damage"):
 			body.take_damage(1)
+		GameJuice.hit_impact()  # Hitstop + shake on every hit
 		queue_free()
 	else:
 		# Hit a wall or environment

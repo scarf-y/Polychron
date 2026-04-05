@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://j4yeg2dwgw8m"]
 
-[ext_resource type="Script" path="res://scripts/time_effect.gd" id="1_script"]
-[ext_resource type="Shader" path="res://assets/shaders/time_stop_inversion.gdshader" id="2_stop_shader"]
-[ext_resource type="Shader" path="res://assets/shaders/time_slow_tint.gdshader" id="3_slow_shader"]
-[ext_resource type="Shader" path="res://assets/shaders/time_erase_ghost.gdshader" id="4_erase_shader"]
+[ext_resource type="Script" uid="uid://c7lu1rwhiod6k" path="res://scripts/time_effect.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://dfkn0vsdcotgk" path="res://assets/shaders/time_stop_inversion.gdshader" id="2_stop_shader"]
+[ext_resource type="Shader" uid="uid://bkqjruasrurpc" path="res://assets/shaders/time_slow_tint.gdshader" id="3_slow_shader"]
+[ext_resource type="Shader" uid="uid://bdtbrr6yr5317" path="res://assets/shaders/time_erase_ghost.gdshader" id="4_erase_shader"]
+[ext_resource type="Shader" path="res://assets/shaders/chromatic_aberration.gdshader" id="5_chromatic_shader"]
 
 [sub_resource type="ShaderMaterial" id="stop_mat"]
 shader = ExtResource("2_stop_shader")
@@ -20,11 +21,17 @@ shader = ExtResource("4_erase_shader")
 shader_parameter/intensity = 0.0
 shader_parameter/time_val = 0.0
 
-[node name="TimeEffect" type="CanvasLayer"]
+[sub_resource type="ShaderMaterial" id="chromatic_mat"]
+shader = ExtResource("5_chromatic_shader")
+shader_parameter/intensity = 0.0
+shader_parameter/aberration_amount = 0.008
+shader_parameter/time_val = 0.0
+
+[node name="TimeEffect" type="CanvasLayer" unique_id=1049450155]
 layer = 100
 script = ExtResource("1_script")
 
-[node name="StopEffect" type="ColorRect" parent="."]
+[node name="StopEffect" type="ColorRect" parent="." unique_id=214111415]
 visible = false
 material = SubResource("stop_mat")
 anchors_preset = 15
@@ -34,7 +41,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SlowEffect" type="ColorRect" parent="."]
+[node name="SlowEffect" type="ColorRect" parent="." unique_id=969582911]
 visible = false
 material = SubResource("slow_mat")
 anchors_preset = 15
@@ -44,9 +51,19 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="EraseEffect" type="ColorRect" parent="."]
+[node name="EraseEffect" type="ColorRect" parent="." unique_id=1632147955]
 visible = false
 material = SubResource("erase_mat")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ChromaticEffect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("chromatic_mat")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

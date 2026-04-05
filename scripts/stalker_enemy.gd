@@ -75,5 +75,6 @@ func take_damage(amount: int = 1) -> void:
 
 func _die() -> void:
 	is_dead = true
+	GameJuice.big_impact()
 	enemy_died.emit(self)
 	queue_free()

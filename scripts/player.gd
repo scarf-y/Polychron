@@ -55,6 +55,7 @@ func _handle_time_abilities() -> void:
 	if Input.is_action_just_pressed("time_stop") and TimeManager.can_use_ability():
 		_active_ability = TimeManager.TimeState.STOPPED
 		TimeManager.change_time_state(TimeManager.TimeState.STOPPED)
+		GameJuice.time_stop_impact()  # Screen shake on activation
 		modulate = Color.CYAN
 	elif Input.is_action_just_released("time_stop") and _active_ability == TimeManager.TimeState.STOPPED:
 		_return_to_normal()

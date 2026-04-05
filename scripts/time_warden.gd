@@ -187,6 +187,7 @@ func take_damage(amount: int = 1) -> void:
 
 func _die() -> void:
 	is_dead = true
+	GameJuice.death_impact()
 	enemy_died.emit(self)
 	# Boss death is dramatic — pause briefly
 	Engine.time_scale = 0.1
