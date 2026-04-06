@@ -80,23 +80,12 @@ func _drop_null_zone() -> void:
 		zone.global_position = global_position
 		get_tree().current_scene.add_child(zone)
 	else:
-		# Fallback: create null zone programmatically
-		_create_null_zone_fallback()
-
-func _create_null_zone_fallback() -> void:
-	var zone := Area2D.new()
-	zone.global_position = global_position
-	zone.collision_layer = 0
-	zone.collision_mask = 2  # Detect player
-	zone.set_script(load("res://scripts/null_zone.gd"))
-	
-	var shape := CollisionShape2D.new()
-	var circle := CircleShape2D.new()
-	circle.radius = 50.0
-	shape.shape = circle
-	zone.add_child(shape)
-	
-	get_tree().current_scene.add_child(zone)
+		# Try loading at runtime
+		null_zone_scene = load(NULL_ZONE_SCENE_PATH)
+		if null_zone_scene:
+			var zone := null_zone_scene.instantiate()
+			zone.global_position = global_position
+			get_tree().current_scene.add_child(zone)
 
 func _update_tether() -> void:
 	# Find nearest Sentinel

@@ -30,6 +30,8 @@ var _attack_timer: float = 0.0
 var _state_timer: float = 0.0
 var _dash_direction: Vector2 = Vector2.ZERO
 var _laser_target_pos: Vector2 = Vector2.ZERO
+var _laser_direction: Vector2 = Vector2.ZERO  # Locked direction when firing
+var _laser_tick_timer: float = 0.0  # Cooldown between damage ticks
 
 # --- Laser Visual ---
 var _laser_line: Line2D = null
@@ -157,11 +159,11 @@ func _handle_laser_telegraph(delta: float, player: Node2D) -> void:
 	_state_timer -= delta
 	velocity = Vector2.ZERO
 	
-	# Update targeting line to track player
-	_laser_target_pos = player.global_position
+	# Targeting line tracks player during telegraph (gives warning)
+	_laser_direction = (player.global_position - global_position).normalized()
 	_laser_line.clear_points()
 	_laser_line.add_point(Vector2.ZERO)
-	_laser_line.add_point(_laser_target_pos - global_position)
+	_laser_line.add_point(_laser_direction * 200.0)  # Fixed length beam
 	
 	# Line gets brighter as it charges
 	var charge: float = 1.0 - (_state_timer / LASER_TELEGRAPH_TIME)
@@ -169,6 +171,9 @@ func _handle_laser_telegraph(delta: float, player: Node2D) -> void:
 	_laser_line.width = 1.0 + charge * 2.0
 	
 	if _state_timer <= 0.0:
+		# LOCK the direction — beam fires in this fixed direction
+		_laser_direction = (player.global_position - global_position).normalized()
+		_laser_tick_timer = 0.0
 		current_state = SentinelState.LASER_FIRING
 		_state_timer = LASER_DURATION
 		_laser_line.default_color = Color(1, 0.3, 0.3, 1.0)
@@ -176,24 +181,29 @@ func _handle_laser_telegraph(delta: float, player: Node2D) -> void:
 
 func _handle_laser_firing(delta: float, player: Node2D) -> void:
 	_state_timer -= delta
+	_laser_tick_timer -= delta
 	velocity = Vector2.ZERO
 	
-	# Beam stays locked at the last target direction (persists during Time Stop!)
+	# Beam fires in LOCKED direction (doesn't track anymore — dodgeable!)
+	var beam_end: Vector2 = _laser_direction * 200.0
 	_laser_line.clear_points()
 	_laser_line.add_point(Vector2.ZERO)
-	_laser_line.add_point(_laser_target_pos - global_position)
+	_laser_line.add_point(beam_end)
 	
 	# Flicker the beam
 	_laser_line.modulate.a = 0.7 + sin(_state_timer * 30.0) * 0.3
 	
-	# Check if player is near the beam line
-	if player and is_instance_valid(player):
+	# Damage with tick cooldown (not every frame!)
+	if player and is_instance_valid(player) and _laser_tick_timer <= 0.0:
+		var beam_end_world: Vector2 = global_position + beam_end
 		var dist_to_beam: float = _point_to_line_distance(
-			player.global_position, global_position, _laser_target_pos
+			player.global_position, global_position, beam_end_world
 		)
-		if dist_to_beam < 10.0:
+		if dist_to_beam < 6.0:  # Tighter hitbox — dodgeable
 			if player.has_method("take_damage"):
 				player.take_damage(LASER_DAMAGE_PER_TICK)
+				GameJuice.spawn_damage_number(LASER_DAMAGE_PER_TICK, player.global_position, false)
+				_laser_tick_timer = LASER_TICK_RATE  # Reset cooldown
 	
 	if _state_timer <= 0.0:
 		_laser_line.visible = false
