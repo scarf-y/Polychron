@@ -1,7 +1,7 @@
 extends Area2D
 
-## Projectile used by both Player and Enemies.
-## Freezes in place during TIME_STOP, resumes when NORMAL.
+## Projectile — used by Player and Enemies.
+## Freezes during TIME_STOP. Player bullets use crit system.
 
 # --- Collision Layer Map ---
 # Layer 1: Walls    | Layer 2: Player
@@ -24,21 +24,17 @@ func setup(dir: Vector2, enemy_bullet: bool = false) -> void:
 	rotation = direction.angle()
 	
 	if is_enemy_bullet:
-		# Enemy bullet: IS on layer 5, DETECTS layers 1 (walls) + 2 (player)
 		collision_layer = 16  # bit 4 = layer 5
 		collision_mask = 3    # bits 0+1 = layers 1+2
 	else:
-		# Player bullet: IS on layer 4, DETECTS layers 1 (walls) + 3 (enemies)
 		collision_layer = 8   # bit 3 = layer 4
 		collision_mask = 5    # bits 0+2 = layers 1+3
 
 func _ready() -> void:
 	add_to_group("projectiles")
 	
-	# Connect signals
 	body_entered.connect(_on_body_entered)
 	
-	# Self-destruct timer
 	var timer := Timer.new()
 	timer.wait_time = LIFETIME
 	timer.one_shot = true
@@ -47,7 +43,6 @@ func _ready() -> void:
 	timer.start()
 
 func _physics_process(delta: float) -> void:
-	# Check time state for freeze behavior
 	if TimeManager.current_state == TimeManager.TimeState.STOPPED:
 		if not _is_frozen:
 			_stored_direction = direction
@@ -65,14 +60,40 @@ func _physics_process(delta: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player") and is_enemy_bullet:
 		if body.has_method("take_damage"):
-			body.take_damage(1)
+			body.take_damage(15.0)  # Enemy bullets do fixed damage
 		GameJuice.screen_shake(3.0, 1.2)
+		GameJuice.spawn_damage_number(15.0, body.global_position, false)
 		queue_free()
 	elif body.is_in_group("enemies") and not is_enemy_bullet:
+		# Use player's crit system
+		var player: Node = get_tree().get_first_node_in_group("player")
+		var damage: float = 12.0
+		var is_crit: bool = false
+		
+		if player and player.has_method("deal_damage"):
+			var result: Array = player.deal_damage()
+			damage = result[0]
+			is_crit = result[1]
+		
+		# Check if enemy has damage reduction (Data Shield from Dampener)
+		if body.has_method("get_damage_reduction"):
+			var reduction: float = body.get_damage_reduction()
+			if reduction > 0.0:
+				damage *= (1.0 - reduction)
+				is_crit = false  # Can't crit shielded targets
+		
 		if body.has_method("take_damage"):
-			body.take_damage(1)
-		GameJuice.hit_impact()  # Hitstop + shake on every hit
+			body.take_damage(damage)
+		
+		# Spawn floating damage number
+		GameJuice.spawn_damage_number(damage, body.global_position, is_crit)
+		
+		# Impact effect
+		if is_crit:
+			GameJuice.crit_impact()
+		else:
+			GameJuice.hit_impact()
+		
 		queue_free()
 	else:
-		# Hit a wall or environment
 		queue_free()

@@ -20,6 +20,7 @@ const RECHARGE_RATE: float = 10.0        # per second in NORMAL state
 
 var time_gauge: float = GAUGE_MAX
 var current_state: TimeState = TimeState.NORMAL
+var null_zone_active: bool = false  # Set by Null Zone — disables abilities
 
 # --- Process ---
 func _process(delta: float) -> void:
@@ -31,8 +32,8 @@ func _process(delta: float) -> void:
 	
 	match current_state:
 		TimeState.NORMAL:
-			# Recharge gauge
-			if time_gauge < GAUGE_MAX:
+			# Recharge gauge (blocked inside Null Zone)
+			if time_gauge < GAUGE_MAX and not null_zone_active:
 				time_gauge = minf(time_gauge + RECHARGE_RATE * real_delta, GAUGE_MAX)
 				time_gauge_changed.emit(time_gauge)
 		TimeState.STOPPED:
@@ -81,4 +82,6 @@ func _force_normal() -> void:
 
 ## Check if an ability can be activated (has gauge)
 func can_use_ability() -> bool:
+	if null_zone_active:
+		return false
 	return time_gauge > 5.0  # Minimum threshold to activate

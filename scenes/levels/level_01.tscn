@@ -9,6 +9,8 @@
 [ext_resource type="Script" path="res://scripts/level_transition.gd" id="7_transition"]
 [ext_resource type="PackedScene" path="res://scenes/effects/time_effect.tscn" id="8_time_fx"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="9_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/sentinel.tscn" id="10_sentinel"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/dampener.tscn" id="11_dampener"]
 
 [sub_resource type="RectangleShape2D" id="wall_h_short"]
 size = Vector2(160, 8)
@@ -248,6 +250,13 @@ position = Vector2(350, 100)
 [node name="Turret_R2" parent="Room2" groups=["enemies"] instance=ExtResource("6_turret")]
 position = Vector2(420, 40)
 
+; Sentinel + Dampener combo in Room 2
+[node name="Sentinel_R2" parent="Room2" groups=["enemies"] instance=ExtResource("10_sentinel")]
+position = Vector2(300, 130)
+
+[node name="Dampener_R2" parent="Room2" groups=["enemies"] instance=ExtResource("11_dampener")]
+position = Vector2(380, 80)
+
 ; ===========================
 ; ROOM 3 — Hazard Room (right-bottom, full width)
 ; ===========================
@@ -280,6 +289,10 @@ position = Vector2(420, 250)
 
 [node name="Stalker_R3_2" parent="Room3" groups=["enemies"] instance=ExtResource("2_stalker")]
 position = Vector2(440, 290)
+
+; Sentinel in Room 3
+[node name="Sentinel_R3" parent="Room3" groups=["enemies"] instance=ExtResource("10_sentinel")]
+position = Vector2(380, 270)
 
 ; ===========================
 ; ENTITIES

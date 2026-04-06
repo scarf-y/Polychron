@@ -1,14 +1,15 @@
 extends CharacterBody2D
 
-## Time Warden — THE BOSS. Can move SLOWLY even during TIME_STOP.
-## This is the ultimate challenge that tests all player abilities.
+## The Kernel — THE BOSS of the Vector Void.
+## Can move SLOWLY even during TIME_STOP. The ultimate test.
+## Polygon2D hexagon shape. Glows ominous purple.
 
 # --- Stats ---
-@export var health: int = 20
-@export var max_health: int = 20
+@export var health: float = 200.0
+@export var max_health: float = 200.0
 @export var normal_speed: float = 40.0
-@export var timestop_speed: float = 15.0  # Moves even in time stop!
-@export var charge_speed: float = 120.0
+@export var timestop_speed: float = 15.0
+@export var charge_speed: float = 140.0
 var is_dead: bool = false
 
 # --- Attack Patterns ---
@@ -17,17 +18,18 @@ var current_boss_state: BossState = BossState.IDLE
 
 # --- Timers ---
 var _attack_timer: float = 0.0
-const ATTACK_INTERVAL: float = 3.0
+const ATTACK_INTERVAL: float = 2.5
 const CHARGE_DURATION: float = 0.8
 const STUN_DURATION: float = 1.0
 var _state_timer: float = 0.0
 
 # --- Charging ---
 var _charge_direction: Vector2 = Vector2.ZERO
+const CHARGE_DAMAGE: float = 25.0
 
 # --- Shooting ---
 var bullet_scene: PackedScene = preload("res://scenes/projectiles/bullet.tscn")
-const SPREAD_COUNT: int = 8  # Number of bullets in spread
+const SPREAD_COUNT: int = 12
 
 # --- Visual ---
 var _flash_timer: float = 0.0
@@ -35,7 +37,7 @@ var _is_telegraph: bool = false
 
 # --- Signals ---
 signal enemy_died(enemy: Node2D)
-signal boss_health_changed(current: int, maximum: int)
+signal boss_health_changed(current: float, maximum: float)
 
 func _ready() -> void:
 	add_to_group("enemies")
@@ -50,20 +52,18 @@ func _physics_process(delta: float) -> void:
 	if not player or not is_instance_valid(player):
 		return
 	
-	# --- Determine speed based on time state ---
+	# --- Speed based on time state ---
 	var effective_speed := normal_speed
 	var is_time_stopped := TimeManager.current_state == TimeManager.TimeState.STOPPED
 	
 	if is_time_stopped:
-		# THE KEY MECHANIC: Boss still moves during time stop, but slowly
 		effective_speed = timestop_speed
-		modulate = Color(0.6, 0.2, 0.8)  # Ominous purple even when frozen
+		modulate = Color(0.5, 0.1, 0.9)  # Deep purple
 	elif TimeManager.current_state == TimeManager.TimeState.ERASED:
-		# Can still sense player faintly during erase
 		effective_speed = normal_speed * 0.5
-		modulate = Color(0.5, 0.2, 0.6, 0.7)
+		modulate = Color(0.4, 0.1, 0.6, 0.7)
 	else:
-		modulate = Color(0.6, 0.1, 0.8)  # Purple
+		modulate = Color(0.6, 0.0, 1.0)  # Neon purple
 	
 	# --- State Machine ---
 	match current_boss_state:
@@ -90,11 +90,9 @@ func _handle_chase(delta: float, player: Node2D, speed: float) -> void:
 	velocity = direction * speed
 	move_and_slide()
 	
-	# Attack timer
 	_attack_timer += delta
 	if _attack_timer >= ATTACK_INTERVAL:
 		_attack_timer = 0.0
-		# Choose attack based on distance
 		if distance < 80.0:
 			_start_charge(direction)
 		else:
@@ -105,13 +103,10 @@ func _start_charge(direction: Vector2) -> void:
 	_charge_direction = direction
 	_state_timer = CHARGE_DURATION
 	_is_telegraph = true
-	
-	# Telegraph: flash red before charging
-	modulate = Color.RED
+	modulate = Color(1, 0, 0)  # Red telegraph
 
 func _handle_charge(delta: float) -> void:
 	if _is_telegraph:
-		# Brief telegraph pause
 		_is_telegraph = false
 		await get_tree().create_timer(0.3).timeout
 	
@@ -119,13 +114,14 @@ func _handle_charge(delta: float) -> void:
 	velocity = _charge_direction * charge_speed
 	move_and_slide()
 	
-	# Check for player collision during charge
 	for i in get_slide_collision_count():
 		var collision := get_slide_collision(i)
 		var collider := collision.get_collider()
 		if collider and collider.is_in_group("player"):
 			if collider.has_method("take_damage"):
-				collider.take_damage(2)  # Heavy hit
+				collider.take_damage(CHARGE_DAMAGE)
+				GameJuice.spawn_damage_number(CHARGE_DAMAGE, collider.global_position, false)
+				GameJuice.screen_shake(6.0, 2.0)
 	
 	if _state_timer <= 0.0:
 		current_boss_state = BossState.STUNNED
@@ -133,11 +129,9 @@ func _handle_charge(delta: float) -> void:
 
 func _start_spread_shot() -> void:
 	current_boss_state = BossState.SPREAD_SHOT
-	# Telegraph
-	modulate = Color.YELLOW
+	modulate = Color(1, 1, 0)  # Yellow telegraph
 
 func _handle_spread_shot(player: Node2D) -> void:
-	# Fire bullets in a spread pattern
 	var base_angle: float = (player.global_position - global_position).angle()
 	
 	for i in SPREAD_COUNT:
@@ -154,6 +148,7 @@ func _handle_spread_shot(player: Node2D) -> void:
 		else:
 			get_parent().add_child(bullet)
 	
+	GameJuice.screen_shake(4.0, 1.5)
 	current_boss_state = BossState.STUNNED
 	_state_timer = STUN_DURATION * 0.5
 
@@ -161,7 +156,6 @@ func _handle_stunned(delta: float) -> void:
 	_state_timer -= delta
 	velocity = Vector2.ZERO
 	
-	# Flicker effect while stunned
 	_flash_timer += delta
 	modulate.a = 0.5 + sin(_flash_timer * 10.0) * 0.3
 	
@@ -170,27 +164,33 @@ func _handle_stunned(delta: float) -> void:
 		modulate.a = 1.0
 		current_boss_state = BossState.CHASE
 
-func take_damage(amount: int = 1) -> void:
+func take_damage(amount: float = 10.0) -> void:
 	if is_dead:
 		return
 	health -= amount
 	boss_health_changed.emit(health, max_health)
 	
-	# Flash white
 	modulate = Color.WHITE
 	await get_tree().create_timer(0.08).timeout
 	if not is_dead:
-		modulate = Color(0.6, 0.1, 0.8)
+		modulate = Color(0.6, 0.0, 1.0)
 	
-	if health <= 0:
+	if health <= 0.0:
 		_die()
 
 func _die() -> void:
 	is_dead = true
 	GameJuice.death_impact()
+	
+	# Massive death particle explosion
+	GameJuice.spawn_death_particles(global_position, Color(0.6, 0.0, 1.0), 25)
+	GameJuice.spawn_death_particles(global_position + Vector2(10, 0), Color(1, 0, 0.5), 15)
+	GameJuice.spawn_death_particles(global_position + Vector2(-10, 0), Color(0, 0.5, 1), 15)
+	
 	enemy_died.emit(self)
-	# Boss death is dramatic — pause briefly
-	Engine.time_scale = 0.1
-	await get_tree().create_timer(0.05).timeout  # 0.5s real time at 0.1x
+	
+	# Dramatic slow-mo death
+	Engine.time_scale = 0.05
+	await get_tree().create_timer(0.1).timeout  # ~2s real time at 0.05x
 	Engine.time_scale = 1.0
 	queue_free()

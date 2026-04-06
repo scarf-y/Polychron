@@ -1,16 +1,17 @@
 extends CharacterBody2D
 
-## Turret Enemy — static, fires bullets at intervals.
-## Freezes during TIME_STOP. Slows with TIME_SLOW.
+## Turret Enemy — static shooter with firing telegraph.
+## Octagonal shape. Flashes before firing.
 
 # --- Stats ---
-@export var health: int = 5
-@export var fire_interval: float = 2.0
+@export var health: float = 60.0
+@export var fire_interval: float = 1.8
 @export var detection_range: float = 200.0
 var is_dead: bool = false
 
 # --- Shooting ---
 var _fire_timer: float = 0.0
+var _is_telegraphing: bool = false
 var bullet_scene: PackedScene = preload("res://scenes/projectiles/bullet.tscn")
 
 # --- Signals ---
@@ -18,7 +19,7 @@ signal enemy_died(enemy: Node2D)
 
 func _ready() -> void:
 	add_to_group("enemies")
-	_fire_timer = fire_interval  # Fire immediately on first detection
+	_fire_timer = fire_interval
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
@@ -28,12 +29,13 @@ func _physics_process(delta: float) -> void:
 	match TimeManager.current_state:
 		TimeManager.TimeState.STOPPED:
 			modulate = Color(0.3, 0.3, 0.3)
-			return  # Completely frozen
+			return
 		TimeManager.TimeState.ERASED:
-			modulate = Color(1.0, 0.6, 0.3, 0.5)
-			return  # Can't see player
+			modulate = Color(1.0, 0.5, 0.0, 0.4)
+			return
 		_:
-			modulate = Color(1.0, 0.5, 0.0)  # Orange
+			if not _is_telegraphing:
+				modulate = Color(1.0, 0.6, 0.0)  # Neon orange
 	
 	# --- Turret Logic ---
 	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D
@@ -44,40 +46,62 @@ func _physics_process(delta: float) -> void:
 	if distance > detection_range:
 		return
 	
-	# Fire timer
 	_fire_timer += delta
-	if _fire_timer >= fire_interval:
+	if _fire_timer >= fire_interval and not _is_telegraphing:
 		_fire_timer = 0.0
-		_fire_at(player)
+		_fire_with_telegraph(player)
 
-func _fire_at(target: Node2D) -> void:
+func _fire_with_telegraph(target: Node2D) -> void:
+	_is_telegraphing = true
+	
+	# Telegraph: flash white rapidly
+	modulate = Color(1, 1, 1)
+	await get_tree().create_timer(0.15).timeout
+	modulate = Color(1.0, 0.3, 0.0)
+	await get_tree().create_timer(0.1).timeout
+	modulate = Color(1, 1, 1)
+	await get_tree().create_timer(0.1).timeout
+	
+	# Fire!
+	if is_dead or not is_instance_valid(target):
+		_is_telegraphing = false
+		return
+	
 	var direction: Vector2 = (target.global_position - global_position).normalized()
 	
 	var bullet := bullet_scene.instantiate()
 	bullet.global_position = global_position
-	bullet.setup(direction, true)  # true = enemy bullet
+	bullet.setup(direction, true)
 	
 	var container: Node = get_tree().get_first_node_in_group("projectiles_container")
 	if container:
 		container.add_child(bullet)
 	else:
 		get_parent().add_child(bullet)
+	
+	# Muzzle flash
+	modulate = Color(1, 1, 0.5)
+	await get_tree().create_timer(0.05).timeout
+	modulate = Color(1.0, 0.6, 0.0)
+	
+	_is_telegraphing = false
 
-func take_damage(amount: int = 1) -> void:
+func take_damage(amount: float = 10.0) -> void:
 	if is_dead:
 		return
 	health -= amount
 	
-	# Flash white
 	modulate = Color.WHITE
 	await get_tree().create_timer(0.05).timeout
 	if not is_dead:
-		modulate = Color(1.0, 0.5, 0.0)
+		modulate = Color(1.0, 0.6, 0.0)
 	
-	if health <= 0:
+	if health <= 0.0:
 		_die()
 
 func _die() -> void:
 	is_dead = true
+	GameJuice.big_impact()
+	GameJuice.spawn_death_particles(global_position, Color(1.0, 0.6, 0.0), 10)
 	enemy_died.emit(self)
 	queue_free()

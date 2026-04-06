@@ -1,10 +1,9 @@
 extends CanvasLayer
 
-## HUD — displays Time Gauge, Health, and current time state.
-## Instance this in the level scene.
+## HUD — displays continuous HP bar, Time Gauge, and time state.
 
 @onready var gauge_bar: ProgressBar = $HUDContainer/GaugeBar
-@onready var health_label: Label = $HUDContainer/HealthLabel
+@onready var hp_bar: ProgressBar = $HUDContainer/HPBar
 @onready var state_label: Label = $HUDContainer/StateLabel
 @onready var gauge_label: Label = $HUDContainer/GaugeLabel
 
@@ -14,6 +13,7 @@ const STATE_COLORS := {
 	"STOPPED": Color(0, 1, 1),
 	"SLOWED": Color(1, 0.85, 0.3),
 	"ERASED": Color(0.5, 0.5, 1.0),
+	"NULLIFIED": Color(0.5, 0.0, 0.0),
 }
 
 func _ready() -> void:
@@ -25,9 +25,12 @@ func _ready() -> void:
 	if gauge_bar:
 		gauge_bar.max_value = TimeManager.GAUGE_MAX
 		gauge_bar.value = TimeManager.time_gauge
+	if hp_bar:
+		hp_bar.max_value = 100.0
+		hp_bar.value = 100.0
 	_update_state_display(TimeManager.current_state)
 	
-	# Find player and connect health signal
+	# Find player and connect signals
 	await get_tree().process_frame
 	var player: Node = get_tree().get_first_node_in_group("player")
 	if player and player.has_signal("player_damaged"):
@@ -35,6 +38,13 @@ func _ready() -> void:
 		_update_health(player.health)
 	if player and player.has_signal("player_died"):
 		player.player_died.connect(_on_player_died)
+
+func _process(_delta: float) -> void:
+	# Null Zone indicator
+	if TimeManager.null_zone_active:
+		if state_label:
+			state_label.text = "[ NULLIFIED ]"
+			state_label.modulate = STATE_COLORS["NULLIFIED"]
 
 func _on_gauge_changed(new_value: float) -> void:
 	if gauge_bar:
@@ -63,34 +73,38 @@ func _update_state_display(state: TimeManager.TimeState) -> void:
 			state_label.text = "[ TIME ERASE ]"
 			state_label.modulate = STATE_COLORS["ERASED"]
 
-func _on_player_damaged(new_health: int) -> void:
+func _on_player_damaged(new_health: float) -> void:
 	_update_health(new_health)
 
-func _update_health(hp: int) -> void:
-	if health_label:
-		var hearts := ""
-		for i in hp:
-			hearts += "♥ "
-		health_label.text = hearts.strip_edges()
+func _update_health(hp: float) -> void:
+	if hp_bar:
+		hp_bar.value = hp
 		
-		# Flash red on damage
-		health_label.modulate = Color.RED
+		# Color shift: green → yellow → red
+		var ratio: float = hp / 100.0
+		if ratio > 0.5:
+			hp_bar.modulate = Color(0.2, 1.0, 0.3)  # Green
+		elif ratio > 0.25:
+			hp_bar.modulate = Color(1.0, 0.85, 0.2)  # Yellow
+		else:
+			hp_bar.modulate = Color(1.0, 0.2, 0.2)  # Red — DANGER
+		
+		# Flash on damage
 		var tween := create_tween()
-		tween.tween_property(health_label, "modulate", Color.WHITE, 0.3)
+		tween.tween_property(hp_bar, "modulate:a", 0.5, 0.05)
+		tween.tween_property(hp_bar, "modulate:a", 1.0, 0.1)
 
 func _on_player_died() -> void:
 	if state_label:
-		state_label.text = "[ TEMPORAL COLLAPSE ]"
+		state_label.text = "[ SEQUENCE TERMINATED ]"
 		state_label.modulate = Color.RED
 	
-	# Show death screen after a delay
 	await get_tree().create_timer(1.5).timeout
 	_show_death_screen()
 
 func _show_death_screen() -> void:
-	# Create a simple death overlay
 	var overlay := ColorRect.new()
-	overlay.color = Color(0.1, 0, 0, 0.8)
+	overlay.color = Color(0.05, 0, 0.05, 0.85)
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(overlay)
@@ -101,18 +115,18 @@ func _show_death_screen() -> void:
 	overlay.add_child(vbox)
 	
 	var death_text := Label.new()
-	death_text.text = "TEMPORAL COLLAPSE"
+	death_text.text = "SEQUENCE TERMINATED"
 	death_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	death_text.add_theme_font_size_override("font_size", 24)
-	death_text.add_theme_color_override("font_color", Color.RED)
+	death_text.add_theme_color_override("font_color", Color(1, 0, 0.3))
 	vbox.add_child(death_text)
 	
 	var retry_btn := Button.new()
-	retry_btn.text = "RETRY"
+	retry_btn.text = "REBOOT SEQUENCE"
 	retry_btn.pressed.connect(func(): get_tree().reload_current_scene())
 	vbox.add_child(retry_btn)
 	
 	var menu_btn := Button.new()
-	menu_btn.text = "MAIN MENU"
+	menu_btn.text = "EXIT TO VOID"
 	menu_btn.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn"))
 	vbox.add_child(menu_btn)

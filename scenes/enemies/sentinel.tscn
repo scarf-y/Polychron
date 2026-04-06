@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/sentinel.gd" id="1_script"]
+
+[sub_resource type="ConvexPolygonShape2D" id="diamond_shape"]
+points = PackedVector2Array(0, -10, 8, 0, 0, 10, -8, 0)
+
+[node name="Sentinel" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_script")
+
+[node name="DiamondShape" type="Polygon2D" parent="."]
+color = Color(1, 0.2, 0.6, 1)
+polygon = PackedVector2Array(0, -10, 8, 0, 0, 10, -8, 0)
+
+[node name="CollisionShape" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, -10, 8, 0, 0, 10, -8, 0)

@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scripts/room_manager.gd" id="3_room_mgr"]
 [ext_resource type="PackedScene" path="res://scenes/effects/time_effect.tscn" id="4_time_fx"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/dampener.tscn" id="6_dampener"]
 
 [sub_resource type="RectangleShape2D" id="wall_h"]
 size = Vector2(260, 8)
@@ -124,9 +125,13 @@ collision_mask = 2
 [node name="Col" type="CollisionShape2D" parent="BossRoom/RoomTrigger"]
 shape = SubResource("trigger_shape")
 
-; THE TIME WARDEN
-[node name="TimeWarden" parent="BossRoom" groups=["enemies"] instance=ExtResource("2_boss")]
+; THE KERNEL (Boss)
+[node name="TheKernel" parent="BossRoom" groups=["enemies"] instance=ExtResource("2_boss")]
 position = Vector2(128, 80)
+
+; Dampener support — protects The Kernel
+[node name="Dampener_Boss" parent="BossRoom" groups=["enemies"] instance=ExtResource("6_dampener")]
+position = Vector2(180, 60)
 
 ; ===========================
 ; ENTITIES

@@ -1,10 +1,6 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_health"]
-font_size = 16
-font_color = Color(1, 0.3, 0.3, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_gauge"]
 font_size = 12
@@ -29,12 +25,15 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="HealthLabel" type="Label" parent="HUDContainer"]
+[node name="HPBar" type="ProgressBar" parent="HUDContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-text = "♥ ♥ ♥ ♥ ♥"
-label_settings = SubResource("LabelSettings_health")
+custom_minimum_size = Vector2(120, 8)
+max_value = 100.0
+value = 100.0
+show_percentage = false
+modulate = Color(0.2, 1.0, 0.3, 1)
 
 [node name="GaugeLabel" type="Label" parent="HUDContainer"]
 layout_mode = 2
