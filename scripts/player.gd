@@ -21,11 +21,11 @@ var can_shoot: bool = true
 var bullet_scene: PackedScene = preload("res://scenes/projectiles/bullet.tscn")
 
 # --- Phase Dash ---
-const DASH_SPEED: float = 1200.0
-const DASH_DURATION: float = 0.15
-const DASH_COOLDOWN: float = 0.8
+const DASH_SPEED: float = 600.0
+const DASH_DURATION: float = 0.2
+const DASH_COOLDOWN: float = 0.6
 const DASH_TIMESTOP_MULTIPLIER: float = 3.0
-const GHOST_SPAWN_INTERVAL: float = 0.02
+const GHOST_SPAWN_INTERVAL: float = 0.025
 var is_dashing: bool = false
 var can_dash: bool = true
 
@@ -39,6 +39,7 @@ signal player_low_hp(is_low: bool)  # For chromatic warning below 25%
 
 func _ready() -> void:
 	add_to_group("player")
+	_setup_crosshair_cursor()
 
 func _process(delta: float) -> void:
 	if is_dead:
@@ -49,16 +50,21 @@ func _process(delta: float) -> void:
 	_handle_dash()
 
 func _physics_process(_delta: float) -> void:
-	if is_dead or is_dashing:
+	if is_dead:
 		return
 	
-	# --- Movement ---
+	# During dash: just move with dash velocity, skip input
+	if is_dashing:
+		move_and_slide()
+		return
+	
+	# --- Normal Movement ---
 	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	
 	# Compensate speed when time is slowed so player moves at normal speed
 	var current_speed: float = SPEED
 	if TimeManager.current_state == TimeManager.TimeState.SLOWED:
-		current_speed = SPEED / 0.2  # 0.2 is the SLOWED time_scale
+		current_speed = SPEED / 0.2
 	
 	if input_dir != Vector2.ZERO:
 		velocity = input_dir.normalized() * current_speed
@@ -267,3 +273,43 @@ func _die() -> void:
 	visible = false
 	set_physics_process(false)
 	set_process(false)
+
+# =========================
+# CROSSHAIR CURSOR
+# =========================
+func _setup_crosshair_cursor() -> void:
+	# Create a 16x16 crosshair texture programmatically
+	var size: int = 16
+	var center: int = size / 2
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))  # Transparent background
+	
+	var crosshair_color := Color(0.3, 1.0, 0.8, 1.0)  # Neon cyan
+	var outline_color := Color(0, 0, 0, 0.8)
+	
+	# Horizontal line
+	for x in range(1, size - 1):
+		if abs(x - center) > 1:  # Gap in center
+			img.set_pixel(x, center, crosshair_color)
+			# Outline
+			if center - 1 >= 0:
+				img.set_pixel(x, center - 1, outline_color)
+			if center + 1 < size:
+				img.set_pixel(x, center + 1, outline_color)
+	
+	# Vertical line
+	for y in range(1, size - 1):
+		if abs(y - center) > 1:  # Gap in center
+			img.set_pixel(center, y, crosshair_color)
+			# Outline
+			if center - 1 >= 0:
+				img.set_pixel(center - 1, y, outline_color)
+			if center + 1 < size:
+				img.set_pixel(center + 1, y, outline_color)
+	
+	# Center dot
+	img.set_pixel(center, center, Color(1, 0.3, 0.3, 1.0))  # Red center dot
+	
+	var tex := ImageTexture.create_from_image(img)
+	Input.set_custom_mouse_cursor(tex, Input.CURSOR_ARROW, Vector2(center, center))
+

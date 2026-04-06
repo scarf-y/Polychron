@@ -75,16 +75,25 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func _drop_null_zone() -> void:
+	# Spawn near the player, not on the Dampener
+	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D
+	if not player or not is_instance_valid(player):
+		return
+	
+	# Random offset from player (30-60px away in a random direction)
+	var offset_dir := Vector2.from_angle(randf() * TAU)
+	var offset_dist := randf_range(30.0, 60.0)
+	var spawn_pos: Vector2 = player.global_position + offset_dir * offset_dist
+	
 	if null_zone_scene:
 		var zone := null_zone_scene.instantiate()
-		zone.global_position = global_position
+		zone.global_position = spawn_pos
 		get_tree().current_scene.add_child(zone)
 	else:
-		# Try loading at runtime
 		null_zone_scene = load(NULL_ZONE_SCENE_PATH)
 		if null_zone_scene:
 			var zone := null_zone_scene.instantiate()
-			zone.global_position = global_position
+			zone.global_position = spawn_pos
 			get_tree().current_scene.add_child(zone)
 
 func _update_tether() -> void:
