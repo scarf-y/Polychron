@@ -248,7 +248,7 @@ position = Vector2(1150, 260)
 ; END PORTAL (Child of Room 2)
 ; ===========================
 [node name="BossPortal" type="Area2D" parent="Room2"]
-position = Vector2(260, 0)
+position = Vector2(1220, 180)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("5_transition")
@@ -267,6 +267,10 @@ color = Color(1, 0, 3, 1)
 ; ===========================
 ; ENTITIES
 ; ===========================
+[node name="Entities" type="Node2D" parent="."]
+
+[node name="Player" parent="Entities" groups=["player"] instance=ExtResource("1_player")]
+position = Vector2(80, 180)
 
 [node name="Projectiles" type="Node2D" parent="." groups=["projectiles_container"]]
 

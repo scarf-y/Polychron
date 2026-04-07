@@ -31,6 +31,7 @@ var can_dash: bool = true
 
 # --- Time Ability State ---
 var _active_ability: TimeManager.TimeState = TimeManager.TimeState.NORMAL
+var _erase_decoy: Node2D = null
 
 # --- Signals ---
 signal player_damaged(new_health: float)
@@ -186,10 +187,23 @@ func _handle_time_abilities() -> void:
 		TimeManager.change_time_state(TimeManager.TimeState.ERASED)
 		set_collision_mask_value(3, false)
 		set_collision_layer_value(2, false)
+		
+		TimeManager.erased_target_position = global_position
+		var decoy_shape = ColorRect.new()
+		decoy_shape.size = Vector2(16, 16)
+		decoy_shape.position = Vector2(-8, -8)
+		decoy_shape.color = Color(0.5, 0.5, 1.0, 0.6)
+		_erase_decoy = Node2D.new()
+		_erase_decoy.global_position = global_position
+		_erase_decoy.add_child(decoy_shape)
+		get_tree().current_scene.add_child(_erase_decoy)
+		
 		_update_modulate()
 	elif Input.is_action_just_released("time_erase") and _active_ability == TimeManager.TimeState.ERASED:
 		set_collision_mask_value(3, true)
 		set_collision_layer_value(2, true)
+		if is_instance_valid(_erase_decoy):
+			_erase_decoy.queue_free()
 		_return_to_normal()
 	
 	# Auto-return when gauge depletes
@@ -197,6 +211,8 @@ func _handle_time_abilities() -> void:
 		if _active_ability == TimeManager.TimeState.ERASED:
 			set_collision_mask_value(3, true)
 			set_collision_layer_value(2, true)
+			if is_instance_valid(_erase_decoy):
+				_erase_decoy.queue_free()
 		_active_ability = TimeManager.TimeState.NORMAL
 		_update_modulate()
 
@@ -248,7 +264,7 @@ func _shoot() -> void:
 # DAMAGE
 # =========================
 func take_damage(amount: float = 10.0) -> void:
-	if is_dead or is_dashing:  # I-frames during dash
+	if is_dead or is_dashing or _active_ability == TimeManager.TimeState.ERASED:  # I-frames and Erase check
 		return
 	health -= amount
 	health = maxf(health, 0.0)

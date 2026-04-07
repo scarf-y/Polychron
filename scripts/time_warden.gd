@@ -80,13 +80,15 @@ func _physics_process(delta: float) -> void:
 			_handle_stunned(delta)
 
 func _handle_idle(delta: float, player: Node2D) -> void:
-	var distance: float = global_position.distance_to(player.global_position)
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+	var distance: float = global_position.distance_to(target_pos)
 	if distance < 300.0:
 		current_boss_state = BossState.CHASE
 
 func _handle_chase(delta: float, player: Node2D, speed: float) -> void:
-	var direction: Vector2 = (player.global_position - global_position).normalized()
-	var distance: float = global_position.distance_to(player.global_position)
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+	var direction: Vector2 = (target_pos - global_position).normalized()
+	var distance: float = global_position.distance_to(target_pos)
 	
 	velocity = direction * speed
 	move_and_slide()
@@ -133,7 +135,8 @@ func _start_spread_shot() -> void:
 	modulate = Color(1, 1, 0)  # Yellow telegraph
 
 func _handle_spread_shot(player: Node2D) -> void:
-	var base_angle: float = (player.global_position - global_position).angle()
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+	var base_angle: float = (target_pos - global_position).angle()
 	
 	for i in SPREAD_COUNT:
 		var angle: float = base_angle + (TAU / SPREAD_COUNT) * i

@@ -45,9 +45,6 @@ func _physics_process(delta: float) -> void:
 			return
 		TimeManager.TimeState.ERASED:
 			modulate = Color(1.0, 0.3, 0.3, 0.4)
-			velocity = velocity.move_toward(Vector2.ZERO, speed)
-			move_and_slide()
-			return
 		_:
 			if not _is_attacking:
 				modulate = Color(1.0, 0.2, 0.2)  # Neon red
@@ -56,8 +53,9 @@ func _physics_process(delta: float) -> void:
 	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D
 	
 	if player and is_instance_valid(player):
-		var direction: Vector2 = (player.global_position - global_position).normalized()
-		var distance: float = global_position.distance_to(player.global_position)
+		var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+		var direction: Vector2 = (target_pos - global_position).normalized()
+		var distance: float = global_position.distance_to(target_pos)
 		
 		if distance <= ATTACK_RANGE and _attack_cooldown_timer <= 0.0 and not _is_attacking:
 			# Telegraph: flash bright yellow before lunging
@@ -67,8 +65,8 @@ func _physics_process(delta: float) -> void:
 		else:
 			if not _is_attacking:
 				velocity = Vector2.ZERO
-				# Contact damage
-				if _damage_timer <= 0.0 and distance <= 20.0 and player.has_method("take_damage"):
+				# Contact damage handled naturally, since Time Erase disables damage inside player anyway
+				if _damage_timer <= 0.0 and global_position.distance_to(player.global_position) <= 20.0 and player.has_method("take_damage"):
 					player.take_damage(CONTACT_DAMAGE)
 					GameJuice.spawn_damage_number(CONTACT_DAMAGE, player.global_position, false)
 					_damage_timer = CONTACT_DAMAGE_COOLDOWN

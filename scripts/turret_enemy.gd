@@ -33,7 +33,6 @@ func _physics_process(delta: float) -> void:
 			return
 		TimeManager.TimeState.ERASED:
 			modulate = Color(1.0, 0.5, 0.0, 0.4)
-			return
 		_:
 			if not _is_telegraphing:
 				modulate = Color(1.0, 0.6, 0.0)  # Neon orange
@@ -43,7 +42,8 @@ func _physics_process(delta: float) -> void:
 	if not player or not is_instance_valid(player):
 		return
 	
-	var distance: float = global_position.distance_to(player.global_position)
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+	var distance: float = global_position.distance_to(target_pos)
 	if distance > detection_range:
 		return
 	
@@ -68,7 +68,8 @@ func _fire_with_telegraph(target: Node2D) -> void:
 		_is_telegraphing = false
 		return
 	
-	var direction: Vector2 = (target.global_position - global_position).normalized()
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(target)
+	var direction: Vector2 = (target_pos - global_position).normalized()
 	
 	var bullet := bullet_scene.instantiate()
 	bullet.global_position = global_position

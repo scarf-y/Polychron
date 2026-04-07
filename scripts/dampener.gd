@@ -50,7 +50,6 @@ func _physics_process(delta: float) -> void:
 			return
 		TimeManager.TimeState.ERASED:
 			modulate = Color(0, 0.8, 0.7, 0.4)
-			return
 		_:
 			modulate = Color(0, 1.0, 0.8)  # Neon cyan
 	
@@ -164,8 +163,8 @@ func _die() -> void:
 	enemy_died.emit(self)
 	
 	# GameJuice glitch particles
-	GameJuice.spawn_glitch_death(global_position, Color(0, 1.0, 0.8))
-	GameJuice.camera_shake(0.15, 2.0)
+	GameJuice.spawn_death_particles(global_position, Color(0, 1.0, 0.8))
+	GameJuice.screen_shake(2.0, 0.15)
 	
 	# Score
 	var hud: CanvasLayer = get_tree().get_first_node_in_group("hud")

@@ -22,6 +22,9 @@ var time_gauge: float = GAUGE_MAX
 var current_state: TimeState = TimeState.NORMAL
 var null_zone_active: bool = false  # Set by Null Zone — disables abilities
 
+# --- Decoy Target (Time Erase) ---
+var erased_target_position: Vector2 = Vector2.ZERO
+
 # --- Process ---
 func _process(delta: float) -> void:
 	# We use unscaled delta for gauge management so slowing time
@@ -85,3 +88,11 @@ func can_use_ability() -> bool:
 	if null_zone_active:
 		return false
 	return time_gauge > 5.0  # Minimum threshold to activate
+
+## Get the target position for enemies (fools enemies into attacking the decoy during ERASED)
+func get_enemy_target_position(player: Node2D) -> Vector2:
+	if not is_instance_valid(player):
+		return Vector2.ZERO
+	if current_state == TimeState.ERASED:
+		return erased_target_position
+	return player.global_position

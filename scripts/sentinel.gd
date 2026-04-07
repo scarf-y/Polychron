@@ -90,8 +90,9 @@ func _physics_process(delta: float) -> void:
 			_handle_stunned(delta)
 
 func _handle_chase(delta: float, player: Node2D, modifier: float) -> void:
-	var direction: Vector2 = (player.global_position - global_position).normalized()
-	var distance: float = global_position.distance_to(player.global_position)
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+	var direction: Vector2 = (target_pos - global_position).normalized()
+	var distance: float = global_position.distance_to(target_pos)
 	
 	velocity = direction * speed * modifier
 	move_and_slide()
@@ -149,7 +150,7 @@ func _handle_dashing(delta: float, player: Node2D) -> void:
 func _start_laser_telegraph(player: Node2D) -> void:
 	current_state = SentinelState.LASER_TELEGRAPH
 	_state_timer = LASER_TELEGRAPH_TIME
-	_laser_target_pos = player.global_position
+	_laser_target_pos = TimeManager.get_enemy_target_position(player)
 	
 	# Show targeting line
 	_laser_line.visible = true
@@ -160,8 +161,9 @@ func _handle_laser_telegraph(delta: float, player: Node2D) -> void:
 	_state_timer -= delta
 	velocity = Vector2.ZERO
 	
-	# Targeting line tracks player during telegraph (gives warning)
-	_laser_direction = (player.global_position - global_position).normalized()
+	# Targeting line tracks target during telegraph (gives warning)
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+	_laser_direction = (target_pos - global_position).normalized()
 	_laser_line.clear_points()
 	_laser_line.add_point(Vector2.ZERO)
 	_laser_line.add_point(_laser_direction * 200.0)  # Fixed length beam
@@ -173,7 +175,8 @@ func _handle_laser_telegraph(delta: float, player: Node2D) -> void:
 	
 	if _state_timer <= 0.0:
 		# LOCK the direction — beam fires in this fixed direction
-		_laser_direction = (player.global_position - global_position).normalized()
+		var final_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+		_laser_direction = (final_pos - global_position).normalized()
 		_laser_tick_timer = 0.0
 		current_state = SentinelState.LASER_FIRING
 		_state_timer = LASER_DURATION
