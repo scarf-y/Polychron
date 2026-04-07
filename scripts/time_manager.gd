@@ -10,6 +10,7 @@ enum TimeState { NORMAL, STOPPED, SLOWED, ERASED }
 signal time_state_changed(new_state: TimeState)
 signal time_gauge_changed(new_value: float)
 signal time_gauge_depleted()
+signal null_zone_changed(is_active: bool)
 
 # --- Time Gauge ---
 const GAUGE_MAX: float = 100.0
@@ -21,6 +22,7 @@ const RECHARGE_RATE: float = 10.0        # per second in NORMAL state
 var time_gauge: float = GAUGE_MAX
 var current_state: TimeState = TimeState.NORMAL
 var null_zone_active: bool = false  # Set by Null Zone — disables abilities
+var _null_zone_count: int = 0
 
 # --- Decoy Target (Time Erase) ---
 var erased_target_position: Vector2 = Vector2.ZERO
@@ -96,3 +98,17 @@ func get_enemy_target_position(player: Node2D) -> Vector2:
 	if current_state == TimeState.ERASED:
 		return erased_target_position
 	return player.global_position
+
+# --- Null Zone Logic ---
+func enter_null_zone() -> void:
+	_null_zone_count += 1
+	if _null_zone_count == 1:
+		null_zone_active = true
+		null_zone_changed.emit(true)
+
+func exit_null_zone() -> void:
+	_null_zone_count -= 1
+	if _null_zone_count <= 0:
+		_null_zone_count = 0
+		null_zone_active = false
+		null_zone_changed.emit(false)

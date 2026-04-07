@@ -20,6 +20,7 @@ func _ready() -> void:
 	layer = 90
 	TimeManager.time_gauge_changed.connect(_on_gauge_changed)
 	TimeManager.time_state_changed.connect(_on_state_changed)
+	TimeManager.null_zone_changed.connect(_on_null_zone_changed)
 	
 	# Initialize
 	if gauge_bar:
@@ -39,12 +40,13 @@ func _ready() -> void:
 	if player and player.has_signal("player_died"):
 		player.player_died.connect(_on_player_died)
 
-func _process(_delta: float) -> void:
-	# Null Zone indicator
-	if TimeManager.null_zone_active:
+func _on_null_zone_changed(is_active: bool) -> void:
+	if is_active:
 		if state_label:
 			state_label.text = "[ NULLIFIED ]"
 			state_label.modulate = STATE_COLORS["NULLIFIED"]
+	else:
+		_update_state_display(TimeManager.current_state)
 
 func _on_gauge_changed(new_value: float) -> void:
 	if gauge_bar:

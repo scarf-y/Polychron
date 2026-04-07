@@ -136,7 +136,11 @@ func _process(delta: float) -> void:
 
 func _vanish() -> void:
 	if _player_inside:
-		TimeManager.null_zone_active = false
+		_player_inside = false
+		TimeManager.exit_null_zone()
+		var player: Node = get_tree().get_first_node_in_group("player")
+		if player and player.has_method("_update_modulate"):
+			player._update_modulate()
 	
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, 0.4)
@@ -145,7 +149,7 @@ func _vanish() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_player_inside = true
-		TimeManager.null_zone_active = true
+		TimeManager.enter_null_zone()
 		
 		# Force cancel any active time ability
 		if body.has_method("force_cancel_ability"):
@@ -158,7 +162,7 @@ func _on_body_entered(body: Node2D) -> void:
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_player_inside = false
-		TimeManager.null_zone_active = false
+		TimeManager.exit_null_zone()
 		
 		# Restore player visual
 		if body.has_method("_update_modulate"):
