@@ -148,8 +148,8 @@ func _on_body_entered(body: Node2D) -> void:
 		TimeManager.null_zone_active = true
 		
 		# Force cancel any active time ability
-		if TimeManager.current_state != TimeManager.TimeState.NORMAL:
-			TimeManager.change_time_state(TimeManager.TimeState.NORMAL)
+		if body.has_method("force_cancel_ability"):
+			body.force_cancel_ability()
 		
 		# Visual feedback on player
 		if body.has_method("_update_modulate"):

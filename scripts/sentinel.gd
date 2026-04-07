@@ -23,7 +23,7 @@ const DASH_DURATION: float = 0.3
 const LASER_TELEGRAPH_TIME: float = 1.0
 const LASER_DAMAGE_PER_TICK: float = 2.0
 const LASER_TICK_RATE: float = 0.1
-const LASER_DURATION: float = 1.5
+const LASER_DURATION: float = 3.0
 const ATTACK_COOLDOWN: float = 2.5
 const DASH_RANGE: float = 80.0
 

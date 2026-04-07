@@ -165,7 +165,7 @@ func deal_damage() -> Array:
 # =========================
 func _handle_time_abilities() -> void:
 	# TIME STOP — Hold Space
-	if Input.is_action_just_pressed("time_stop") and TimeManager.can_use_ability():
+	if Input.is_action_just_pressed("time_stop") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
 		_active_ability = TimeManager.TimeState.STOPPED
 		TimeManager.change_time_state(TimeManager.TimeState.STOPPED)
 		GameJuice.time_stop_impact()
@@ -174,7 +174,7 @@ func _handle_time_abilities() -> void:
 		_return_to_normal()
 	
 	# TIME SLOW — Hold Shift
-	if Input.is_action_just_pressed("time_slow") and TimeManager.can_use_ability():
+	if Input.is_action_just_pressed("time_slow") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
 		_active_ability = TimeManager.TimeState.SLOWED
 		TimeManager.change_time_state(TimeManager.TimeState.SLOWED)
 		_update_modulate()
@@ -182,7 +182,7 @@ func _handle_time_abilities() -> void:
 		_return_to_normal()
 	
 	# TIME ERASE — Hold E
-	if Input.is_action_just_pressed("time_erase") and TimeManager.can_use_ability():
+	if Input.is_action_just_pressed("time_erase") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
 		_active_ability = TimeManager.TimeState.ERASED
 		TimeManager.change_time_state(TimeManager.TimeState.ERASED)
 		set_collision_mask_value(3, false)
@@ -216,6 +216,15 @@ func _handle_time_abilities() -> void:
 		_active_ability = TimeManager.TimeState.NORMAL
 		_update_modulate()
 
+func force_cancel_ability() -> void:
+	if _active_ability != TimeManager.TimeState.NORMAL:
+		if _active_ability == TimeManager.TimeState.ERASED:
+			set_collision_mask_value(3, true)
+			set_collision_layer_value(2, true)
+			if is_instance_valid(_erase_decoy):
+				_erase_decoy.queue_free()
+		_return_to_normal()
+
 func _return_to_normal() -> void:
 	_active_ability = TimeManager.TimeState.NORMAL
 	TimeManager.change_time_state(TimeManager.TimeState.NORMAL)
@@ -224,6 +233,9 @@ func _return_to_normal() -> void:
 func _update_modulate() -> void:
 	if is_dashing:
 		modulate = Color(0.3, 0.6, 1.0, 0.5)
+		return
+	if TimeManager.null_zone_active:
+		modulate = Color(0.5, 0.5, 0.5, 0.7)
 		return
 	match _active_ability:
 		TimeManager.TimeState.NORMAL:
