@@ -21,10 +21,10 @@ var can_shoot: bool = true
 var bullet_scene: PackedScene = preload("res://scenes/projectiles/bullet.tscn")
 
 # --- Phase Dash ---
-const DASH_SPEED: float = 600.0
+const DASH_SPEED: float = 300.0
 const DASH_DURATION: float = 0.2
 const DASH_COOLDOWN: float = 0.6
-const DASH_TIMESTOP_MULTIPLIER: float = 3.0
+const DASH_TIMESTOP_MULTIPLIER: float = 1.5
 const GHOST_SPAWN_INTERVAL: float = 0.025
 var is_dashing: bool = false
 var can_dash: bool = true
@@ -274,42 +274,51 @@ func _die() -> void:
 	set_physics_process(false)
 	set_process(false)
 
+func set_camera_limits(rect: Rect2) -> void:
+	var cam: Camera2D = get_node_or_null("Camera2D")
+	if cam:
+		cam.limit_left = int(rect.position.x)
+		cam.limit_top = int(rect.position.y)
+		cam.limit_right = int(rect.position.x + rect.size.x)
+		cam.limit_bottom = int(rect.position.y + rect.size.y)
+
 # =========================
 # CROSSHAIR CURSOR
 # =========================
 func _setup_crosshair_cursor() -> void:
-	# Create a 16x16 crosshair texture programmatically
-	var size: int = 16
+	var size: int = 32
 	var center: int = size / 2
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0, 0, 0, 0))  # Transparent background
+	img.fill(Color(0, 0, 0, 0))
 	
-	var crosshair_color := Color(0.3, 1.0, 0.8, 1.0)  # Neon cyan
-	var outline_color := Color(0, 0, 0, 0.8)
+	var col := Color(0.3, 1.0, 0.8, 1.0)  # Neon cyan
+	var out := Color(0, 0, 0, 0.9)
+	var gap: int = 3  # Bigger gap in center
 	
-	# Horizontal line
-	for x in range(1, size - 1):
-		if abs(x - center) > 1:  # Gap in center
-			img.set_pixel(x, center, crosshair_color)
-			# Outline
-			if center - 1 >= 0:
-				img.set_pixel(x, center - 1, outline_color)
-			if center + 1 < size:
-				img.set_pixel(x, center + 1, outline_color)
+	# Horizontal lines (2px thick)
+	for x in range(2, size - 2):
+		if abs(x - center) > gap:
+			for w in range(-1, 1):  # 2px width
+				img.set_pixel(x, center + w, col)
+				if center + w - 1 >= 0:
+					img.set_pixel(x, center + w - 1, out)
+				if center + w + 1 < size:
+					img.set_pixel(x, center + w + 1, out)
 	
-	# Vertical line
-	for y in range(1, size - 1):
-		if abs(y - center) > 1:  # Gap in center
-			img.set_pixel(center, y, crosshair_color)
-			# Outline
-			if center - 1 >= 0:
-				img.set_pixel(center - 1, y, outline_color)
-			if center + 1 < size:
-				img.set_pixel(center + 1, y, outline_color)
+	# Vertical lines (2px thick)
+	for y in range(2, size - 2):
+		if abs(y - center) > gap:
+			for w in range(-1, 1):
+				img.set_pixel(center + w, y, col)
+				if center + w - 1 >= 0:
+					img.set_pixel(center + w - 1, y, out)
+				if center + w + 1 < size:
+					img.set_pixel(center + w + 1, y, out)
 	
-	# Center dot
-	img.set_pixel(center, center, Color(1, 0.3, 0.3, 1.0))  # Red center dot
+	# Center dot (3x3 red)
+	for dx in range(-1, 2):
+		for dy in range(-1, 2):
+			img.set_pixel(center + dx, center + dy, Color(1, 0.2, 0.3, 1.0))
 	
 	var tex := ImageTexture.create_from_image(img)
 	Input.set_custom_mouse_cursor(tex, Input.CURSOR_ARROW, Vector2(center, center))
-

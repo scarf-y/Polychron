@@ -8,6 +8,7 @@ extends CharacterBody2D
 @export var fire_interval: float = 1.8
 @export var detection_range: float = 200.0
 var is_dead: bool = false
+var is_active_in_room: bool = true
 
 # --- Shooting ---
 var _fire_timer: float = 0.0
@@ -22,7 +23,7 @@ func _ready() -> void:
 	_fire_timer = fire_interval
 
 func _physics_process(delta: float) -> void:
-	if is_dead:
+	if is_dead or not is_active_in_room:
 		return
 	
 	# --- Time State Reactions ---

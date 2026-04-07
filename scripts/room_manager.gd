@@ -4,7 +4,7 @@ extends Node2D
 ## Attach to a Node2D that contains an Area2D trigger and door nodes.
 
 # --- Signals ---
-signal room_entered()
+signal room_entered(camera_rect: Rect2)
 signal room_cleared()
 
 # --- Config ---
@@ -30,21 +30,39 @@ func _ready() -> void:
 			child.visible = false
 			_set_door_collision(child, false)
 	
-	# Find all enemies in this room
+	# Find all enemies in this room and put them to sleep initially
 	for child in get_children():
 		if child.is_in_group("enemies"):
 			enemies_in_room.append(child)
 			child.connect("enemy_died", _on_enemy_died)
+			if "is_active_in_room" in child:
+				child.is_active_in_room = false
 
 func _on_trigger_body_entered(body: Node2D) -> void:
 	if is_active or is_cleared:
 		return
 	if body.is_in_group("player"):
-		_activate_room()
+		_activate_room(body)
 
-func _activate_room() -> void:
+func _activate_room(player: Node2D) -> void:
 	is_active = true
-	room_entered.emit()
+	
+	# Compute room bounds based on trigger shape
+	var room_rect := Rect2()
+	var trigger := get_node_or_null("RoomTrigger/Col") as CollisionShape2D
+	if trigger and trigger.shape is RectangleShape2D:
+		var rect_shape := trigger.shape as RectangleShape2D
+		room_rect = Rect2(trigger.global_position - rect_shape.size / 2.0, rect_shape.size)
+	
+	if player.has_method("set_camera_limits") and room_rect.has_area():
+		player.set_camera_limits(room_rect)
+	
+	# Wake up enemies
+	for enemy in enemies_in_room:
+		if is_instance_valid(enemy) and "is_active_in_room" in enemy:
+			enemy.is_active_in_room = true
+	
+	room_entered.emit(room_rect)
 	
 	if enemies_in_room.size() == 0:
 		_clear_room()

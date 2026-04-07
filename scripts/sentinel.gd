@@ -8,6 +8,7 @@ extends CharacterBody2D
 @export var health: float = 50.0
 @export var speed: float = 55.0
 var is_dead: bool = false
+var is_active_in_room: bool = true
 var crit_resist: bool = false  # Set by Dampener's Data Shield
 var damage_reduction: float = 0.0  # Set by Dampener's Data Shield
 
@@ -51,7 +52,7 @@ func _ready() -> void:
 	add_child(_laser_line)
 
 func _physics_process(delta: float) -> void:
-	if is_dead:
+	if is_dead or not is_active_in_room:
 		return
 	
 	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D

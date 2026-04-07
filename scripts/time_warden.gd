@@ -11,6 +11,7 @@ extends CharacterBody2D
 @export var timestop_speed: float = 15.0
 @export var charge_speed: float = 140.0
 var is_dead: bool = false
+var is_active_in_room: bool = true
 
 # --- Attack Patterns ---
 enum BossState { IDLE, CHASE, CHARGING, SPREAD_SHOT, STUNNED }
@@ -45,7 +46,7 @@ func _ready() -> void:
 	boss_health_changed.emit(health, max_health)
 
 func _physics_process(delta: float) -> void:
-	if is_dead:
+	if is_dead or not is_active_in_room:
 		return
 	
 	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D

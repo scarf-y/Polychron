@@ -8,6 +8,7 @@ extends CharacterBody2D
 @export var health: float = 30.0
 @export var orbit_speed: float = 20.0
 var is_dead: bool = false
+var is_active_in_room: bool = true
 
 # --- Null Zone ---
 const NULL_ZONE_INTERVAL: float = 6.0
@@ -44,7 +45,7 @@ func _ready() -> void:
 	add_child(_tether_line)
 
 func _physics_process(delta: float) -> void:
-	if is_dead:
+	if is_dead or not is_active_in_room:
 		return
 	
 	# Rotate the visual ring

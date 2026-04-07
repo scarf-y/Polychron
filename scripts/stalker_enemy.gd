@@ -7,6 +7,7 @@ extends CharacterBody2D
 @export var speed: float = 60.0
 @export var health: float = 40.0
 var is_dead: bool = false
+var is_active_in_room: bool = true
 
 # --- Contact Damage ---
 const CONTACT_DAMAGE: float = 18.0
@@ -28,7 +29,7 @@ func _ready() -> void:
 	add_to_group("enemies")
 
 func _physics_process(delta: float) -> void:
-	if is_dead:
+	if is_dead or not is_active_in_room:
 		return
 	
 	# Tick cooldowns
