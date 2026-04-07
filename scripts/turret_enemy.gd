@@ -4,8 +4,8 @@ extends CharacterBody2D
 ## Octagonal shape. Flashes before firing.
 
 # --- Stats ---
-@export var health: float = 60.0
-@export var fire_interval: float = 1.8
+@export var health: float = 120.0
+@export var fire_interval: float = 0.6
 @export var detection_range: float = 200.0
 var is_dead: bool = false
 var is_active_in_room: bool = true

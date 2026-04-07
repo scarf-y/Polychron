@@ -5,7 +5,7 @@ extends CharacterBody2D
 ## Attacks: Kinetic Stutter (dash-strike) and Linear Deletion (laser beam).
 
 # --- Stats ---
-@export var health: float = 50.0
+@export var health: float = 150.0
 @export var speed: float = 55.0
 var is_dead: bool = false
 var is_active_in_room: bool = true

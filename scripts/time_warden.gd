@@ -5,8 +5,8 @@ extends CharacterBody2D
 ## Polygon2D hexagon shape. Glows ominous purple.
 
 # --- Stats ---
-@export var health: float = 200.0
-@export var max_health: float = 200.0
+@export var health: float = 800.0
+@export var max_health: float = 800.0
 @export var normal_speed: float = 40.0
 @export var timestop_speed: float = 15.0
 @export var charge_speed: float = 140.0
@@ -19,7 +19,7 @@ var current_boss_state: BossState = BossState.IDLE
 
 # --- Timers ---
 var _attack_timer: float = 0.0
-const ATTACK_INTERVAL: float = 2.5
+const ATTACK_INTERVAL: float = 1.2
 const CHARGE_DURATION: float = 0.8
 const STUN_DURATION: float = 1.0
 var _state_timer: float = 0.0
@@ -30,7 +30,7 @@ const CHARGE_DAMAGE: float = 25.0
 
 # --- Shooting ---
 var bullet_scene: PackedScene = preload("res://scenes/projectiles/bullet.tscn")
-const SPREAD_COUNT: int = 12
+const SPREAD_COUNT: int = 24
 
 # --- Visual ---
 var _flash_timer: float = 0.0

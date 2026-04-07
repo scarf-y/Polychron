@@ -14,7 +14,11 @@ var is_cleared: bool = false
 var enemies_in_room: Array[Node] = []
 
 # Door references (set in _ready by finding children)
+# Door references (set in _ready by finding children)
 var doors: Array[StaticBody2D] = []
+
+# Portal references
+var portals: Array[Area2D] = []
 
 func _ready() -> void:
 	# Find the trigger area
@@ -31,12 +35,25 @@ func _ready() -> void:
 			_set_door_collision(child, false)
 	
 	# Find all enemies in this room and put them to sleep initially
+	# Find all enemies in this room and put them to sleep initially
 	for child in get_children():
 		if child.is_in_group("enemies"):
 			enemies_in_room.append(child)
 			child.connect("enemy_died", _on_enemy_died)
 			if "is_active_in_room" in child:
 				child.is_active_in_room = false
+	
+	# Find adjacent portals (siblings or anywhere else we can infer, actually let's just find children named *Portal)
+	# Wait, portals are siblings. We need to check if the parent has "Portal" children, or just use groups.
+	# Simplest: export var, but since we modify via script, let's look for LevelPortal/BossPortal in the scene tree.
+	# Even simpler: attach the portal as a child of RoomManager! If a child is an Area2D and has "Portal" in name:
+	for child in get_children():
+		if child is Area2D and "Portal" in child.name:
+			portals.append(child)
+			child.visible = false
+			for grand_child in child.get_children():
+				if grand_child is CollisionShape2D:
+					grand_child.set_deferred("disabled", true)
 
 func _on_trigger_body_entered(body: Node2D) -> void:
 	if is_active or is_cleared:
@@ -84,10 +101,19 @@ func _clear_room() -> void:
 	is_active = false
 	room_cleared.emit()
 	
-	# Unlock doors
+	# Unlock doors EXCEPT "DoorBack"
 	for door in doors:
+		if door.name.begins_with("DoorBack"):
+			continue # Leave it locked forever
 		door.visible = false
 		_set_door_collision(door, false)
+	
+	# Show and enable portals
+	for portal in portals:
+		portal.visible = true
+		for child in portal.get_children():
+			if child is CollisionShape2D:
+				child.set_deferred("disabled", false)
 
 func _set_door_collision(door: StaticBody2D, enabled: bool) -> void:
 	for child in door.get_children():

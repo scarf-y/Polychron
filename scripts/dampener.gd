@@ -5,22 +5,21 @@ extends CharacterBody2D
 ## Drops Null Zones and tethers to Sentinels with Data Shield.
 
 # --- Stats ---
-@export var health: float = 30.0
-@export var orbit_speed: float = 20.0
+@export var health: float = 80.0
+@export var orbit_speed: float = 60.0
 var is_dead: bool = false
 var is_active_in_room: bool = true
 
 # --- Null Zone ---
-const NULL_ZONE_INTERVAL: float = 6.0
+const NULL_ZONE_INTERVAL: float = 3.0
 const NULL_ZONE_SCENE_PATH: String = "res://scenes/enemies/null_zone.tscn"
-var _null_zone_timer: float = 3.0  # First zone drops at 3s
+var _null_zone_timer: float = 1.5  # First zone drops at 1.5s
 var null_zone_scene: PackedScene = null
 
 # --- Data Shield ---
-const TETHER_RANGE: float = 120.0
+const TETHER_RANGE: float = 250.0
 const DAMAGE_REDUCTION: float = 0.5  # 50% reduction
-var _tethered_sentinel: Node2D = null
-var _tether_line: Line2D = null
+var _tethered_sentinels: Array[Node2D] = []
 
 # --- Visual ---
 var _ring_rotation: float = 0.0
@@ -35,14 +34,6 @@ func _ready() -> void:
 	# Load null zone scene
 	if ResourceLoader.exists(NULL_ZONE_SCENE_PATH):
 		null_zone_scene = load(NULL_ZONE_SCENE_PATH)
-	
-	# Create tether line
-	_tether_line = Line2D.new()
-	_tether_line.width = 1.5
-	_tether_line.default_color = Color(0, 0.8, 1.0, 0.6)
-	_tether_line.z_index = 3
-	_tether_line.visible = false
-	add_child(_tether_line)
 
 func _physics_process(delta: float) -> void:
 	if is_dead or not is_active_in_room:
@@ -50,6 +41,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Rotate the visual ring
 	_ring_rotation += delta * 2.0
+	queue_redraw() # Force a redraw for the tethers
 	
 	# --- Time State Reactions ---
 	match TimeManager.current_state:
@@ -71,9 +63,30 @@ func _physics_process(delta: float) -> void:
 	# --- Data Shield Logic ---
 	_update_tether()
 	
-	# Dampener doesn't chase — it orbits slowly in place
-	velocity = Vector2(cos(_ring_rotation), sin(_ring_rotation)) * orbit_speed
+	# Move towards the closest tethered sentinel to follow them
+	if _tethered_sentinels.size() > 0:
+		var target: Node2D = _tethered_sentinels[0]
+		if is_instance_valid(target):
+			var dist = global_position.distance_to(target.global_position)
+			if dist > 80.0: # Keep a slight distance
+				velocity = global_position.direction_to(target.global_position) * orbit_speed
+			else:
+				# Orbit it
+				velocity = Vector2(cos(_ring_rotation), sin(_ring_rotation)) * orbit_speed
+	else:
+		# Just orbit in place
+		velocity = Vector2(cos(_ring_rotation), sin(_ring_rotation)) * orbit_speed
+		
 	move_and_slide()
+
+func _draw() -> void:
+	if is_dead or not is_active_in_room:
+		return
+	var pulse: float = 0.5 + sin(_ring_rotation * 3.0) * 0.3
+	var c := Color(0, 0.8, 1.0, pulse)
+	for s in _tethered_sentinels:
+		if is_instance_valid(s):
+			draw_line(Vector2.ZERO, to_local(s.global_position), c, 1.5)
 
 func _drop_null_zone() -> void:
 	# Spawn near the player, not on the Dampener
@@ -98,43 +111,32 @@ func _drop_null_zone() -> void:
 			get_tree().current_scene.add_child(zone)
 
 func _update_tether() -> void:
-	# Find nearest Sentinel
-	var nearest_sentinel: Node2D = null
-	var nearest_dist: float = TETHER_RANGE
+	# Clear old tethers' explicitly if they exist and are valid
+	for old_s in _tethered_sentinels:
+		if is_instance_valid(old_s):
+			old_s.damage_reduction = 0.0
 	
-	for node in get_tree().get_nodes_in_group("enemies"):
+	var new_tethers: Array[Node2D] = []
+	var nodes := get_tree().get_nodes_in_group("enemies")
+	
+	# Find all sentinels in range
+	for node in nodes:
 		if node == self or not is_instance_valid(node):
 			continue
 		if node.get_script() and node.has_method("get_damage_reduction"):
-			var dist: float = global_position.distance_to(node.global_position)
-			if dist < nearest_dist:
-				nearest_dist = dist
-				nearest_sentinel = node
+			if global_position.distance_to(node.global_position) < TETHER_RANGE:
+				new_tethers.append(node)
 	
-	# Update tether
-	if nearest_sentinel and is_instance_valid(nearest_sentinel):
-		if _tethered_sentinel != nearest_sentinel:
-			# Remove old tether
-			if _tethered_sentinel and is_instance_valid(_tethered_sentinel):
-				_tethered_sentinel.damage_reduction = 0.0
-			_tethered_sentinel = nearest_sentinel
-		
-		# Apply shield
-		_tethered_sentinel.damage_reduction = DAMAGE_REDUCTION
-		
-		# Draw tether line
-		_tether_line.visible = true
-		_tether_line.clear_points()
-		_tether_line.add_point(Vector2.ZERO)
-		_tether_line.add_point(nearest_sentinel.global_position - global_position)
-		
-		# Pulse the tether
-		_tether_line.modulate.a = 0.5 + sin(_ring_rotation * 3.0) * 0.3
-	else:
-		_tether_line.visible = false
-		if _tethered_sentinel and is_instance_valid(_tethered_sentinel):
-			_tethered_sentinel.damage_reduction = 0.0
-		_tethered_sentinel = null
+	# Try to sort the new tethers by distance so [0] is closest
+	new_tethers.sort_custom(func(a, b): return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
+	
+	# Update active list
+	_tethered_sentinels = new_tethers
+	
+	# Re-apply shield to all in range
+	for s in _tethered_sentinels:
+		if is_instance_valid(s):
+			s.damage_reduction = DAMAGE_REDUCTION
 
 func take_damage(amount: float = 10.0) -> void:
 	if is_dead:
@@ -150,17 +152,24 @@ func take_damage(amount: float = 10.0) -> void:
 		_die()
 
 func _die() -> void:
+	if is_dead:
+		return
 	is_dead = true
 	
-	# Release tether with spark effect
-	if _tethered_sentinel and is_instance_valid(_tethered_sentinel):
-		_tethered_sentinel.damage_reduction = 0.0
-		GameJuice.spawn_death_particles(
-			(_tethered_sentinel.global_position + global_position) / 2.0,
-			Color(0, 0.8, 1.0), 6
-		)
+	# Remove shields
+	for s in _tethered_sentinels:
+		if is_instance_valid(s):
+			s.damage_reduction = 0.0
 	
-	GameJuice.big_impact()
-	GameJuice.spawn_death_particles(global_position, Color(0, 1.0, 0.8), 12)
 	enemy_died.emit(self)
+	
+	# GameJuice glitch particles
+	GameJuice.spawn_glitch_death(global_position, Color(0, 1.0, 0.8))
+	GameJuice.camera_shake(0.15, 2.0)
+	
+	# Score
+	var hud: CanvasLayer = get_tree().get_first_node_in_group("hud")
+	if hud and hud.has_method("add_chrono"):
+		hud.add_chrono(20)
+	
 	queue_free()

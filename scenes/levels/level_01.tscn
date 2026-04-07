@@ -320,32 +320,28 @@ position = Vector2(1500, 80)
 position = Vector2(1500, 280)
 
 ; ===========================
-; ENTITIES
+; END PORTAL (Child of Room 3)
 ; ===========================
-[node name="Entities" type="Node2D" parent="."]
-
-[node name="Player" parent="Entities" groups=["player"] instance=ExtResource("1_player")]
-position = Vector2(80, 180)
-
-; ===========================
-; END PORTAL
-; ===========================
-[node name="LevelPortal" type="Area2D" parent="."]
-position = Vector2(1860, 180)
+[node name="LevelPortal" type="Area2D" parent="Room3"]
+position = Vector2(260, 0)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("5_transition")
 next_level_path = "res://scenes/levels/level_02.tscn"
 
-[node name="Col" type="CollisionShape2D" parent="LevelPortal"]
+[node name="Col" type="CollisionShape2D" parent="Room3/LevelPortal"]
 shape = SubResource("portal_shape")
 
-[node name="Vis" type="ColorRect" parent="LevelPortal"]
+[node name="Vis" type="ColorRect" parent="Room3/LevelPortal"]
 offset_left = -16.0
 offset_top = -32.0
 offset_right = 16.0
 offset_bottom = 32.0
 color = Color(1, 0, 3, 1)
+
+; ===========================
+; ENTITIES
+; ===========================
 
 [node name="Projectiles" type="Node2D" parent="." groups=["projectiles_container"]]
 

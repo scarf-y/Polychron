@@ -5,8 +5,8 @@ extends Area2D
 ## HIGHLY VISIBLE: red pulsing circle with border.
 
 # --- Config ---
-const INITIAL_RADIUS: float = 35.0
-const GROWTH_RADIUS: float = 55.0
+const INITIAL_RADIUS: float = 60.0
+const GROWTH_RADIUS: float = 120.0
 const STABLE_DURATION: float = 3.0
 const GROWTH_DURATION: float = 2.0
 

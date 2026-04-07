@@ -5,7 +5,7 @@ extends CharacterBody2D
 
 # --- Stats ---
 @export var speed: float = 60.0
-@export var health: float = 40.0
+@export var health: float = 80.0
 var is_dead: bool = false
 var is_active_in_room: bool = true
 
