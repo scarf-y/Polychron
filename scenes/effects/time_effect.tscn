@@ -4,7 +4,7 @@
 [ext_resource type="Shader" uid="uid://dfkn0vsdcotgk" path="res://assets/shaders/time_stop_inversion.gdshader" id="2_stop_shader"]
 [ext_resource type="Shader" uid="uid://bkqjruasrurpc" path="res://assets/shaders/time_slow_tint.gdshader" id="3_slow_shader"]
 [ext_resource type="Shader" uid="uid://bdtbrr6yr5317" path="res://assets/shaders/time_erase_ghost.gdshader" id="4_erase_shader"]
-[ext_resource type="Shader" path="res://assets/shaders/chromatic_aberration.gdshader" id="5_chromatic_shader"]
+[ext_resource type="Shader" uid="uid://cr7oggvkpvfrg" path="res://assets/shaders/chromatic_aberration.gdshader" id="5_chromatic_shader"]
 
 [sub_resource type="ShaderMaterial" id="stop_mat"]
 shader = ExtResource("2_stop_shader")
@@ -61,7 +61,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="ChromaticEffect" type="ColorRect" parent="."]
+[node name="ChromaticEffect" type="ColorRect" parent="." unique_id=802138441]
 visible = false
 material = SubResource("chromatic_mat")
 anchors_preset = 15

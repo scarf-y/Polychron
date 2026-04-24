@@ -14,7 +14,6 @@ var is_cleared: bool = false
 var enemies_in_room: Array[Node] = []
 
 # Door references (set in _ready by finding children)
-# Door references (set in _ready by finding children)
 var doors: Array[StaticBody2D] = []
 
 # Portal references
@@ -34,7 +33,6 @@ func _ready() -> void:
 			child.visible = false
 			_set_door_collision(child, false)
 	
-	# Find all enemies in this room and put them to sleep initially
 	# Find all enemies in this room and put them to sleep initially
 	for child in get_children():
 		if child.is_in_group("enemies"):

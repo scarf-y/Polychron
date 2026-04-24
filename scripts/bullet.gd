@@ -62,7 +62,6 @@ func _on_body_entered(body: Node2D) -> void:
 		if body.has_method("take_damage"):
 			body.take_damage(15.0)  # Enemy bullets do fixed damage
 		GameJuice.screen_shake(3.0, 1.2)
-		GameJuice.spawn_damage_number(15.0, body.global_position, false)
 		queue_free()
 	elif body.is_in_group("enemies") and not is_enemy_bullet:
 		# Use player's crit system
