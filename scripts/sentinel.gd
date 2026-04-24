@@ -139,7 +139,6 @@ func _handle_dashing(delta: float, player: Node2D) -> void:
 		if collider and collider.is_in_group("player"):
 			if collider.has_method("take_damage"):
 				collider.take_damage(DASH_DAMAGE)
-				GameJuice.spawn_damage_number(DASH_DAMAGE, collider.global_position, false)
 				GameJuice.screen_shake(5.0, 2.0)
 	
 	if _state_timer <= 0.0:
@@ -206,7 +205,6 @@ func _handle_laser_firing(delta: float, player: Node2D) -> void:
 		if dist_to_beam < 6.0:  # Tighter hitbox — dodgeable
 			if player.has_method("take_damage"):
 				player.take_damage(LASER_DAMAGE_PER_TICK)
-				GameJuice.spawn_damage_number(LASER_DAMAGE_PER_TICK, player.global_position, false)
 				_laser_tick_timer = LASER_TICK_RATE  # Reset cooldown
 	
 	if _state_timer <= 0.0:
@@ -249,10 +247,22 @@ func take_damage(amount: float = 10.0) -> void:
 	if health <= 0.0:
 		_die()
 
+var _health_core_scene: PackedScene = preload("res://scenes/effects/health_core.tscn")
+
 func _die() -> void:
 	is_dead = true
 	_laser_line.visible = false
 	GameJuice.death_impact()
 	GameJuice.spawn_death_particles(global_position, Color(1, 0.2, 0.6), 15)
+	
+	# Fracture reduction / lockdown exit
+	TimeManager.on_enemy_killed()
+	
+	# 30% chance to drop a Health Core
+	if randf() < 0.3:
+		var core := _health_core_scene.instantiate()
+		core.global_position = global_position
+		get_tree().current_scene.add_child(core)
+	
 	enemy_died.emit(self)
 	queue_free()

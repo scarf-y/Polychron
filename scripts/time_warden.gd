@@ -123,7 +123,6 @@ func _handle_charge(delta: float) -> void:
 		if collider and collider.is_in_group("player"):
 			if collider.has_method("take_damage"):
 				collider.take_damage(CHARGE_DAMAGE)
-				GameJuice.spawn_damage_number(CHARGE_DAMAGE, collider.global_position, false)
 				GameJuice.screen_shake(6.0, 2.0)
 	
 	if _state_timer <= 0.0:
@@ -182,6 +181,8 @@ func take_damage(amount: float = 10.0) -> void:
 	if health <= 0.0:
 		_die()
 
+var _health_core_scene: PackedScene = preload("res://scenes/effects/health_core.tscn")
+
 func _die() -> void:
 	is_dead = true
 	GameJuice.death_impact()
@@ -190,6 +191,14 @@ func _die() -> void:
 	GameJuice.spawn_death_particles(global_position, Color(0.6, 0.0, 1.0), 25)
 	GameJuice.spawn_death_particles(global_position + Vector2(10, 0), Color(1, 0, 0.5), 15)
 	GameJuice.spawn_death_particles(global_position + Vector2(-10, 0), Color(0, 0.5, 1), 15)
+	
+	# Fracture reduction / lockdown exit
+	TimeManager.on_enemy_killed()
+	
+	# Boss always drops a Health Core
+	var core := _health_core_scene.instantiate()
+	core.global_position = global_position
+	get_tree().current_scene.add_child(core)
 	
 	enemy_died.emit(self)
 	

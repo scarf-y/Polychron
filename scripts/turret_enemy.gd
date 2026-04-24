@@ -101,9 +101,21 @@ func take_damage(amount: float = 10.0) -> void:
 	if health <= 0.0:
 		_die()
 
+var _health_core_scene: PackedScene = preload("res://scenes/effects/health_core.tscn")
+
 func _die() -> void:
 	is_dead = true
 	GameJuice.big_impact()
 	GameJuice.spawn_death_particles(global_position, Color(1.0, 0.6, 0.0), 10)
+	
+	# Fracture reduction / lockdown exit
+	TimeManager.on_enemy_killed()
+	
+	# 30% chance to drop a Health Core
+	if randf() < 0.3:
+		var core := _health_core_scene.instantiate()
+		core.global_position = global_position
+		get_tree().current_scene.add_child(core)
+	
 	enemy_died.emit(self)
 	queue_free()

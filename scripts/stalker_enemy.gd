@@ -68,7 +68,6 @@ func _physics_process(delta: float) -> void:
 				# Contact damage handled naturally, since Time Erase disables damage inside player anyway
 				if _damage_timer <= 0.0 and global_position.distance_to(player.global_position) <= 20.0 and player.has_method("take_damage"):
 					player.take_damage(CONTACT_DAMAGE)
-					GameJuice.spawn_damage_number(CONTACT_DAMAGE, player.global_position, false)
 					_damage_timer = CONTACT_DAMAGE_COOLDOWN
 		
 		move_and_slide()
@@ -93,7 +92,6 @@ func _perform_lunge(direction: Vector2, player: Node2D) -> void:
 		var dist: float = global_position.distance_to(player.global_position)
 		if dist < 24.0 and player.has_method("take_damage"):
 			player.take_damage(CONTACT_DAMAGE)
-			GameJuice.spawn_damage_number(CONTACT_DAMAGE, player.global_position, false)
 			GameJuice.screen_shake(4.0, 2.0)
 	
 	_is_attacking = false
@@ -112,9 +110,21 @@ func take_damage(amount: float = 10.0) -> void:
 	if health <= 0.0:
 		_die()
 
+var _health_core_scene: PackedScene = preload("res://scenes/effects/health_core.tscn")
+
 func _die() -> void:
 	is_dead = true
 	GameJuice.big_impact()
 	GameJuice.spawn_death_particles(global_position, Color(1.0, 0.2, 0.2), 10)
+	
+	# Fracture reduction / lockdown exit
+	TimeManager.on_enemy_killed()
+	
+	# 30% chance to drop a Health Core
+	if randf() < 0.3:
+		var core := _health_core_scene.instantiate()
+		core.global_position = global_position
+		get_tree().current_scene.add_child(core)
+	
 	enemy_died.emit(self)
 	queue_free()
