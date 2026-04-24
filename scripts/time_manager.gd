@@ -36,6 +36,9 @@ var fracture_level: float = 0.0
 var is_lockdown: bool = false
 var can_use_time: bool = true
 
+var _lockdown_timer: float = 0.0
+const LOCKDOWN_DURATION: float = 60.0
+
 # --- Decoy Target (Time Erase) ---
 var erased_target_position: Vector2 = Vector2.ZERO
 
@@ -44,6 +47,7 @@ func reset_fracture() -> void:
 	fracture_level = 0.0
 	is_lockdown = false
 	can_use_time = true
+	_lockdown_timer = 0.0
 	time_gauge = GAUGE_MAX
 	current_state = TimeState.NORMAL
 	Engine.time_scale = 1.0
@@ -91,6 +95,9 @@ func _process(delta: float) -> void:
 
 func _process_fracture(real_delta: float) -> void:
 	if is_lockdown:
+		_lockdown_timer += real_delta
+		if _lockdown_timer >= LOCKDOWN_DURATION:
+			_exit_lockdown()
 		return  # Fracture stays at 100 during lockdown
 	
 	var old_fracture: float = fracture_level
@@ -113,6 +120,7 @@ func _process_fracture(real_delta: float) -> void:
 func _enter_lockdown() -> void:
 	is_lockdown = true
 	can_use_time = false
+	_lockdown_timer = 0.0
 	fracture_level = FRACTURE_MAX
 	fracture_changed.emit(fracture_level)
 	lockdown_changed.emit(true)
@@ -121,15 +129,19 @@ func _enter_lockdown() -> void:
 	if current_state != TimeState.NORMAL:
 		_force_normal()
 
+func _exit_lockdown() -> void:
+	is_lockdown = false
+	can_use_time = true
+	_lockdown_timer = 0.0
+	fracture_level = 75.0
+	fracture_changed.emit(fracture_level)
+	lockdown_changed.emit(false)
+
 ## Called when any enemy dies — reduces fracture and can exit lockdown
 func on_enemy_killed() -> void:
 	if is_lockdown:
 		# Exit lockdown — the "clutch moment"
-		is_lockdown = false
-		can_use_time = true
-		fracture_level = 75.0
-		fracture_changed.emit(fracture_level)
-		lockdown_changed.emit(false)
+		_exit_lockdown()
 	else:
 		# Normal fracture reduction per kill
 		fracture_level = maxf(fracture_level - FRACTURE_KILL_REDUCTION, 0.0)
