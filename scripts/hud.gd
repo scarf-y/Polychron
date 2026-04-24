@@ -83,6 +83,10 @@ func _build_hud() -> void:
 	game_timer_label.add_theme_font_size_override("font_size", 16)
 	game_timer_label.add_theme_color_override("font_color", Color(0.8, 1.0, 0.9))
 	game_timer_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	game_timer_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	game_timer_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	game_timer_label.offset_left = -120.0
+	game_timer_label.offset_top = -40.0
 	game_timer_label.offset_right = -16.0
 	game_timer_label.offset_bottom = -16.0
 	game_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
