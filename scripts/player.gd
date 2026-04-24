@@ -54,9 +54,16 @@ func _ready() -> void:
 	add_to_group("player")
 	_setup_crosshair_cursor()
 	
+	# Reset fracture state on spawn (handles respawn after death)
+	TimeManager.reset_fracture()
+	GameJuice.stop_lockdown_flicker()
+	
 	# Connect fracture signals
 	TimeManager.fracture_changed.connect(_on_fracture_changed)
 	TimeManager.lockdown_changed.connect(_on_lockdown_changed)
+	
+	# Sync debuffs to current fracture level
+	_on_fracture_changed(TimeManager.fracture_level)
 
 func _process(delta: float) -> void:
 	if is_dead:

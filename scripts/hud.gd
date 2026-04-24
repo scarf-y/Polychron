@@ -13,6 +13,7 @@ var gauge_label: Label = null
 var fracture_bar: ProgressBar = null
 var fracture_label: Label = null
 var fracture_stage_label: Label = null
+var fracture_debuff_label: Label = null
 var state_label: Label = null
 var lockdown_warning: Label = null
 
@@ -168,6 +169,13 @@ func _build_hud() -> void:
 	fracture_stage_label.add_theme_color_override("font_color", Color(0.5, 0.7, 1.0, 0.7))
 	fracture_stage_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	fracture_vbox.add_child(fracture_stage_label)
+	
+	fracture_debuff_label = Label.new()
+	fracture_debuff_label.text = "[ All Systems Nominal ]"
+	fracture_debuff_label.add_theme_font_size_override("font_size", 8)
+	fracture_debuff_label.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0, 0.8))
+	fracture_debuff_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	fracture_vbox.add_child(fracture_debuff_label)
 	
 	# --- State Label (Right) ---
 	var state_vbox := VBoxContainer.new()
@@ -326,18 +334,33 @@ func _update_fracture_stage(value: float) -> void:
 	if value >= 100.0:
 		fracture_stage_label.text = "STAGE V — LOCKDOWN"
 		fracture_stage_label.add_theme_color_override("font_color", Color(1.0, 0.1, 0.1, 1.0))
+		if fracture_debuff_label:
+			fracture_debuff_label.text = "[ TIME ABILITIES DISABLED ]"
+			fracture_debuff_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3))
 	elif value > 75.0:
 		fracture_stage_label.text = "STAGE IV — CRITICAL"
 		fracture_stage_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.2, 0.9))
+		if fracture_debuff_label:
+			fracture_debuff_label.text = "[ +50% DMG Taken | -20% Speed | x2 Dash CD ]"
+			fracture_debuff_label.add_theme_color_override("font_color", Color(1.0, 0.5, 0.4))
 	elif value > 50.0:
 		fracture_stage_label.text = "STAGE III — TEMPORAL DECAY"
 		fracture_stage_label.add_theme_color_override("font_color", Color(1.0, 0.5, 0.2, 0.8))
+		if fracture_debuff_label:
+			fracture_debuff_label.text = "[ -20% Speed | x2 Dash CD | -50% Crit Chance ]"
+			fracture_debuff_label.add_theme_color_override("font_color", Color(1.0, 0.7, 0.4))
 	elif value > 25.0:
 		fracture_stage_label.text = "STAGE II — INSTABILITY"
 		fracture_stage_label.add_theme_color_override("font_color", Color(0.9, 0.7, 0.3, 0.7))
+		if fracture_debuff_label:
+			fracture_debuff_label.text = "[ -50% Crit Chance ]"
+			fracture_debuff_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.5))
 	else:
 		fracture_stage_label.text = "STAGE I — STABLE"
 		fracture_stage_label.add_theme_color_override("font_color", Color(0.5, 0.7, 1.0, 0.7))
+		if fracture_debuff_label:
+			fracture_debuff_label.text = "[ All Systems Nominal ]"
+			fracture_debuff_label.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0, 0.8))
 
 func _on_lockdown_changed(is_lockdown: bool) -> void:
 	if lockdown_warning:

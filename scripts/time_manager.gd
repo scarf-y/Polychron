@@ -39,6 +39,19 @@ var can_use_time: bool = true
 # --- Decoy Target (Time Erase) ---
 var erased_target_position: Vector2 = Vector2.ZERO
 
+## Reset all fracture state — call on scene reload / respawn
+func reset_fracture() -> void:
+	fracture_level = 0.0
+	is_lockdown = false
+	can_use_time = true
+	time_gauge = GAUGE_MAX
+	current_state = TimeState.NORMAL
+	Engine.time_scale = 1.0
+	fracture_changed.emit(fracture_level)
+	lockdown_changed.emit(false)
+	time_gauge_changed.emit(time_gauge)
+	time_state_changed.emit(current_state)
+
 # --- Process ---
 func _process(delta: float) -> void:
 	# We use unscaled delta for gauge management so slowing time
