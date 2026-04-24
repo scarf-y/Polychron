@@ -219,3 +219,65 @@ func stop_lockdown_flicker() -> void:
 func lockdown_impact() -> void:
 	screen_shake(6.0, 2.5)
 	hitstop(0.2, 0.02)
+
+# =========================
+# LEVEL TRANSITION (GLITCH EFFECT)
+# =========================
+var _transition_active: bool = false
+
+func transition_to_scene(path: String) -> void:
+	if _transition_active:
+		return
+	_transition_active = true
+	
+	# Create canvas layer for top-level rendering
+	var canvas := CanvasLayer.new()
+	canvas.layer = 120
+	get_tree().root.add_child(canvas)
+	
+	# Create ColorRect to fill screen
+	var rect := ColorRect.new()
+	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rect.color = Color(0, 0, 0, 0)
+	canvas.add_child(rect)
+	
+	# Play transition sound / shake
+	screen_shake(8.0, 2.0)
+	
+	# Glitch sequence
+	var tween := create_tween()
+	
+	# Fast rapid flashes
+	for i in range(10):
+		tween.tween_callback(func():
+			rect.color = Color(randf_range(0, 1), randf_range(0, 0.5), randf_range(0.5, 1), randf_range(0.3, 0.8))
+		)
+		tween.tween_interval(0.05)
+	
+	# Solid black
+	tween.tween_callback(func(): rect.color = Color.BLACK)
+	tween.tween_interval(0.3)
+	
+	# Change scene
+	tween.tween_callback(func():
+		get_tree().change_scene_to_file(path)
+	)
+	
+	# Wait for scene to load
+	tween.tween_interval(0.1)
+	
+	# Glitch fade in
+	for i in range(5):
+		tween.tween_callback(func():
+			rect.color = Color(randf_range(0, 1), randf_range(0, 0.5), randf_range(0.5, 1), randf_range(0.1, 0.4))
+		)
+		tween.tween_interval(0.05)
+		
+	# Fade out completely
+	tween.tween_property(rect, "color", Color(0, 0, 0, 0), 0.3)
+	
+	# Cleanup
+	tween.tween_callback(func():
+		canvas.queue_free()
+		_transition_active = false
+	)

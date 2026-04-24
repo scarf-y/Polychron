@@ -491,7 +491,10 @@ func _show_death_screen() -> void:
 	retry_btn.text = "  REBOOT SEQUENCE  "
 	retry_btn.custom_minimum_size = Vector2(200, 36)
 	_style_death_button(retry_btn, Color(0.15, 0.4, 0.8))
-	retry_btn.pressed.connect(func(): get_tree().reload_current_scene())
+	retry_btn.pressed.connect(func():
+		TimeManager.reset_fracture(true)
+		get_tree().reload_current_scene()
+	)
 	vbox.add_child(retry_btn)
 	
 	# Menu button

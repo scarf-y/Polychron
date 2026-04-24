@@ -9,6 +9,12 @@ func _ready() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
+		# Prevent death mid-transition
+		if body.has_method("set"):
+			body.set("_invincibility_timer", 999.0)
+			
 		# Reset time state before transitioning
 		TimeManager.change_time_state(TimeManager.TimeState.NORMAL)
-		get_tree().change_scene_to_file(next_level_path)
+		
+		# Use glitch transition instead of immediate scene change
+		GameJuice.transition_to_scene(next_level_path)

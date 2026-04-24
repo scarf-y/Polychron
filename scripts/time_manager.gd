@@ -42,8 +42,14 @@ const LOCKDOWN_DURATION: float = 60.0
 # --- Decoy Target (Time Erase) ---
 var erased_target_position: Vector2 = Vector2.ZERO
 
+# --- Persistent Player State ---
+var player_health: float = 100.0
+
 ## Reset all fracture state — call on scene reload / respawn
-func reset_fracture() -> void:
+func reset_fracture(reset_hp: bool = false) -> void:
+	if reset_hp:
+		player_health = 100.0
+		
 	fracture_level = 0.0
 	is_lockdown = false
 	can_use_time = true

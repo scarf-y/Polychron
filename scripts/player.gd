@@ -54,6 +54,9 @@ func _ready() -> void:
 	add_to_group("player")
 	_setup_crosshair_cursor()
 	
+	# Load persistent health
+	health = TimeManager.player_health
+	
 	# Reset fracture state on spawn (handles respawn after death)
 	TimeManager.reset_fracture()
 	GameJuice.stop_lockdown_flicker()
@@ -402,20 +405,28 @@ func _shoot() -> void:
 func take_damage(amount: float = 10.0) -> void:
 	if is_dead or is_dashing or _active_ability == TimeManager.TimeState.ERASED or _invincibility_timer > 0.0:
 		return
+		
 	_invincibility_timer = INVINCIBILITY_DURATION
 	
 	# Apply fracture damage multiplier (Stage IV: +50%)
 	var final_amount: float = amount * _damage_multiplier
 	health -= final_amount
 	health = maxf(health, 0.0)
+	TimeManager.player_health = health
+	
+	# Screen shake and hitstop via GameJuice
+	GameJuice.hit_impact()
+	
 	player_damaged.emit(health)
 	
 	# Spawn damage numbers — purple & 2x larger at Stage IV+
 	var is_fracture_amplified: bool = _fracture_stage >= 4
 	if is_fracture_amplified:
-		GameJuice.spawn_damage_number(final_amount, global_position, false, Color(0.7, 0.1, 1.0), 2.0)
+		if GameJuice.has_method("spawn_damage_number"):
+			GameJuice.spawn_damage_number(final_amount, global_position, false, Color(0.7, 0.1, 1.0), 2.0)
 	else:
-		GameJuice.spawn_damage_number(final_amount, global_position, false)
+		if GameJuice.has_method("spawn_damage_number"):
+			GameJuice.spawn_damage_number(final_amount, global_position, false)
 	
 	# Low HP warning
 	player_low_hp.emit(health < max_health * 0.25)
