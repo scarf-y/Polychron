@@ -34,9 +34,7 @@ func _ready() -> void:
 			best_time_label.position = vbox.position - Vector2(0, 30)
 
 func _on_start_pressed() -> void:
-	TimeManager.reset_fracture(true)
-	TimeManager.game_time = 0.0
-	TimeManager.game_is_active = true
+	TimeManager.start_new_run()
 	get_tree().change_scene_to_file("res://scenes/levels/level_01.tscn")
 
 func _on_quit_pressed() -> void:

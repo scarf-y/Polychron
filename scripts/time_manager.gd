@@ -55,7 +55,6 @@ var death_count: int = 0
 func reset_fracture(reset_hp: bool = false) -> void:
 	if reset_hp:
 		player_health = 100.0
-		death_count = 0
 		
 	fracture_level = 0.0
 	is_lockdown = false
@@ -68,6 +67,13 @@ func reset_fracture(reset_hp: bool = false) -> void:
 	lockdown_changed.emit(false)
 	time_gauge_changed.emit(time_gauge)
 	time_state_changed.emit(current_state)
+
+## Called ONLY from the Main Menu when starting a fresh game
+func start_new_run() -> void:
+	game_time = 0.0
+	death_count = 0
+	game_is_active = true
+	reset_fracture(true)
 
 # --- Process ---
 func _process(delta: float) -> void:

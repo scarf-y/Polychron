@@ -456,7 +456,6 @@ func _update_health(hp: float) -> void:
 # =========================
 func _on_player_died() -> void:
 	TimeManager.death_count += 1
-	TimeManager.game_is_active = false
 	
 	if state_label:
 		state_label.text = "[ SEQUENCE TERMINATED ]"
