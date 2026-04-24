@@ -1,7 +1,7 @@
 extends Node
 
 ## The central time manipulation system for Chronos Bound.
-## Autoloaded as "TimeManager". Manages time states and the Time Gauge resource.
+## Autoloaded as "TimeManager". Manages time states, Time Gauge, and Temporal Fracture.
 
 # --- Enums ---
 enum TimeState { NORMAL, STOPPED, SLOWED, ERASED }
@@ -11,6 +11,8 @@ signal time_state_changed(new_state: TimeState)
 signal time_gauge_changed(new_value: float)
 signal time_gauge_depleted()
 signal null_zone_changed(is_active: bool)
+signal fracture_changed(new_value: float)
+signal lockdown_changed(is_lockdown: bool)
 
 # --- Time Gauge ---
 const GAUGE_MAX: float = 100.0
@@ -24,6 +26,16 @@ var current_state: TimeState = TimeState.NORMAL
 var null_zone_active: bool = false  # Set by Null Zone — disables abilities
 var _null_zone_count: int = 0
 
+# --- Temporal Fracture ---
+const FRACTURE_MAX: float = 100.0
+const FRACTURE_ACCUMULATE_RATE: float = 15.0  # per second while using abilities
+const FRACTURE_DECAY_RATE: float = 5.0        # per second in NORMAL state
+const FRACTURE_KILL_REDUCTION: float = 10.0   # per enemy kill
+
+var fracture_level: float = 0.0
+var is_lockdown: bool = false
+var can_use_time: bool = true
+
 # --- Decoy Target (Time Erase) ---
 var erased_target_position: Vector2 = Vector2.ZERO
 
@@ -35,6 +47,7 @@ func _process(delta: float) -> void:
 	if Engine.time_scale > 0.0:
 		real_delta = delta / Engine.time_scale
 	
+	# --- Time Gauge Logic ---
 	match current_state:
 		TimeState.NORMAL:
 			# Recharge gauge (blocked inside Null Zone)
@@ -59,10 +72,63 @@ func _process(delta: float) -> void:
 			if time_gauge <= 0.0:
 				time_gauge = 0.0
 				_force_normal()
+	
+	# --- Fracture Logic ---
+	_process_fracture(real_delta)
+
+func _process_fracture(real_delta: float) -> void:
+	if is_lockdown:
+		return  # Fracture stays at 100 during lockdown
+	
+	var old_fracture: float = fracture_level
+	
+	if current_state != TimeState.NORMAL:
+		# Accumulate fracture while using time abilities
+		fracture_level = minf(fracture_level + FRACTURE_ACCUMULATE_RATE * real_delta, FRACTURE_MAX)
+	else:
+		# Decay fracture when in NORMAL state
+		fracture_level = maxf(fracture_level - FRACTURE_DECAY_RATE * real_delta, 0.0)
+	
+	# Only emit if changed meaningfully
+	if absf(fracture_level - old_fracture) > 0.01:
+		fracture_changed.emit(fracture_level)
+	
+	# Check lockdown trigger
+	if fracture_level >= FRACTURE_MAX and not is_lockdown:
+		_enter_lockdown()
+
+func _enter_lockdown() -> void:
+	is_lockdown = true
+	can_use_time = false
+	fracture_level = FRACTURE_MAX
+	fracture_changed.emit(fracture_level)
+	lockdown_changed.emit(true)
+	
+	# Force back to NORMAL immediately
+	if current_state != TimeState.NORMAL:
+		_force_normal()
+
+## Called when any enemy dies — reduces fracture and can exit lockdown
+func on_enemy_killed() -> void:
+	if is_lockdown:
+		# Exit lockdown — the "clutch moment"
+		is_lockdown = false
+		can_use_time = true
+		fracture_level = 75.0
+		fracture_changed.emit(fracture_level)
+		lockdown_changed.emit(false)
+	else:
+		# Normal fracture reduction per kill
+		fracture_level = maxf(fracture_level - FRACTURE_KILL_REDUCTION, 0.0)
+		fracture_changed.emit(fracture_level)
 
 func change_time_state(new_state: TimeState) -> void:
 	# Don't allow activation if gauge is empty (except returning to NORMAL)
 	if new_state != TimeState.NORMAL and time_gauge <= 0.0:
+		return
+	
+	# Block time abilities during lockdown
+	if new_state != TimeState.NORMAL and not can_use_time:
 		return
 	
 	current_state = new_state
@@ -85,9 +151,11 @@ func _force_normal() -> void:
 	time_gauge_depleted.emit()
 	change_time_state(TimeState.NORMAL)
 
-## Check if an ability can be activated (has gauge)
+## Check if an ability can be activated (has gauge and not locked down)
 func can_use_ability() -> bool:
 	if null_zone_active:
+		return false
+	if not can_use_time:
 		return false
 	return time_gauge > 5.0  # Minimum threshold to activate
 
