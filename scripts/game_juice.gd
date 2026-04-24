@@ -115,20 +115,35 @@ func spawn_damage_number(amount: float, pos: Vector2, is_crit: bool, color_overr
 	tween.tween_property(label, "scale", label.scale * 0.5, 0.6).set_delay(0.3)
 	tween.chain().tween_callback(label.queue_free)
 
-## Spawn a "BLOCKED" or "NULLIFIED" text
+## Spawn a "LOCKED OUT" or "NULLIFIED" text with visual emphasis
 func spawn_blocked_text(pos: Vector2) -> void:
 	var label := Label.new()
-	label.text = "BLOCKED"
-	label.global_position = pos + Vector2(-20, -10)
+	var is_lockdown: bool = TimeManager.is_lockdown
+	
+	if is_lockdown:
+		label.text = "⚠ LOCKED OUT ⚠"
+		label.add_theme_color_override("font_color", Color(1.0, 0.15, 0.15))
+		label.add_theme_font_size_override("font_size", 11)
+	else:
+		label.text = "NULLIFIED"
+		label.add_theme_color_override("font_color", Color(0.6, 0.0, 0.0))
+		label.add_theme_font_size_override("font_size", 9)
+	
+	label.global_position = pos + Vector2(-30, -18)
 	label.z_index = 100
-	label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-	label.add_theme_font_size_override("font_size", 8)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	
 	get_tree().current_scene.add_child(label)
 	
+	# Pop up and fade with a shake feel
 	var tween := label.create_tween()
-	tween.tween_property(label, "modulate:a", 0.0, 0.5)
-	tween.tween_callback(label.queue_free)
+	tween.set_parallel(true)
+	tween.tween_property(label, "position:y", label.position.y - 25.0, 0.5).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.5).set_delay(0.3)
+	# Quick scale pop
+	label.scale = Vector2(1.3, 1.3)
+	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 0.15).set_ease(Tween.EASE_OUT)
+	tween.chain().tween_callback(label.queue_free)
 
 # =========================
 # DEATH EFFECT — Glitch Evaporation
@@ -179,3 +194,28 @@ func time_stop_impact() -> void:
 func death_impact() -> void:
 	hitstop(0.15, 0.01)
 	screen_shake(8.0, 2.0)
+
+# =========================
+# LOCKDOWN FLICKER
+# =========================
+var _lockdown_flicker_tween: Tween = null
+
+## Start the lockdown flicker on a target node (player)
+## Oscillates modulate.a between 0.2 and 1.0 every 0.05s
+func start_lockdown_flicker(target: Node2D) -> void:
+	stop_lockdown_flicker()
+	if not is_instance_valid(target):
+		return
+	_lockdown_flicker_tween = create_tween().set_loops()
+	_lockdown_flicker_tween.tween_property(target, "modulate:a", 0.2, 0.05)
+	_lockdown_flicker_tween.tween_property(target, "modulate:a", 1.0, 0.05)
+
+## Stop the lockdown flicker
+func stop_lockdown_flicker() -> void:
+	if _lockdown_flicker_tween and _lockdown_flicker_tween.is_valid():
+		_lockdown_flicker_tween.kill()
+		_lockdown_flicker_tween = null
+
+func lockdown_impact() -> void:
+	screen_shake(6.0, 2.5)
+	hitstop(0.2, 0.02)

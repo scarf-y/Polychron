@@ -157,9 +157,16 @@ func _on_lockdown_changed(lockdown: bool) -> void:
 	if lockdown:
 		# Force cancel any active time ability
 		force_cancel_ability()
+		# Start lockdown flicker + impact
+		GameJuice.lockdown_impact()
+		GameJuice.start_lockdown_flicker(self)
 	else:
+		# Stop flicker and restore visuals
+		GameJuice.stop_lockdown_flicker()
+		modulate.a = 1.0
 		# Re-apply debuffs for current fracture level (75% after exit)
 		_on_fracture_changed(TimeManager.fracture_level)
+		_update_modulate()
 
 # =========================
 # PHASE DASH
