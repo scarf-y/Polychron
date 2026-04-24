@@ -80,11 +80,12 @@ func _build_hud() -> void:
 	# Game Timer Label
 	game_timer_label = Label.new()
 	game_timer_label.text = "00:00.00"
-	game_timer_label.add_theme_font_size_override("font_size", 14)
+	game_timer_label.add_theme_font_size_override("font_size", 16)
 	game_timer_label.add_theme_color_override("font_color", Color(0.8, 1.0, 0.9))
-	game_timer_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	game_timer_label.offset_top = 4.0
-	game_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	game_timer_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	game_timer_label.offset_right = -16.0
+	game_timer_label.offset_bottom = -16.0
+	game_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	add_child(game_timer_label)
 	
 	# --- HP Section ---
