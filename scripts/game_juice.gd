@@ -81,14 +81,22 @@ func _process_shake(delta: float) -> void:
 # =========================
 # FLOATING DAMAGE NUMBERS
 # =========================
-func spawn_damage_number(amount: float, pos: Vector2, is_crit: bool) -> void:
+func spawn_damage_number(amount: float, pos: Vector2, is_crit: bool, color_override: Color = Color(-1, -1, -1), scale_override: float = 1.0) -> void:
 	var label := Label.new()
 	label.text = str(int(amount))
 	label.global_position = pos + Vector2(randf_range(-8, 8), -10)
 	label.z_index = 100
 	
-	# Style based on crit
-	if is_crit:
+	# Check for color override (e.g. Stage IV fracture — purple + 2x)
+	var has_override: bool = color_override.r >= 0.0
+	
+	# Style based on crit or override
+	if has_override:
+		label.add_theme_color_override("font_color", color_override)
+		label.add_theme_font_size_override("font_size", int(12 * scale_override))
+		label.scale = Vector2(scale_override, scale_override)
+		label.text += "!!"
+	elif is_crit:
 		label.add_theme_color_override("font_color", Color(1, 0.9, 0.1))  # Bright gold
 		label.add_theme_font_size_override("font_size", 14)
 		label.scale = Vector2(1.5, 1.5)
