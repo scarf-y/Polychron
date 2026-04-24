@@ -206,4 +206,8 @@ func _die() -> void:
 	Engine.time_scale = 0.05
 	await get_tree().create_timer(0.1).timeout  # ~2s real time at 0.05x
 	Engine.time_scale = 1.0
+	
+	# Transition to Win Screen
+	GameJuice.transition_to_scene("res://scenes/ui/win_screen.tscn")
+	
 	queue_free()
