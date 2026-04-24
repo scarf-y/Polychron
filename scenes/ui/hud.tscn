@@ -1,60 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_gauge"]
-font_size = 12
-font_color = Color(0.5, 0.8, 1, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_state"]
-font_size = 14
-font_color = Color(1, 1, 1, 1)
 
 [node name="HUD" type="CanvasLayer"]
 layer = 90
 script = ExtResource("1_script")
-
-[node name="HUDContainer" type="MarginContainer" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
-
-[node name="HPBar" type="ProgressBar" parent="HUDContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-custom_minimum_size = Vector2(120, 8)
-max_value = 100.0
-value = 100.0
-show_percentage = false
-modulate = Color(0.2, 1.0, 0.3, 1)
-
-[node name="GaugeLabel" type="Label" parent="HUDContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-text = "CHRONO: 100%"
-label_settings = SubResource("LabelSettings_gauge")
-
-[node name="GaugeBar" type="ProgressBar" parent="HUDContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-offset_top = -20.0
-custom_minimum_size = Vector2(200, 10)
-max_value = 100.0
-value = 100.0
-show_percentage = false
-
-[node name="StateLabel" type="Label" parent="HUDContainer"]
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-text = "[ NORMAL ]"
-label_settings = SubResource("LabelSettings_state")
