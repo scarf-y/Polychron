@@ -29,7 +29,7 @@ var _null_zone_count: int = 0
 # --- Temporal Fracture ---
 const FRACTURE_MAX: float = 100.0
 const FRACTURE_ACCUMULATE_RATE: float = 15.0  # per second while using abilities
-const FRACTURE_DECAY_RATE: float = 5.0        # per second in NORMAL state
+const FRACTURE_DECAY_RATE: float = 1.5        # per second in NORMAL state (slow decay)
 const FRACTURE_KILL_REDUCTION: float = 10.0   # per enemy kill
 
 var fracture_level: float = 0.0
