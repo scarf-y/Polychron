@@ -4,7 +4,7 @@ extends Area2D
 ## Glowing white-green square that heals the player on contact.
 ## Features spawn animation, pickup glow effect, and auto-destroy timer.
 
-const HEAL_AMOUNT: float = 5.0
+const HEAL_AMOUNT: float = 10.0
 const LIFETIME: float = 8.0
 
 var _pulse_tween: Tween = null

@@ -45,6 +45,11 @@ var erased_target_position: Vector2 = Vector2.ZERO
 # --- Persistent Player State ---
 var player_health: float = 100.0
 
+# --- Timer ---
+var game_time: float = 0.0
+var best_game_time: float = -1.0
+var game_is_active: bool = false
+
 ## Reset all fracture state — call on scene reload / respawn
 func reset_fracture(reset_hp: bool = false) -> void:
 	if reset_hp:
@@ -69,6 +74,9 @@ func _process(delta: float) -> void:
 	var real_delta: float = delta
 	if Engine.time_scale > 0.0:
 		real_delta = delta / Engine.time_scale
+	
+	if game_is_active:
+		game_time += real_delta
 	
 	# --- Time Gauge Logic ---
 	match current_state:
