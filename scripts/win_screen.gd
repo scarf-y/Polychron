@@ -27,6 +27,14 @@ func _ready() -> void:
 		# Insert below subtitle, above button
 		vbox.add_child(time_label)
 		vbox.move_child(time_label, 2)
+		
+		var death_label := Label.new()
+		death_label.text = "DEATHS: " + str(TimeManager.death_count)
+		death_label.add_theme_font_size_override("font_size", 14)
+		death_label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
+		death_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vbox.add_child(death_label)
+		vbox.move_child(death_label, 3)
 	
 	# Reset player health completely for a new run
 	TimeManager.player_health = 100.0

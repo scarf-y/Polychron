@@ -45,15 +45,17 @@ var erased_target_position: Vector2 = Vector2.ZERO
 # --- Persistent Player State ---
 var player_health: float = 100.0
 
-# --- Timer ---
+# --- Timer & Deaths ---
 var game_time: float = 0.0
 var best_game_time: float = -1.0
 var game_is_active: bool = false
+var death_count: int = 0
 
 ## Reset all fracture state — call on scene reload / respawn
 func reset_fracture(reset_hp: bool = false) -> void:
 	if reset_hp:
 		player_health = 100.0
+		death_count = 0
 		
 	fracture_level = 0.0
 	is_lockdown = false

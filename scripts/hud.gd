@@ -16,6 +16,7 @@ var fracture_stage_label: Label = null
 var fracture_debuff_label: Label = null
 var state_label: Label = null
 var lockdown_warning: Label = null
+var game_timer_label: Label = null
 
 var _lockdown_pulse_tween: Tween = null
 var _player_ref: Node = null
@@ -75,6 +76,16 @@ func _build_hud() -> void:
 	top_bar.offset_bottom = 50.0
 	top_bar.add_theme_constant_override("separation", 12)
 	add_child(top_bar)
+	
+	# Game Timer Label
+	game_timer_label = Label.new()
+	game_timer_label.text = "00:00.00"
+	game_timer_label.add_theme_font_size_override("font_size", 14)
+	game_timer_label.add_theme_color_override("font_color", Color(0.8, 1.0, 0.9))
+	game_timer_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	game_timer_label.offset_top = 4.0
+	game_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(game_timer_label)
 	
 	# --- HP Section ---
 	var hp_vbox := VBoxContainer.new()
@@ -242,6 +253,14 @@ func _build_hud() -> void:
 	lockdown_warning.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	lockdown_warning.visible = false
 	add_child(lockdown_warning)
+
+func _process(_delta: float) -> void:
+	if game_timer_label and TimeManager.game_is_active:
+		var time_seconds = TimeManager.game_time
+		var minutes := int(time_seconds) / 60
+		var seconds := int(time_seconds) % 60
+		var millis := int((time_seconds - int(time_seconds)) * 100)
+		game_timer_label.text = "%02d:%02d.%02d" % [minutes, seconds, millis]
 
 # =========================
 # SIGNAL HANDLERS
@@ -436,6 +455,9 @@ func _update_health(hp: float) -> void:
 # DEATH SCREEN
 # =========================
 func _on_player_died() -> void:
+	TimeManager.death_count += 1
+	TimeManager.game_is_active = false
+	
 	if state_label:
 		state_label.text = "[ SEQUENCE TERMINATED ]"
 		state_label.add_theme_color_override("font_color", Color.RED)
