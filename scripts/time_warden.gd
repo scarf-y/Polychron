@@ -172,8 +172,7 @@ func _fire_spread() -> void:
 	for i in SPREAD_COUNT:
 		var b: Node2D = bullet_scene.instantiate()
 		b.global_position = global_position
-		b.direction = Vector2.RIGHT.rotated(i * angle_step)
-		b.speed = 100.0
+		b.setup(Vector2.RIGHT.rotated(i * angle_step), true)
 		if "modulate" in b:
 			b.modulate = Color(1.0, 0.2, 1.0)
 		get_tree().current_scene.add_child(b)
