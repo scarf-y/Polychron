@@ -206,20 +206,22 @@ func _die() -> void:
 	Engine.time_scale = 0.1
 	
 	var tween := create_tween()
-	tween.tween_property(self, "scale", Vector2(1.8, 1.8), 0.2) # ~2 seconds real time
+	# 0.4 game time = 4.0 seconds real time at 0.1x time scale
+	tween.tween_property(self, "scale", Vector2(2.2, 2.2), 0.4) 
 	
 	# Chain of erratic explosions while time is slowed
-	for i in range(8):
-		await get_tree().create_timer(0.02).timeout
-		GameJuice.screen_shake(8.0, 1.0)
+	for i in range(15):
+		# 0.03 game time = 0.3 seconds real time per explosion (4.5 seconds total)
+		await get_tree().create_timer(0.03).timeout
+		GameJuice.screen_shake(12.0, 1.5)
 		modulate = Color(randf_range(0.5, 1.0), randf_range(0, 0.5), randf_range(0.5, 1.0))
-		var offset := Vector2(randf_range(-30, 30), randf_range(-30, 30))
-		GameJuice.spawn_death_particles(global_position + offset, modulate, 15)
+		var offset := Vector2(randf_range(-40, 40), randf_range(-40, 40))
+		GameJuice.spawn_death_particles(global_position + offset, modulate, 20)
 	
 	# Final massive burst and restore time
 	Engine.time_scale = 1.0
-	GameJuice.screen_shake(25.0, 3.0)
-	GameJuice.spawn_death_particles(global_position, Color.WHITE, 60)
+	GameJuice.screen_shake(30.0, 3.0)
+	GameJuice.spawn_death_particles(global_position, Color.WHITE, 80)
 	
 	# Transition to Win Screen
 	GameJuice.transition_to_scene("res://scenes/ui/win_screen.tscn")
