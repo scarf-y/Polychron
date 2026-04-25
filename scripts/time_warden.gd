@@ -38,7 +38,7 @@ var _is_telegraph: bool = false
 
 # --- Minions ---
 var stalker_scene: PackedScene = preload("res://scenes/enemies/stalker.tscn")
-var _minion_spawn_timer: float = 30.0
+var _minion_spawn_timer: float = 15.0
 
 # --- Signals ---
 signal enemy_died(enemy: Node2D)
@@ -73,8 +73,8 @@ func _physics_process(delta: float) -> void:
 	# --- Minion Spawning ---
 	_minion_spawn_timer -= delta * Engine.time_scale
 	if _minion_spawn_timer <= 0.0:
-		_minion_spawn_timer = 30.0
-		if randf() <= 0.5:
+		_minion_spawn_timer = 15.0
+		if randf() <= 0.75:
 			_spawn_minions()
 	
 	# --- State Machine ---
@@ -173,8 +173,8 @@ func _fire_spread() -> void:
 		var b: Node2D = bullet_scene.instantiate()
 		b.global_position = global_position
 		b.setup(Vector2.RIGHT.rotated(i * angle_step), true)
-		if "modulate" in b:
-			b.modulate = Color(1.0, 0.2, 1.0)
+		if "base_color" in b:
+			b.base_color = Color(1.0, 0.2, 1.0)
 		get_tree().current_scene.add_child(b)
 
 func _spawn_minions() -> void:

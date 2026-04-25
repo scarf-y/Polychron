@@ -18,6 +18,8 @@ var is_enemy_bullet: bool = false
 var _stored_direction: Vector2 = Vector2.ZERO
 var _is_frozen: bool = false
 
+var base_color: Color = Color.WHITE
+
 func setup(dir: Vector2, enemy_bullet: bool = false) -> void:
 	direction = dir.normalized()
 	is_enemy_bullet = enemy_bullet
@@ -26,9 +28,13 @@ func setup(dir: Vector2, enemy_bullet: bool = false) -> void:
 	if is_enemy_bullet:
 		collision_layer = 16  # bit 4 = layer 5
 		collision_mask = 3    # bits 0+1 = layers 1+2
+		base_color = Color(1.0, 0.4, 0.4) # Default enemy bullet red
 	else:
 		collision_layer = 8   # bit 3 = layer 4
 		collision_mask = 5    # bits 0+2 = layers 1+3
+		base_color = Color.WHITE
+		
+	modulate = base_color
 
 func _ready() -> void:
 	add_to_group("projectiles")
@@ -53,7 +59,7 @@ func _physics_process(delta: float) -> void:
 		if _is_frozen:
 			direction = _stored_direction
 			_is_frozen = false
-			modulate = Color.WHITE
+			modulate = base_color
 	
 	position += direction * BULLET_SPEED * delta
 
