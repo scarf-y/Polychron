@@ -142,7 +142,7 @@ position = Vector2(740, 120)
 [node name="Entities" type="Node2D" parent="."]
 
 [node name="Player" parent="Entities" groups=["player"] instance=ExtResource("1_player")]
-position = Vector2(640, 600)
+position = Vector2(640, 350)
 
 ; ===========================
 ; PROJECTILES CONTAINER

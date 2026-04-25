@@ -36,6 +36,10 @@ const SPREAD_COUNT: int = 24
 var _flash_timer: float = 0.0
 var _is_telegraph: bool = false
 
+# --- Minions ---
+var stalker_scene: PackedScene = preload("res://scenes/enemies/stalker.tscn")
+var _minion_spawn_timer: float = 30.0
+
 # --- Signals ---
 signal enemy_died(enemy: Node2D)
 signal boss_health_changed(current: float, maximum: float)
@@ -65,6 +69,13 @@ func _physics_process(delta: float) -> void:
 		modulate = Color(0.4, 0.1, 0.6, 0.7)
 	else:
 		modulate = Color(0.6, 0.0, 1.0)  # Neon purple
+		
+	# --- Minion Spawning ---
+	_minion_spawn_timer -= delta * Engine.time_scale
+	if _minion_spawn_timer <= 0.0:
+		_minion_spawn_timer = 30.0
+		if randf() <= 0.5:
+			_spawn_minions()
 	
 	# --- State Machine ---
 	match current_boss_state:
@@ -134,22 +145,7 @@ func _start_spread_shot() -> void:
 	modulate = Color(1, 1, 0)  # Yellow telegraph
 
 func _handle_spread_shot(player: Node2D) -> void:
-	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
-	var base_angle: float = (target_pos - global_position).angle()
-	
-	for i in SPREAD_COUNT:
-		var angle: float = base_angle + (TAU / SPREAD_COUNT) * i
-		var direction: Vector2 = Vector2.from_angle(angle)
-		
-		var bullet := bullet_scene.instantiate()
-		bullet.global_position = global_position
-		bullet.setup(direction, true)
-		
-		var container: Node = get_tree().get_first_node_in_group("projectiles_container")
-		if container:
-			container.add_child(bullet)
-		else:
-			get_parent().add_child(bullet)
+	_fire_spread()
 	
 	GameJuice.screen_shake(4.0, 1.5)
 	current_boss_state = BossState.STUNNED
@@ -166,6 +162,37 @@ func _handle_stunned(delta: float) -> void:
 		_flash_timer = 0.0
 		modulate.a = 1.0
 		current_boss_state = BossState.CHASE
+
+func _fire_spread() -> void:
+	if not is_instance_valid(bullet_scene): return
+	
+	GameJuice.screen_shake(4.0, 0.2)
+	
+	var angle_step = TAU / SPREAD_COUNT
+	for i in SPREAD_COUNT:
+		var b: Node2D = bullet_scene.instantiate()
+		b.global_position = global_position
+		b.direction = Vector2.RIGHT.rotated(i * angle_step)
+		b.speed = 100.0
+		if "modulate" in b:
+			b.modulate = Color(1.0, 0.2, 1.0)
+		get_tree().current_scene.add_child(b)
+
+func _spawn_minions() -> void:
+	if not is_instance_valid(stalker_scene): return
+	
+	var count = randi_range(3, 5)
+	for i in range(count):
+		var stalker: Node2D = stalker_scene.instantiate()
+		var angle = randf() * TAU
+		var dist = randf_range(80.0, 200.0)
+		stalker.global_position = global_position + Vector2(cos(angle), sin(angle)) * dist
+		
+		if "is_active_in_room" in stalker:
+			stalker.is_active_in_room = true
+			
+		get_tree().current_scene.add_child(stalker)
+		GameJuice.spawn_death_particles(stalker.global_position, Color(0.8, 0.2, 0.2), 15)
 
 func take_damage(amount: float = 10.0) -> void:
 	if is_dead:
