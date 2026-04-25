@@ -202,10 +202,24 @@ func _die() -> void:
 	
 	enemy_died.emit(self)
 	
-	# Dramatic slow-mo death
-	Engine.time_scale = 0.05
-	await get_tree().create_timer(0.1).timeout  # ~2s real time at 0.05x
+	# Dramatic slow-mo death animation
+	Engine.time_scale = 0.1
+	
+	var tween := create_tween()
+	tween.tween_property(self, "scale", Vector2(1.8, 1.8), 0.2) # ~2 seconds real time
+	
+	# Chain of erratic explosions while time is slowed
+	for i in range(8):
+		await get_tree().create_timer(0.02).timeout
+		GameJuice.screen_shake(8.0, 1.0)
+		modulate = Color(randf_range(0.5, 1.0), randf_range(0, 0.5), randf_range(0.5, 1.0))
+		var offset := Vector2(randf_range(-30, 30), randf_range(-30, 30))
+		GameJuice.spawn_death_particles(global_position + offset, modulate, 15)
+	
+	# Final massive burst and restore time
 	Engine.time_scale = 1.0
+	GameJuice.screen_shake(25.0, 3.0)
+	GameJuice.spawn_death_particles(global_position, Color.WHITE, 60)
 	
 	# Transition to Win Screen
 	GameJuice.transition_to_scene("res://scenes/ui/win_screen.tscn")

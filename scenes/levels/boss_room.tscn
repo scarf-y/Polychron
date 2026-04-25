@@ -9,13 +9,13 @@
 [ext_resource type="PackedScene" path="res://scenes/effects/world_environment.tscn" id="7_world_env"]
 
 [sub_resource type="RectangleShape2D" id="wall_h"]
-size = Vector2(360, 8)
+size = Vector2(1280, 16)
 
 [sub_resource type="RectangleShape2D" id="wall_v"]
-size = Vector2(8, 360)
+size = Vector2(16, 720)
 
 [sub_resource type="RectangleShape2D" id="trigger_shape"]
-size = Vector2(320, 320)
+size = Vector2(1200, 680)
 
 [node name="BossRoom" type="Node2D"]
 
@@ -30,23 +30,23 @@ size = Vector2(320, 320)
 [node name="Floor" type="ColorRect" parent="."]
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 360.0
-offset_bottom = 360.0
+offset_right = 1280.0
+offset_bottom = 720.0
 color = Color(0.01, 0.0, 0.02, 1)
 
 ; Warning stripes around the edge (Glowing Red)
 [node name="WarningBorder" type="ColorRect" parent="."]
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 356.0
-offset_bottom = 356.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1272.0
+offset_bottom = 712.0
 color = Color(2.0, 0.0, 0.2, 1)
 
 [node name="InnerFloor" type="ColorRect" parent="."]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 352.0
-offset_bottom = 352.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 1264.0
+offset_bottom = 704.0
 color = Color(0, 0, 0, 1)
 
 ; ===========================
@@ -55,7 +55,7 @@ color = Color(0, 0, 0, 1)
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="TopWall" type="StaticBody2D" parent="Walls"]
-position = Vector2(180, -4)
+position = Vector2(640, -8)
 collision_layer = 1
 collision_mask = 0
 
@@ -63,14 +63,14 @@ collision_mask = 0
 shape = SubResource("wall_h")
 
 [node name="Vis" type="ColorRect" parent="Walls/TopWall"]
-offset_left = -180.0
-offset_top = -4.0
-offset_right = 180.0
-offset_bottom = 4.0
+offset_left = -640.0
+offset_top = -8.0
+offset_right = 640.0
+offset_bottom = 8.0
 color = Color(1.5, 0.1, 2.5, 1)
 
 [node name="BottomWall" type="StaticBody2D" parent="Walls"]
-position = Vector2(180, 364)
+position = Vector2(640, 728)
 collision_layer = 1
 collision_mask = 0
 
@@ -78,14 +78,14 @@ collision_mask = 0
 shape = SubResource("wall_h")
 
 [node name="Vis" type="ColorRect" parent="Walls/BottomWall"]
-offset_left = -180.0
-offset_top = -4.0
-offset_right = 180.0
-offset_bottom = 4.0
+offset_left = -640.0
+offset_top = -8.0
+offset_right = 640.0
+offset_bottom = 8.0
 color = Color(1.5, 0.1, 2.5, 1)
 
 [node name="LeftWall" type="StaticBody2D" parent="Walls"]
-position = Vector2(-4, 180)
+position = Vector2(-8, 360)
 collision_layer = 1
 collision_mask = 0
 
@@ -93,14 +93,14 @@ collision_mask = 0
 shape = SubResource("wall_v")
 
 [node name="Vis" type="ColorRect" parent="Walls/LeftWall"]
-offset_left = -4.0
-offset_top = -180.0
-offset_right = 4.0
-offset_bottom = 180.0
+offset_left = -8.0
+offset_top = -360.0
+offset_right = 8.0
+offset_bottom = 360.0
 color = Color(1.5, 0.1, 2.5, 1)
 
 [node name="RightWall" type="StaticBody2D" parent="Walls"]
-position = Vector2(364, 180)
+position = Vector2(1288, 360)
 collision_layer = 1
 collision_mask = 0
 
@@ -108,10 +108,10 @@ collision_mask = 0
 shape = SubResource("wall_v")
 
 [node name="Vis" type="ColorRect" parent="Walls/RightWall"]
-offset_left = -4.0
-offset_top = -180.0
-offset_right = 4.0
-offset_bottom = 180.0
+offset_left = -8.0
+offset_top = -360.0
+offset_right = 8.0
+offset_bottom = 360.0
 color = Color(1.5, 0.1, 2.5, 1)
 
 ; ===========================
@@ -121,7 +121,7 @@ color = Color(1.5, 0.1, 2.5, 1)
 script = ExtResource("3_room_mgr")
 
 [node name="RoomTrigger" type="Area2D" parent="Room"]
-position = Vector2(180, 180)
+position = Vector2(640, 360)
 collision_layer = 0
 collision_mask = 2
 
@@ -130,11 +130,11 @@ shape = SubResource("trigger_shape")
 
 ; THE KERNEL (Boss)
 [node name="TheKernel" parent="Room" groups=["enemies"] instance=ExtResource("2_boss")]
-position = Vector2(180, 100)
+position = Vector2(640, 150)
 
 ; Dampener support — protects The Kernel
 [node name="Dampener_Boss" parent="Room" groups=["enemies"] instance=ExtResource("6_dampener")]
-position = Vector2(240, 80)
+position = Vector2(740, 120)
 
 ; ===========================
 ; ENTITIES
@@ -142,7 +142,7 @@ position = Vector2(240, 80)
 [node name="Entities" type="Node2D" parent="."]
 
 [node name="Player" parent="Entities" groups=["player"] instance=ExtResource("1_player")]
-position = Vector2(180, 280)
+position = Vector2(640, 600)
 
 ; ===========================
 ; PROJECTILES CONTAINER
