@@ -30,7 +30,7 @@ const CHARGE_DAMAGE: float = 25.0
 
 # --- Shooting ---
 var bullet_scene: PackedScene = preload("res://scenes/projectiles/bullet.tscn")
-const SPREAD_COUNT: int = 24
+const SPREAD_COUNT: int = 12
 
 # --- Visual ---
 var _flash_timer: float = 0.0
@@ -39,6 +39,10 @@ var _is_telegraph: bool = false
 # --- Minions ---
 var stalker_scene: PackedScene = preload("res://scenes/enemies/stalker.tscn")
 var _minion_spawn_timer: float = 15.0
+
+# --- Bombs ---
+var bomb_scene: PackedScene = preload("res://scenes/enemies/time_bomb.tscn")
+var _bomb_spawn_timer: float = 5.0
 
 # --- Signals ---
 signal enemy_died(enemy: Node2D)
@@ -76,6 +80,12 @@ func _physics_process(delta: float) -> void:
 		_minion_spawn_timer = 15.0
 		if randf() <= 0.75:
 			_spawn_minions()
+			
+	# --- Bomb Spawning ---
+	_bomb_spawn_timer -= delta * Engine.time_scale
+	if _bomb_spawn_timer <= 0.0:
+		_bomb_spawn_timer = 5.0
+		_spawn_bombs(player)
 	
 	# --- State Machine ---
 	match current_boss_state:
@@ -192,6 +202,17 @@ func _spawn_minions() -> void:
 			
 		get_tree().current_scene.add_child(stalker)
 		GameJuice.spawn_death_particles(stalker.global_position, Color(0.8, 0.2, 0.2), 15)
+
+func _spawn_bombs(player: Node2D) -> void:
+	if not is_instance_valid(bomb_scene): return
+	
+	var count = randi_range(1, 3)
+	for i in range(count):
+		var bomb: Node2D = bomb_scene.instantiate()
+		var angle = randf() * TAU
+		var dist = randf_range(0.0, 150.0)
+		bomb.global_position = player.global_position + Vector2(cos(angle), sin(angle)) * dist
+		get_tree().current_scene.add_child(bomb)
 
 func take_damage(amount: float = 10.0) -> void:
 	if is_dead:
