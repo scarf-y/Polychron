@@ -6,7 +6,7 @@ extends CharacterBody2D
 # --- Stats ---
 @export var health: float = 120.0
 @export var fire_interval: float = 0.6
-@export var detection_range: float = 200.0
+@export var detection_range: float = 400.0
 var is_dead: bool = false
 var is_active_in_room: bool = true
 
@@ -71,15 +71,17 @@ func _fire_with_telegraph(target: Node2D) -> void:
 	var target_pos: Vector2 = TimeManager.get_enemy_target_position(target)
 	var direction: Vector2 = (target_pos - global_position).normalized()
 	
-	var bullet := bullet_scene.instantiate()
-	bullet.global_position = global_position
-	bullet.setup(direction, true)
+	var b: Node2D = bullet_scene.instantiate()
+	b.global_position = global_position
+	b.setup(direction, true)
+	if "speed" in b:
+		b.speed = 400.0
 	
 	var container: Node = get_tree().get_first_node_in_group("projectiles_container")
 	if container:
-		container.add_child(bullet)
+		container.add_child(b)
 	else:
-		get_parent().add_child(bullet)
+		get_parent().add_child(b)
 	
 	# Muzzle flash
 	modulate = Color(1, 1, 0.5)
