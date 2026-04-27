@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://scenes/levels/crusher_hazard.tscn" id="10_crusher"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/stalker.tscn" id="11_stalker"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/prism.tscn" id="12_prism"]
+[ext_resource type="AudioStream" path="res://assets/audio/chrono stream.mp3" id="13_bgm"]
 
 [sub_resource type="RectangleShape2D" id="wall_h_long"]
 size = Vector2(1280, 16)
@@ -249,3 +250,9 @@ position = Vector2(80, 180)
 [node name="TimeEffect" parent="." unique_id=2096809280 instance=ExtResource("6_time_fx")]
 
 [node name="HUD" parent="." unique_id=272692176 instance=ExtResource("7_hud")]
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_bgm")
+autoplay = true
+volume_db = -12.0
+bus = &"Master"

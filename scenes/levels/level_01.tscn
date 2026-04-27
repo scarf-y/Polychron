@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
 [ext_resource type="PackedScene" path="res://scenes/effects/world_environment.tscn" id="8_world_env"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/prism.tscn" id="9_prism"]
+[ext_resource type="AudioStream" path="res://assets/audio/chrono stream.mp3" id="10_bgm"]
 
 [sub_resource type="RectangleShape2D" id="wall_h_long"]
 size = Vector2(1920, 16)
@@ -313,3 +314,9 @@ position = Vector2(80, 180)
 [node name="TimeEffect" parent="." unique_id=2051863049 instance=ExtResource("6_time_fx")]
 
 [node name="HUD" parent="." unique_id=1692469853 instance=ExtResource("7_hud")]
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_bgm")
+autoplay = true
+volume_db = -12.0
+bus = &"Master"
