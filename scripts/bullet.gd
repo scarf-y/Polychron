@@ -8,7 +8,7 @@ extends Area2D
 # Layer 3: Enemies  | Layer 4: Player Bullets | Layer 5: Enemy Bullets
 
 # --- Config ---
-const BULLET_SPEED: float = 250.0
+var speed: float = 250.0
 const LIFETIME: float = 3.0
 
 var direction: Vector2 = Vector2.RIGHT
@@ -61,7 +61,7 @@ func _physics_process(delta: float) -> void:
 			_is_frozen = false
 			modulate = base_color
 	
-	position += direction * BULLET_SPEED * delta
+	position += direction * speed * delta
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player") and is_enemy_bullet:

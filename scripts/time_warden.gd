@@ -14,7 +14,7 @@ var is_dead: bool = false
 var is_active_in_room: bool = true
 
 # --- Attack Patterns ---
-enum BossState { IDLE, CHASE, CHARGING, SPREAD_SHOT, STUNNED }
+enum BossState { IDLE, CHASE, CHARGING, SPREAD_SHOT, STUNNED, CONE_SHOCKWAVE }
 var current_boss_state: BossState = BossState.IDLE
 
 # --- Timers ---
@@ -99,6 +99,8 @@ func _physics_process(delta: float) -> void:
 			_handle_spread_shot(player)
 		BossState.STUNNED:
 			_handle_stunned(delta)
+		BossState.CONE_SHOCKWAVE:
+			_handle_cone_shockwave(delta, player)
 
 func _handle_idle(delta: float, player: Node2D) -> void:
 	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
@@ -120,7 +122,10 @@ func _handle_chase(delta: float, player: Node2D, speed: float) -> void:
 		if distance < 80.0:
 			_start_charge(direction)
 		else:
-			_start_spread_shot()
+			if randf() < 0.4:
+				_start_cone_shockwave(player)
+			else:
+				_start_spread_shot()
 
 func _start_charge(direction: Vector2) -> void:
 	current_boss_state = BossState.CHARGING
@@ -207,12 +212,71 @@ func _spawn_bombs(player: Node2D) -> void:
 	if not is_instance_valid(bomb_scene): return
 	
 	var count = randi_range(1, 3)
+	var spawned_positions: Array[Vector2] = []
 	for i in range(count):
 		var bomb: Node2D = bomb_scene.instantiate()
-		var angle = randf() * TAU
-		var dist = randf_range(0.0, 150.0)
-		bomb.global_position = player.global_position + Vector2(cos(angle), sin(angle)) * dist
+		
+		# Prevent stacking
+		var spawn_pos := Vector2.ZERO
+		var valid_pos := false
+		var attempts := 0
+		while not valid_pos and attempts < 10:
+			var angle = randf() * TAU
+			var dist = randf_range(0.0, 150.0)
+			spawn_pos = player.global_position + Vector2(cos(angle), sin(angle)) * dist
+			
+			valid_pos = true
+			for p in spawned_positions:
+				if p.distance_to(spawn_pos) < 160.0:
+					valid_pos = false
+					break
+			attempts += 1
+			
+		spawned_positions.append(spawn_pos)
+		bomb.global_position = spawn_pos
 		get_tree().current_scene.add_child(bomb)
+
+var _cone_direction: Vector2 = Vector2.ZERO
+
+func _start_cone_shockwave(player: Node2D) -> void:
+	current_boss_state = BossState.CONE_SHOCKWAVE
+	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
+	_cone_direction = (target_pos - global_position).normalized()
+	_state_timer = 0.6  # Telegraph duration
+	_is_telegraph = true
+	modulate = Color(1.0, 0.5, 0.0)  # Orange telegraph
+	velocity = Vector2.ZERO
+
+func _handle_cone_shockwave(delta: float, player: Node2D) -> void:
+	_state_timer -= delta
+	if _state_timer <= 0.0:
+		if _is_telegraph:
+			_fire_cone(_cone_direction)
+			_is_telegraph = false
+			_state_timer = STUN_DURATION * 0.5
+			modulate = Color.WHITE
+		else:
+			current_boss_state = BossState.CHASE
+
+func _fire_cone(dir: Vector2) -> void:
+	if not is_instance_valid(bullet_scene): return
+	
+	GameJuice.screen_shake(8.0, 0.3)
+	
+	var bullet_count = 15
+	var spread_angle = deg_to_rad(45.0)
+	var start_angle = dir.angle() - (spread_angle / 2.0)
+	var angle_step = spread_angle / float(bullet_count - 1)
+	
+	for i in bullet_count:
+		var b: Node2D = bullet_scene.instantiate()
+		b.global_position = global_position
+		b.setup(Vector2.RIGHT.rotated(start_angle + i * angle_step), true)
+		if "speed" in b:
+			b.speed = 450.0  # Very fast!
+		if "base_color" in b:
+			b.base_color = Color(1.0, 0.5, 0.0)
+		get_tree().current_scene.add_child(b)
 
 func take_damage(amount: float = 10.0) -> void:
 	if is_dead:

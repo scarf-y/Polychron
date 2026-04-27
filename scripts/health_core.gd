@@ -94,11 +94,8 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 	
 	# Heal the player
-	if "health" in body and "max_health" in body:
-		body.health = minf(body.health + HEAL_AMOUNT, body.max_health)
-		# Emit the player's damaged signal to update HUD
-		if body.has_signal("player_damaged"):
-			body.player_damaged.emit(body.health)
+	if body.has_method("heal"):
+		body.heal(HEAL_AMOUNT)
 	
 	# Pickup VFX: green glow around the player
 	_play_pickup_effect(body)

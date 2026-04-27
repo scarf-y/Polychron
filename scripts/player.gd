@@ -440,6 +440,13 @@ func take_damage(amount: float = 10.0) -> void:
 	if health <= 0.0:
 		_die()
 
+func heal(amount: float) -> void:
+	if is_dead:
+		return
+	health = minf(health + amount, max_health)
+	TimeManager.player_health = health
+	player_damaged.emit(health)
+
 func _die() -> void:
 	is_dead = true
 	GameJuice.death_impact()
