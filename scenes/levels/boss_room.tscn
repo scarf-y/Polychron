@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/dampener.tscn" id="6_dampener"]
 [ext_resource type="PackedScene" path="res://scenes/effects/world_environment.tscn" id="7_world_env"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/prism.tscn" id="8_prism"]
 
 [sub_resource type="RectangleShape2D" id="wall_h"]
 size = Vector2(1280, 16)
@@ -135,6 +136,12 @@ position = Vector2(640, 150)
 ; Dampener support — protects The Kernel
 [node name="Dampener_Boss" parent="Room" groups=["enemies"] instance=ExtResource("6_dampener")]
 position = Vector2(740, 120)
+
+[node name="Prism_1" parent="Room" groups=["enemies"] instance=ExtResource("8_prism")]
+position = Vector2(320, 260)
+
+[node name="Prism_2" parent="Room" groups=["enemies"] instance=ExtResource("8_prism")]
+position = Vector2(960, 260)
 
 ; ===========================
 ; ENTITIES
