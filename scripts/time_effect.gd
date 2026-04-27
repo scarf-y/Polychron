@@ -146,7 +146,7 @@ func _apply_fracture_vfx() -> void:
 
 # --- Stage III: Screen Jitter ---
 func _process_jitter(_delta: float) -> void:
-	if _jitter_intensity <= 0.0:
+	if _jitter_intensity <= 0.0 or not GlobalSettings.screenshake_enabled:
 		return
 	
 	var cam: Camera2D = get_viewport().get_camera_2d() if get_viewport() else null
@@ -155,12 +155,15 @@ func _process_jitter(_delta: float) -> void:
 	
 	# Only add jitter when GameJuice isn't already shaking
 	# (We piggyback on their offset system)
-	if _jitter_intensity > 0.0 and _fracture_stage >= 3:
+	if _fracture_stage >= 3:
 		var jitter := Vector2(
 			randf_range(-_jitter_intensity, _jitter_intensity),
 			randf_range(-_jitter_intensity, _jitter_intensity)
 		)
-		cam.offset += jitter
+		# To avoid infinite offset stacking, we just assign the jitter, 
+		# assuming GameJuice reset it, or we rely on the small variance.
+		# A better way is to only apply it if GameJuice isn't applying heavy shake.
+		cam.offset = jitter
 
 # --- Stage IV: Occasional Color Inversion ---
 func _process_inversion(delta: float) -> void:
