@@ -146,7 +146,10 @@ func _apply_fracture_vfx() -> void:
 
 # --- Stage III: Screen Jitter ---
 func _process_jitter(_delta: float) -> void:
-	if _jitter_intensity <= 0.0 or not GlobalSettings.screenshake_enabled:
+	if _jitter_intensity <= 0.0:
+		return
+	var gs = get_node_or_null("/root/GlobalSettings")
+	if gs and not gs.screenshake_enabled:
 		return
 	
 	var cam: Camera2D = get_viewport().get_camera_2d() if get_viewport() else null
