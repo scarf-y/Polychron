@@ -242,7 +242,7 @@ func _start_cone_shockwave(player: Node2D) -> void:
 	current_boss_state = BossState.CONE_SHOCKWAVE
 	var target_pos: Vector2 = TimeManager.get_enemy_target_position(player)
 	_cone_direction = (target_pos - global_position).normalized()
-	_state_timer = 0.6  # Telegraph duration
+	_state_timer = 1.0  # Telegraph duration
 	_is_telegraph = true
 	modulate = Color(1.0, 0.5, 0.0)  # Orange telegraph
 	velocity = Vector2.ZERO

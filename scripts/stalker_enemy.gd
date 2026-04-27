@@ -16,9 +16,11 @@ var _damage_timer: float = 0.0
 
 # --- Attack Telegraph ---
 var _is_attacking: bool = false
-const LUNGE_SPEED: float = 200.0
-const LUNGE_DURATION: float = 0.2
-const ATTACK_RANGE: float = 50.0
+var _is_telegraphing: bool = false
+var _lunge_target_dir: Vector2 = Vector2.ZERO
+const LUNGE_SPEED: float = 500.0
+const LUNGE_DURATION: float = 0.3
+const ATTACK_RANGE: float = 140.0
 const ATTACK_COOLDOWN: float = 1.5
 var _attack_cooldown_timer: float = 0.0
 
@@ -74,11 +76,17 @@ func _physics_process(delta: float) -> void:
 
 func _perform_lunge(direction: Vector2, player: Node2D) -> void:
 	_is_attacking = true
+	_is_telegraphing = true
+	_lunge_target_dir = direction
 	_attack_cooldown_timer = ATTACK_COOLDOWN
 	
-	# Telegraph: flash yellow for 0.3s
+	# Telegraph: flash yellow for 0.3s and show line
 	modulate = Color(1, 1, 0)  # Bright yellow warning
+	queue_redraw()
 	await get_tree().create_timer(0.3).timeout
+	
+	_is_telegraphing = false
+	queue_redraw()
 	
 	# Lunge!
 	modulate = Color(1, 0, 0)  # Bright red during attack
@@ -96,6 +104,13 @@ func _perform_lunge(direction: Vector2, player: Node2D) -> void:
 	
 	_is_attacking = false
 	modulate = Color(1.0, 0.2, 0.2)
+
+func _draw() -> void:
+	if _is_telegraphing:
+		var target_pos = _lunge_target_dir * (LUNGE_SPEED * LUNGE_DURATION)
+		# Draw a thick transparent grey/white line to show the dash path
+		draw_line(Vector2.ZERO, target_pos, Color(0.8, 0.8, 0.9, 0.3), 8.0)
+		draw_circle(target_pos, 8.0, Color(0.8, 0.8, 0.9, 0.3))
 
 func take_damage(amount: float = 10.0) -> void:
 	if is_dead:
