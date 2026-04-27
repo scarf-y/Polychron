@@ -1,13 +1,14 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene format=3 uid="uid://dqcsia6hgg8l8"]
 
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://dhcoe3ss3vy5b" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/stalker.tscn" id="2_stalker"]
-[ext_resource type="Script" path="res://scripts/room_manager.gd" id="3_room_mgr"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/turret.tscn" id="4_turret"]
-[ext_resource type="Script" path="res://scripts/level_transition.gd" id="5_transition"]
-[ext_resource type="PackedScene" path="res://scenes/effects/time_effect.tscn" id="6_time_fx"]
+[ext_resource type="Script" uid="uid://4kjx36sq15lt" path="res://scripts/room_manager.gd" id="3_room_mgr"]
+[ext_resource type="PackedScene" uid="uid://dqwnmc3usx5cn" path="res://scenes/enemies/turret.tscn" id="4_turret"]
+[ext_resource type="Script" uid="uid://dky7oam5qq2r2" path="res://scripts/level_transition.gd" id="5_transition"]
+[ext_resource type="PackedScene" uid="uid://j4yeg2dwgw8m" path="res://scenes/effects/time_effect.tscn" id="6_time_fx"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
 [ext_resource type="PackedScene" path="res://scenes/effects/world_environment.tscn" id="8_world_env"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/prism.tscn" id="9_prism"]
 
 [sub_resource type="RectangleShape2D" id="wall_h_long"]
 size = Vector2(1920, 16)
@@ -27,328 +28,288 @@ size = Vector2(16, 80)
 [sub_resource type="RectangleShape2D" id="portal_shape"]
 size = Vector2(32, 64)
 
-[node name="Level_01" type="Node2D"]
+[node name="Level_01" type="Node2D" unique_id=1680148200]
 
-; ===========================
-; EFFECTS & WORLD
-; ===========================
-[node name="WorldEnvironment" parent="." instance=ExtResource("8_world_env")]
+[node name="WorldEnvironment" parent="." unique_id=331129002 instance=ExtResource("8_world_env")]
 
-; ===========================
-; FLOORS (3 640x360 rooms)
-; ===========================
-[node name="Floors" type="Node2D" parent="."]
+[node name="Floors" type="Node2D" parent="." unique_id=794665038]
 
-[node name="Floor1" type="ColorRect" parent="Floors"]
+[node name="Floor1" type="ColorRect" parent="Floors" unique_id=161074563]
 offset_right = 640.0
 offset_bottom = 360.0
 color = Color(0, 0, 0, 1)
 
-[node name="Floor2" type="ColorRect" parent="Floors"]
+[node name="Floor2" type="ColorRect" parent="Floors" unique_id=1451985349]
 offset_left = 640.0
 offset_right = 1280.0
 offset_bottom = 360.0
 color = Color(0, 0, 0, 1)
 
-[node name="Floor3" type="ColorRect" parent="Floors"]
+[node name="Floor3" type="ColorRect" parent="Floors" unique_id=1565635317]
 offset_left = 1280.0
 offset_right = 1920.0
 offset_bottom = 360.0
 color = Color(0, 0, 0, 1)
 
-; ===========================
-; PERIMETER WALLS (Glowing Cyan)
-; ===========================
-[node name="Walls" type="Node2D" parent="."]
+[node name="Walls" type="Node2D" parent="." unique_id=2122598026]
 
-[node name="TopWall" type="StaticBody2D" parent="Walls"]
+[node name="TopWall" type="StaticBody2D" parent="Walls" unique_id=202214284]
 position = Vector2(960, -8)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/TopWall"]
+[node name="Col" type="CollisionShape2D" parent="Walls/TopWall" unique_id=1858074349]
 shape = SubResource("wall_h_long")
 
-[node name="Vis" type="ColorRect" parent="Walls/TopWall"]
+[node name="Vis" type="ColorRect" parent="Walls/TopWall" unique_id=1008144114]
 offset_left = -960.0
 offset_top = -8.0
 offset_right = 960.0
 offset_bottom = 8.0
 color = Color(0, 1.5, 3, 1)
 
-[node name="BottomWall" type="StaticBody2D" parent="Walls"]
+[node name="BottomWall" type="StaticBody2D" parent="Walls" unique_id=70625276]
 position = Vector2(960, 368)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/BottomWall"]
+[node name="Col" type="CollisionShape2D" parent="Walls/BottomWall" unique_id=1968756739]
 shape = SubResource("wall_h_long")
 
-[node name="Vis" type="ColorRect" parent="Walls/BottomWall"]
+[node name="Vis" type="ColorRect" parent="Walls/BottomWall" unique_id=432395827]
 offset_left = -960.0
 offset_top = -8.0
 offset_right = 960.0
 offset_bottom = 8.0
 color = Color(0, 1.5, 3, 1)
 
-[node name="LeftWall" type="StaticBody2D" parent="Walls"]
+[node name="LeftWall" type="StaticBody2D" parent="Walls" unique_id=536406034]
 position = Vector2(-8, 180)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/LeftWall"]
+[node name="Col" type="CollisionShape2D" parent="Walls/LeftWall" unique_id=655257423]
 shape = SubResource("wall_v_short")
 
-[node name="Vis" type="ColorRect" parent="Walls/LeftWall"]
+[node name="Vis" type="ColorRect" parent="Walls/LeftWall" unique_id=1721174690]
 offset_left = -8.0
 offset_top = -180.0
 offset_right = 8.0
 offset_bottom = 180.0
 color = Color(0, 1.5, 3, 1)
 
-[node name="RightWall" type="StaticBody2D" parent="Walls"]
+[node name="RightWall" type="StaticBody2D" parent="Walls" unique_id=1743371807]
 position = Vector2(1928, 180)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/RightWall"]
+[node name="Col" type="CollisionShape2D" parent="Walls/RightWall" unique_id=912250735]
 shape = SubResource("wall_v_short")
 
-[node name="Vis" type="ColorRect" parent="Walls/RightWall"]
+[node name="Vis" type="ColorRect" parent="Walls/RightWall" unique_id=1709534313]
 offset_left = -8.0
 offset_top = -180.0
 offset_right = 8.0
 offset_bottom = 180.0
 color = Color(0, 1.5, 3, 1)
 
-; Divider 1 (Between R1 and R2)
-[node name="Divider1_Top" type="StaticBody2D" parent="Walls"]
+[node name="Divider1_Top" type="StaticBody2D" parent="Walls" unique_id=1520568655]
 position = Vector2(640, 70)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/Divider1_Top"]
+[node name="Col" type="CollisionShape2D" parent="Walls/Divider1_Top" unique_id=562484674]
 shape = SubResource("wall_h_door")
 
-[node name="Vis" type="ColorRect" parent="Walls/Divider1_Top"]
+[node name="Vis" type="ColorRect" parent="Walls/Divider1_Top" unique_id=556662291]
 offset_left = -8.0
 offset_top = -70.0
 offset_right = 8.0
 offset_bottom = 70.0
 color = Color(0, 1.5, 3, 1)
 
-[node name="Divider1_Bot" type="StaticBody2D" parent="Walls"]
+[node name="Divider1_Bot" type="StaticBody2D" parent="Walls" unique_id=1479755758]
 position = Vector2(640, 290)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/Divider1_Bot"]
+[node name="Col" type="CollisionShape2D" parent="Walls/Divider1_Bot" unique_id=1808300998]
 shape = SubResource("wall_h_door")
 
-[node name="Vis" type="ColorRect" parent="Walls/Divider1_Bot"]
+[node name="Vis" type="ColorRect" parent="Walls/Divider1_Bot" unique_id=128498819]
 offset_left = -8.0
 offset_top = -70.0
 offset_right = 8.0
 offset_bottom = 70.0
 color = Color(0, 1.5, 3, 1)
 
-; Divider 2 (Between R2 and R3)
-[node name="Divider2_Top" type="StaticBody2D" parent="Walls"]
+[node name="Divider2_Top" type="StaticBody2D" parent="Walls" unique_id=570713083]
 position = Vector2(1280, 70)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/Divider2_Top"]
+[node name="Col" type="CollisionShape2D" parent="Walls/Divider2_Top" unique_id=233157031]
 shape = SubResource("wall_h_door")
 
-[node name="Vis" type="ColorRect" parent="Walls/Divider2_Top"]
+[node name="Vis" type="ColorRect" parent="Walls/Divider2_Top" unique_id=2031333696]
 offset_left = -8.0
 offset_top = -70.0
 offset_right = 8.0
 offset_bottom = 70.0
 color = Color(0, 1.5, 3, 1)
 
-[node name="Divider2_Bot" type="StaticBody2D" parent="Walls"]
+[node name="Divider2_Bot" type="StaticBody2D" parent="Walls" unique_id=1975543574]
 position = Vector2(1280, 290)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Walls/Divider2_Bot"]
+[node name="Col" type="CollisionShape2D" parent="Walls/Divider2_Bot" unique_id=626048078]
 shape = SubResource("wall_h_door")
 
-[node name="Vis" type="ColorRect" parent="Walls/Divider2_Bot"]
+[node name="Vis" type="ColorRect" parent="Walls/Divider2_Bot" unique_id=1215402033]
 offset_left = -8.0
 offset_top = -70.0
 offset_right = 8.0
 offset_bottom = 70.0
 color = Color(0, 1.5, 3, 1)
 
-; ===========================
-; ROOM 1 — Start (Tutorial)
-; ===========================
-[node name="Room1" type="Node2D" parent="."]
+[node name="Room1" type="Node2D" parent="." unique_id=1825699663]
 script = ExtResource("3_room_mgr")
 
-[node name="RoomTrigger" type="Area2D" parent="Room1"]
+[node name="RoomTrigger" type="Area2D" parent="Room1" unique_id=265054531]
 position = Vector2(320, 180)
 collision_layer = 0
 collision_mask = 2
 
-[node name="Col" type="CollisionShape2D" parent="Room1/RoomTrigger"]
+[node name="Col" type="CollisionShape2D" parent="Room1/RoomTrigger" unique_id=353619848]
 shape = SubResource("trigger_shape")
 
-; Lock Door 1
-[node name="Door1" type="StaticBody2D" parent="Room1"]
+[node name="Door1" type="StaticBody2D" parent="Room1" unique_id=1328021228]
 position = Vector2(640, 180)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Room1/Door1"]
+[node name="Col" type="CollisionShape2D" parent="Room1/Door1" unique_id=1524736901]
 shape = SubResource("door_shape")
 
-[node name="Vis" type="ColorRect" parent="Room1/Door1"]
+[node name="Vis" type="ColorRect" parent="Room1/Door1" unique_id=1488833878]
 offset_left = -8.0
 offset_top = -40.0
 offset_right = 8.0
 offset_bottom = 40.0
 color = Color(3, 1.5, 0, 1)
 
-; Enemies
-[node name="Stalker_R1" parent="Room1" groups=["enemies"] instance=ExtResource("2_stalker")]
+[node name="Stalker_R1" parent="Room1" unique_id=1878251305 groups=["enemies"] instance=ExtResource("2_stalker")]
 position = Vector2(450, 180)
 
-; ===========================
-; ROOM 2 — Combat 1
-; ===========================
-[node name="Room2" type="Node2D" parent="."]
+[node name="Room2" type="Node2D" parent="." unique_id=448436014]
 script = ExtResource("3_room_mgr")
 
-[node name="RoomTrigger" type="Area2D" parent="Room2"]
+[node name="RoomTrigger" type="Area2D" parent="Room2" unique_id=104846584]
 position = Vector2(960, 180)
 collision_layer = 0
 collision_mask = 2
 
-[node name="Col" type="CollisionShape2D" parent="Room2/RoomTrigger"]
+[node name="Col" type="CollisionShape2D" parent="Room2/RoomTrigger" unique_id=319454201]
 shape = SubResource("trigger_shape")
 
-; Lock Door 1 (Backwards)
-[node name="DoorBack" type="StaticBody2D" parent="Room2"]
+[node name="DoorBack" type="StaticBody2D" parent="Room2" unique_id=1143546787]
 position = Vector2(640, 180)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Room2/DoorBack"]
+[node name="Col" type="CollisionShape2D" parent="Room2/DoorBack" unique_id=1123256724]
 shape = SubResource("door_shape")
 
-[node name="Vis" type="ColorRect" parent="Room2/DoorBack"]
+[node name="Vis" type="ColorRect" parent="Room2/DoorBack" unique_id=1706270558]
 offset_left = -8.0
 offset_top = -40.0
 offset_right = 8.0
 offset_bottom = 40.0
 color = Color(3, 1.5, 0, 1)
 
-; Lock Door 2 (Forwards)
-[node name="DoorForward" type="StaticBody2D" parent="Room2"]
+[node name="DoorForward" type="StaticBody2D" parent="Room2" unique_id=1973723666]
 position = Vector2(1280, 180)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Room2/DoorForward"]
+[node name="Col" type="CollisionShape2D" parent="Room2/DoorForward" unique_id=2046888051]
 shape = SubResource("door_shape")
 
-[node name="Vis" type="ColorRect" parent="Room2/DoorForward"]
+[node name="Vis" type="ColorRect" parent="Room2/DoorForward" unique_id=833698954]
 offset_left = -8.0
 offset_top = -40.0
 offset_right = 8.0
 offset_bottom = 40.0
 color = Color(3, 1.5, 0, 1)
 
-; Enemies
-[node name="Stalker_R2_1" parent="Room2" groups=["enemies"] instance=ExtResource("2_stalker")]
+[node name="Stalker_R2_1" parent="Room2" unique_id=1889048986 groups=["enemies"] instance=ExtResource("2_stalker")]
 position = Vector2(1100, 100)
 
-[node name="Stalker_R2_2" parent="Room2" groups=["enemies"] instance=ExtResource("2_stalker")]
+[node name="Stalker_R2_2" parent="Room2" unique_id=1709825381 groups=["enemies"] instance=ExtResource("2_stalker")]
 position = Vector2(1100, 260)
 
-[node name="Turret_R2" parent="Room2" groups=["enemies"] instance=ExtResource("4_turret")]
+[node name="Turret_R2" parent="Room2" unique_id=1631941848 groups=["enemies"] instance=ExtResource("4_turret")]
 position = Vector2(1150, 180)
 
-; ===========================
-; ROOM 3 — Combat 2
-; ===========================
-[node name="Room3" type="Node2D" parent="."]
+[node name="Prism_R2" parent="Room2" unique_id=1567341234 groups=["enemies"] instance=ExtResource("9_prism")]
+position = Vector2(960, 180)
+
+[node name="Room3" type="Node2D" parent="." unique_id=789157418]
 script = ExtResource("3_room_mgr")
 
-[node name="RoomTrigger" type="Area2D" parent="Room3"]
+[node name="RoomTrigger" type="Area2D" parent="Room3" unique_id=498191971]
 position = Vector2(1600, 180)
 collision_layer = 0
 collision_mask = 2
 
-[node name="Col" type="CollisionShape2D" parent="Room3/RoomTrigger"]
+[node name="Col" type="CollisionShape2D" parent="Room3/RoomTrigger" unique_id=1039544823]
 shape = SubResource("trigger_shape")
 
-; Lock Door 2 (Backwards)
-[node name="DoorBack" type="StaticBody2D" parent="Room3"]
+[node name="DoorBack" type="StaticBody2D" parent="Room3" unique_id=72299687]
 position = Vector2(1280, 180)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Col" type="CollisionShape2D" parent="Room3/DoorBack"]
+[node name="Col" type="CollisionShape2D" parent="Room3/DoorBack" unique_id=307392870]
 shape = SubResource("door_shape")
 
-[node name="Vis" type="ColorRect" parent="Room3/DoorBack"]
+[node name="Vis" type="ColorRect" parent="Room3/DoorBack" unique_id=1415395166]
 offset_left = -8.0
 offset_top = -40.0
 offset_right = 8.0
 offset_bottom = 40.0
 color = Color(3, 1.5, 0, 1)
 
-; Enemies
-[node name="Stalker_R3_1" parent="Room3" groups=["enemies"] instance=ExtResource("2_stalker")]
+[node name="Stalker_R3_1" parent="Room3" unique_id=980109236 groups=["enemies"] instance=ExtResource("2_stalker")]
 position = Vector2(1700, 80)
 
-[node name="Stalker_R3_2" parent="Room3" groups=["enemies"] instance=ExtResource("2_stalker")]
+[node name="Stalker_R3_2" parent="Room3" unique_id=917600097 groups=["enemies"] instance=ExtResource("2_stalker")]
 position = Vector2(1700, 280)
 
-[node name="Stalker_R3_3" parent="Room3" groups=["enemies"] instance=ExtResource("2_stalker")]
+[node name="Stalker_R3_3" parent="Room3" unique_id=2107682389 groups=["enemies"] instance=ExtResource("2_stalker")]
 position = Vector2(1800, 180)
 
-[node name="Turret_R3_1" parent="Room3" groups=["enemies"] instance=ExtResource("4_turret")]
+[node name="Turret_R3_1" parent="Room3" unique_id=2121505051 groups=["enemies"] instance=ExtResource("4_turret")]
 position = Vector2(1500, 80)
 
-[node name="Turret_R3_2" parent="Room3" groups=["enemies"] instance=ExtResource("4_turret")]
+[node name="Turret_R3_2" parent="Room3" unique_id=2077234781 groups=["enemies"] instance=ExtResource("4_turret")]
 position = Vector2(1500, 280)
 
-; ===========================
-; END PORTAL (Child of Room 3)
-; ===========================
-[node name="LevelPortal" type="Area2D" parent="Room3"]
+[node name="Prism_R3" parent="Room3" unique_id=1567341235 groups=["enemies"] instance=ExtResource("9_prism")]
+position = Vector2(1600, 180)
+
+[node name="LevelPortal" type="Area2D" parent="Room3" unique_id=1834281865]
 position = Vector2(1860, 180)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("5_transition")
-next_level_path = "res://scenes/levels/level_02.tscn"
 
-[node name="Col" type="CollisionShape2D" parent="Room3/LevelPortal"]
+[node name="Col" type="CollisionShape2D" parent="Room3/LevelPortal" unique_id=351195029]
 shape = SubResource("portal_shape")
 
-[node name="Vis" type="ColorRect" parent="Room3/LevelPortal"]
+[node name="Vis" type="ColorRect" parent="Room3/LevelPortal" unique_id=904245926]
 offset_left = -16.0
 offset_top = -32.0
 offset_right = 16.0
 offset_bottom = 32.0
 color = Color(1, 0, 3, 1)
 
-; ===========================
-; ENTITIES
-; ===========================
-[node name="Entities" type="Node2D" parent="."]
+[node name="Entities" type="Node2D" parent="." unique_id=364918151]
 
-[node name="Player" parent="Entities" groups=["player"] instance=ExtResource("1_player")]
+[node name="Player" parent="Entities" unique_id=1216688232 groups=["player"] instance=ExtResource("1_player")]
 position = Vector2(80, 180)
 
-[node name="Projectiles" type="Node2D" parent="." groups=["projectiles_container"]]
+[node name="Projectiles" type="Node2D" parent="." unique_id=784208799 groups=["projectiles_container"]]
 
-[node name="TimeEffect" parent="." instance=ExtResource("6_time_fx")]
+[node name="TimeEffect" parent="." unique_id=2051863049 instance=ExtResource("6_time_fx")]
 
-[node name="HUD" parent="." instance=ExtResource("7_hud")]
+[node name="HUD" parent="." unique_id=1692469853 instance=ExtResource("7_hud")]

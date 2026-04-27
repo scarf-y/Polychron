@@ -1,6 +1,31 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/prism.gd" id="1_script"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_prism"]
+size = Vector2(40, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_laser_h"]
+size = Vector2(1200, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_laser_v"]
+size = Vector2(30, 1200)
+
 [node name="Prism" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_prism")
+
+[node name="LaserArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape2D_H" type="CollisionShape2D" parent="LaserArea"]
+shape = SubResource("RectangleShape2D_laser_h")
+
+[node name="CollisionShape2D_V" type="CollisionShape2D" parent="LaserArea"]
+shape = SubResource("RectangleShape2D_laser_v")

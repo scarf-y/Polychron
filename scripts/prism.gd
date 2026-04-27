@@ -12,7 +12,7 @@ const IDLE_TIME: float = 4.0
 const TELEGRAPH_TIME: float = 1.5
 const FIRING_TIME: float = 3.0
 
-var _laser_area: Area2D
+@onready var _laser_area: Area2D = $LaserArea
 const LASER_WIDTH: float = 30.0
 const LASER_LENGTH: float = 1200.0
 const DAMAGE: float = 20.0
@@ -24,34 +24,7 @@ signal enemy_died(enemy: Node2D)
 func _ready() -> void:
 	add_to_group("enemies")
 	
-	# Setup main hurtbox (Layer 3)
-	collision_layer = 4
-	collision_mask = 0
-	var shape = CollisionShape2D.new()
-	var rect = RectangleShape2D.new()
-	rect.size = Vector2(40, 40)
-	shape.shape = rect
-	add_child(shape)
-	
-	# Setup Laser Area (Detects player on Layer 2)
-	_laser_area = Area2D.new()
-	_laser_area.collision_layer = 0
-	_laser_area.collision_mask = 2
-	add_child(_laser_area)
-	
-	var h_shape = CollisionShape2D.new()
-	var h_rect = RectangleShape2D.new()
-	h_rect.size = Vector2(LASER_LENGTH, LASER_WIDTH)
-	h_shape.shape = h_rect
-	_laser_area.add_child(h_shape)
-	
-	var v_shape = CollisionShape2D.new()
-	var v_rect = RectangleShape2D.new()
-	v_rect.size = Vector2(LASER_WIDTH, LASER_LENGTH)
-	v_shape.shape = v_rect
-	_laser_area.add_child(v_shape)
-	
-	# Initially disable laser hitboxes
+	# Ensure LaserArea is initially disabled
 	_laser_area.monitoring = false
 	_timer = IDLE_TIME
 
