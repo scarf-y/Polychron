@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 TimeManager="*res://scripts/time_manager.gd"
 GameJuice="*res://scripts/game_juice.gd"
+GlobalSettings="*res://scripts/global_settings.gd"
 
 [display]
 

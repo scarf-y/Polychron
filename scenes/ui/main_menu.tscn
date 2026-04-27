@@ -1,6 +1,7 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_script"]
+[ext_resource type="AudioStream" path="res://assets/audio/chrono break.mp3" id="2_audio"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font_size = 32
@@ -88,6 +89,10 @@ theme_override_constants/separation = 12
 layout_mode = 2
 text = "ENTER THE VOID"
 
+[node name="SettingsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "SETTINGS"
+
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "TERMINATE"
@@ -108,3 +113,70 @@ text = "WASD - Move  |  LMB - Shoot  |  Q - Phase Dash
 SPACE - Time Stop  |  SHIFT - Time Slow
 E - Time Erase"
 label_settings = SubResource("LabelSettings_controls")
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_audio")
+autoplay = true
+bus = &"Master"
+
+[node name="SettingsPanel" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -120.0
+offset_right = 150.0
+offset_bottom = 120.0
+color = Color(0.05, 0.05, 0.1, 0.95)
+
+[node name="Border" type="ReferenceRect" parent="SettingsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+border_color = Color(0, 1, 0.8, 1)
+editor_only = false
+
+[node name="VBox" type="VBoxContainer" parent="SettingsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="SettingsPanel/VBox"]
+layout_mode = 2
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="MusicCheck" type="CheckBox" parent="SettingsPanel/VBox"]
+layout_mode = 2
+text = "Enable Music"
+button_pressed = true
+
+[node name="ShakeCheck" type="CheckBox" parent="SettingsPanel/VBox"]
+layout_mode = 2
+text = "Enable Screenshake"
+button_pressed = true
+
+[node name="VolLabel" type="Label" parent="SettingsPanel/VBox"]
+layout_mode = 2
+text = "Master Volume"
+
+[node name="VolSlider" type="HSlider" parent="SettingsPanel/VBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="CloseSettings" type="Button" parent="SettingsPanel/VBox"]
+layout_mode = 2
+text = "CLOSE"
