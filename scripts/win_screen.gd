@@ -1,8 +1,19 @@
 extends CanvasLayer
 
+@onready var bgm_player: AudioStreamPlayer = $BGMPlayer
+
 func _ready() -> void:
 	# Stop the timer
 	TimeManager.game_is_active = false
+	
+	# Setup BGM
+	if GlobalSettings.music_enabled:
+		bgm_player.volume_db = GlobalSettings.get_volume_db()
+		var stream = load("res://assets/audio/chrono savior.mp3")
+		if stream is AudioStreamMP3:
+			stream.loop = true
+		bgm_player.stream = stream
+		bgm_player.play()
 	
 	# Check for new best time
 	var current_time = TimeManager.game_time

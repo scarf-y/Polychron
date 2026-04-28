@@ -42,6 +42,8 @@ func _load_settings() -> void:
 
 func _apply_audio_settings() -> void:
 	if GlobalSettings.music_enabled:
+		if bgm_player.stream is AudioStreamMP3:
+			bgm_player.stream.loop = true
 		if not bgm_player.playing:
 			bgm_player.play()
 		bgm_player.volume_db = GlobalSettings.get_volume_db()
