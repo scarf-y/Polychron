@@ -100,13 +100,13 @@ func _process_shake(delta: float) -> void:
 # =========================
 # FLOATING DAMAGE NUMBERS
 # =========================
-func spawn_damage_number(amount: float, pos: Vector2, is_crit: bool, color_override: Color = Color(-1, -1, -1), scale_override: float = 1.0) -> void:
+func spawn_damage_number(amount: float, pos: Vector2, is_crit: bool, color_override: Color = Color(-1, -1, -1), scale_override: float = 1.0, suffix: String = "") -> void:
 	var label := Label.new()
-	label.text = str(int(amount))
+	label.text = str(int(amount)) + suffix
 	label.global_position = pos + Vector2(randf_range(-8, 8), -10)
 	label.z_index = 100
 	
-	# Check for color override (e.g. Stage IV fracture — purple + 2x)
+	# Check for color override
 	var has_override: bool = color_override.r >= 0.0
 	
 	# Style based on crit or override
@@ -114,12 +114,10 @@ func spawn_damage_number(amount: float, pos: Vector2, is_crit: bool, color_overr
 		label.add_theme_color_override("font_color", color_override)
 		label.add_theme_font_size_override("font_size", int(12 * scale_override))
 		label.scale = Vector2(scale_override, scale_override)
-		label.text += "!!"
 	elif is_crit:
-		label.add_theme_color_override("font_color", Color(1, 0.9, 0.1))  # Bright gold
+		label.add_theme_color_override("font_color", Color(0.8, 0.2, 1.0)) # Neon Purple
 		label.add_theme_font_size_override("font_size", 14)
 		label.scale = Vector2(1.5, 1.5)
-		label.text += "!"
 	else:
 		label.add_theme_color_override("font_color", Color.WHITE)
 		label.add_theme_font_size_override("font_size", 10)

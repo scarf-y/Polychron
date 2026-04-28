@@ -94,27 +94,35 @@ func _on_body_entered(body: Node2D) -> void:
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
 		
-		# Determine damage number color
+		# Determine damage number color, suffix, and sound volume
 		var hit_color := Color.WHITE
+		var hit_suffix := ""
+		var hit_volume := -6.0
 		var is_slowed := TimeManager.current_state == TimeManager.TimeState.SLOWED
 		
 		if is_slowed and is_crit:
 			hit_color = Color(1.0, 0.5, 0.1) # Electric Orange (Super Hit)
-		elif is_slowed:
-			hit_color = Color(1.0, 0.85, 0.3) # Gold (Time Slow Buff)
+			hit_suffix = "!!!"
+			hit_volume = 4.0
 		elif is_crit:
 			hit_color = Color(0.8, 0.2, 1.0) # Neon Purple (Critical)
+			hit_suffix = "!!"
+			hit_volume = 2.0
+		elif is_slowed:
+			hit_color = Color(1.0, 0.85, 0.3) # Gold (Time Slow Buff)
+			hit_suffix = "!"
+			hit_volume = 0.0
 		
 		# Spawn floating damage number
-		GameJuice.spawn_damage_number(damage, body.global_position, is_crit, hit_color, 1.2 if is_slowed else 1.0)
+		GameJuice.spawn_damage_number(damage, body.global_position, is_crit, hit_color, 1.2 if is_slowed else 1.0, hit_suffix)
 		
 		# Impact effect
 		if is_crit:
 			GameJuice.crit_impact()
-			GameJuice.play_sfx("res://assets/audio/enemyHurt.wav", 2.0, randf_range(1.3, 1.5))
 		else:
 			GameJuice.hit_impact()
-			GameJuice.play_sfx("res://assets/audio/enemyHurt.wav", -6.0, randf_range(0.9, 1.1))
+		
+		GameJuice.play_sfx("res://assets/audio/enemyHurt.wav", hit_volume, randf_range(1.1, 1.4) if is_crit else randf_range(0.9, 1.1))
 		
 		queue_free()
 	else:

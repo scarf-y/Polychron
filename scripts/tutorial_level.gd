@@ -26,7 +26,7 @@ var steps = [
 	},
 	{
 		"title": "TIME SLOW",
-		"info": "Hold SHIFT to Slow Time\nDrains the CHRONO BAR (Blue Bar)\nDeal 1.25x DMG if you hit while time is slowed!\n(Gold = Slow Bonus | Orange = Slow + Crit)",
+		"info": "Hold SHIFT to Slow Time\nDrains the CHRONO BAR (Blue Bar)\nDeal 1.25x DMG if you hit while time is slowed!\n(Gold ! = Slow | Purple !! = Crit | Orange !!! = Both)",
 		"condition": "slow"
 	},
 	{
