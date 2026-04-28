@@ -1,6 +1,6 @@
 extends Control
 
-## Main Menu — Entry point for Chronos Bound.
+## POLYCHRON — Entry point for the game.
 ## Title, Start, and Quit buttons.
 
 @onready var start_button: Button = $VBoxContainer/StartButton

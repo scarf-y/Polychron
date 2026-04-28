@@ -1,6 +1,6 @@
 extends Node2D
 
-## Tutorial Controller for The Vector Void.
+## Tutorial Controller for POLYCHRON.
 ## Handles the sequence of instructional steps and trigger zones.
 
 @onready var player = $Player
@@ -46,7 +46,7 @@ var steps = [
 	},
 	{
 		"title": "TUTORIAL COMPLETE",
-		"info": "You are ready to enter THE VECTOR VOID.\nPress ENTER to return to menu",
+		"info": "You are ready to enter POLYCHRON.\nPress ENTER to return to menu",
 		"condition": "finish"
 	}
 ]

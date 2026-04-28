@@ -55,7 +55,7 @@ offset_right = 200.0
 offset_bottom = 90.0
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "THE VECTOR VOID"
+text = "POLYCHRON"
 label_settings = SubResource("LabelSettings_title")
 
 [node name="SubtitleLabel" type="Label" parent="."]
@@ -89,7 +89,7 @@ theme_override_constants/separation = 10
 
 [node name="StartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "ENTER THE VOID"
+text = "INITIALIZE POLYCHRON"
 
 [node name="TutorialButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2

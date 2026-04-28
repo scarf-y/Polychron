@@ -1,6 +1,6 @@
 extends Node
 
-## The central time manipulation system for Chronos Bound.
+## The central time manipulation system for POLYCHRON.
 ## Autoloaded as "TimeManager". Manages time states, Time Gauge, and Temporal Fracture.
 
 # --- Enums ---
