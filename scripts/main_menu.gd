@@ -31,6 +31,19 @@ func _ready() -> void:
 	vol_slider.value_changed.connect(_on_volume_changed)
 	
 	_load_settings()
+	_animate_title()
+	
+	# Display Best Time
+	if TimeManager.best_game_time > 0.0:
+		var best_time_label := Label.new()
+		best_time_label.text = "FASTEST CLEAR: " + _format_time(TimeManager.best_game_time)
+		best_time_label.add_theme_font_size_override("font_size", 10)
+		best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))
+		best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		best_time_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+		best_time_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		best_time_label.offset_bottom = -16.0
+		add_child(best_time_label)
 	
 	# Ensure time is normal when returning to menu
 	Engine.time_scale = 1.0
@@ -79,23 +92,6 @@ func _on_volume_changed(value: float) -> void:
 	if gs:
 		gs.master_volume = value
 	_apply_audio_settings()
-	
-	# Animate title
-	_animate_title()
-	
-	# Display Best Time
-	if TimeManager.best_game_time > 0.0:
-		var best_time_label := Label.new()
-		best_time_label.text = "FASTEST CLEAR: " + _format_time(TimeManager.best_game_time)
-		best_time_label.add_theme_font_size_override("font_size", 12)
-		best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))
-		best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		# Insert above the VBoxContainer
-		var vbox = get_node("VBoxContainer")
-		if vbox:
-			vbox.add_sibling(best_time_label)
-			best_time_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-			best_time_label.position = vbox.position - Vector2(0, 30)
 
 func _on_start_pressed() -> void:
 	TimeManager.start_new_run()
