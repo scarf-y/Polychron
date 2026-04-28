@@ -10,6 +10,8 @@ extends Node2D
 
 var current_step: int = 0
 var _pending_step: bool = false
+var _has_moved: bool = false
+var _has_dashed: bool = false
 var steps = [
 	{
 		"title": "MOVEMENT",
@@ -58,7 +60,15 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	match current_step:
 		0: # Movement
-			if not _pending_step and (Input.is_action_just_pressed("move_right") or Input.is_action_just_pressed("move_left")):
+			if not _has_moved:
+				if Input.is_action_just_pressed("move_right") or Input.is_action_just_pressed("move_left") or Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("move_down"):
+					_has_moved = true
+			
+			if not _has_dashed:
+				if Input.is_action_just_pressed("dash"):
+					_has_dashed = true
+					
+			if not _pending_step and _has_moved and _has_dashed:
 				_pending_step = true
 				_next_step_delayed(2.0)
 		1: # Slow
