@@ -33,7 +33,7 @@ var steps = [
 	},
 	{
 		"title": "FRACTURE & LOCKDOWN",
-		"info": "Abilities increase the FRACTURE METER (Red/Purple Bar)\n100% Fracture = LOCKDOWN (Abilities Locked)\nKill enemies to reduce Fracture and end Lockdown",
+		"info": "Abilities build FRACTURE (Red/Purple Bar)\nReach 100% Fracture to trigger LOCKDOWN\n(Use abilities until the bar is full!)",
 		"condition": "kill"
 	},
 	{
@@ -50,6 +50,7 @@ func _ready() -> void:
 	
 	if has_node("Dummy"):
 		$Dummy.dummy_killed.connect(_on_dummy_killed)
+		$Dummy.is_invincible = true # Start invincible
 	
 	# Connect to signals if needed
 	TimeManager.lockdown_changed.connect(_on_lockdown_changed)
@@ -85,6 +86,10 @@ func _update_step_ui() -> void:
 	step_label.text = step.title
 	info_label.text = step.info
 	
+	# If we are in the kill step, make sure dummy exists and is initially invincible
+	if current_step == 4 and has_node("Dummy"):
+		$Dummy.is_invincible = not TimeManager.is_lockdown
+	
 	# Animate UI
 	instructions.modulate.a = 0
 	var tween = create_tween()
@@ -102,9 +107,15 @@ func _next_step_delayed(delay: float) -> void:
 	)
 
 func _on_lockdown_changed(is_lockdown: bool) -> void:
+	if has_node("Dummy"):
+		$Dummy.is_invincible = not is_lockdown
+		
 	if is_lockdown and current_step == 4:
-		# Maybe show extra info about how to clear it
-		info_label.text += "\n\nLOCKDOWN ACTIVE! Kill the dummy to clear it!"
+		# Show extra info about how to clear it
+		info_label.text = "LOCKDOWN ACTIVE!\nAbility use disabled.\nKill the dummy to RE-SYNC and clear Fracture!"
+	elif not is_lockdown and current_step == 4:
+		# If they managed to clear it without killing the dummy (e.g. time passed, though unlikely in tutorial)
+		info_label.text = steps[current_step].info
 
 func _on_dummy_killed() -> void:
 	if current_step == 4 and not _pending_step:

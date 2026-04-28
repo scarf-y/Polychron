@@ -3,11 +3,18 @@ extends CharacterBody2D
 signal dummy_killed
 
 @export var health: float = 1.0 # 1 hit to kill
+var is_invincible: bool = false
 
 func _ready() -> void:
 	add_to_group("enemies")
 
 func take_damage(_amount: float) -> void:
+	if is_invincible:
+		# Maybe show a small shield effect or flash
+		modulate = Color(2, 2, 2) # Flash white
+		get_tree().create_timer(0.1).timeout.connect(func(): modulate = Color.WHITE)
+		return
+		
 	# Dummies just die instantly for tutorial flow
 	_die()
 
