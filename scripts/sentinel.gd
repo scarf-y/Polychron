@@ -16,12 +16,12 @@ var damage_reduction: float = 0.0  # Set by Dampener's Data Shield
 enum SentinelState { CHASE, DASH_TELEGRAPH, DASHING, LASER_TELEGRAPH, LASER_FIRING, STUNNED }
 var current_state: SentinelState = SentinelState.CHASE
 
-const DASH_DAMAGE: float = 18.0
+const DASH_DAMAGE: float = 20.0
 const DASH_SPEED: float = 300.0
 const DASH_TELEGRAPH_TIME: float = 0.4
 const DASH_DURATION: float = 0.3
-const LASER_TELEGRAPH_TIME: float = 1.0
-const LASER_DAMAGE_PER_TICK: float = 2.0
+const LASER_TELEGRAPH_TIME: float = 1.5
+const LASER_DAMAGE_PER_TICK: float = 10.0
 const LASER_TICK_RATE: float = 0.1
 const LASER_DURATION: float = 3.0
 const ATTACK_COOLDOWN: float = 2.5

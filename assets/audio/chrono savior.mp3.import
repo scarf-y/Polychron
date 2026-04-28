@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cjke046f0feoo"
+path="res://.godot/imported/chrono savior.mp3-1f9d7b7acf6eaa7f7c5792625be7e64b.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/chrono savior.mp3"
+dest_files=["res://.godot/imported/chrono savior.mp3-1f9d7b7acf6eaa7f7c5792625be7e64b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

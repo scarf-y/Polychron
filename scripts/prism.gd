@@ -59,7 +59,7 @@ func _physics_process(delta: float) -> void:
 				_timer = FIRING_TIME
 				_laser_area.monitoring = true
 				GameJuice.screen_shake(8.0, 3.0)
-				GameJuice.play_sfx("res://assets/audio/continuousBeam.wav", 0.0)
+				GameJuice.play_sfx("res://assets/audio/continuousBeam.wav", 5.0)
 		State.FIRING:
 			if _timer <= 0.0:
 				current_state = State.IDLE

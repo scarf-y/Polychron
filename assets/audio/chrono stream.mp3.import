@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dud2sow55rutr"
+path="res://.godot/imported/chrono stream.mp3-6d6494143fe3d7b4fdc776bc2f575498.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/chrono stream.mp3"
+dest_files=["res://.godot/imported/chrono stream.mp3-6d6494143fe3d7b4fdc776bc2f575498.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
