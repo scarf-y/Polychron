@@ -19,7 +19,6 @@ extends Control
 @onready var title_label: Label = $MainHBox/LeftVBox/TitleLabel
 @onready var subtitle_label: Label = $MainHBox/LeftVBox/SubtitleLabel
 @onready var best_time_label: Label = $MainHBox/RightVBox/BestTimeLabel
-@onready var player_poly: Polygon2D = $MainHBox/RightVBox/PlayerPreviewContainer/PlayerPoly
 @onready var cube_container: Control = $MainHBox/RightVBox/PlayerPreviewContainer
 
 # --- Cube Data ---
@@ -56,10 +55,6 @@ func _ready() -> void:
 	else:
 		best_time_label.text = "FASTEST CLEAR: NONE"
 		best_time_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-	
-	# Hide static poly, we use custom draw
-	if player_poly:
-		player_poly.visible = false
 	
 	# Connect draw signal
 	cube_container.draw.connect(_on_cube_draw)

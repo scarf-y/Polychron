@@ -105,10 +105,6 @@ alignment = 1
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 
-[node name="PlayerPoly" type="Polygon2D" parent="MainHBox/RightVBox/PlayerPreviewContainer" unique_id=1170953560]
-position = Vector2(98, 52)
-color = Color(0.3, 0.5, 1, 1)
-polygon = PackedVector2Array(0, -25, 20, -38, 34, -8, 1, 28, -21, 29, -23, -24)
 
 [node name="BestTimeLabel" type="Label" parent="MainHBox/RightVBox" unique_id=122374007]
 layout_mode = 2
