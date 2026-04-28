@@ -182,6 +182,7 @@ func _fire_spread() -> void:
 	if not is_instance_valid(bullet_scene): return
 	
 	GameJuice.screen_shake(4.0, 0.2)
+	GameJuice.play_sfx("res://assets/audio/bossRadialAttack.wav", -2.0)
 	
 	var angle_step = TAU / SPREAD_COUNT
 	for i in SPREAD_COUNT:
@@ -235,6 +236,7 @@ func _spawn_bombs(player: Node2D) -> void:
 		spawned_positions.append(spawn_pos)
 		bomb.global_position = spawn_pos
 		get_tree().current_scene.add_child(bomb)
+		GameJuice.play_sfx("res://assets/audio/timeBomb.wav", -4.0)
 
 var _cone_direction: Vector2 = Vector2.ZERO
 
@@ -262,6 +264,7 @@ func _fire_cone(dir: Vector2) -> void:
 	if not is_instance_valid(bullet_scene): return
 	
 	GameJuice.screen_shake(8.0, 0.3)
+	GameJuice.play_sfx("res://assets/audio/bossShockwave.wav", 0.0)
 	
 	var bullet_count = 15
 	var spread_angle = deg_to_rad(45.0)

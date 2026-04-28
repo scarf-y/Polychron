@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/effects/world_environment.tscn" id="7_world_env"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/prism.tscn" id="8_prism"]
 [ext_resource type="AudioStream" path="res://assets/audio/chrono stream.mp3" id="9_bgm"]
+[ext_resource type="Script" path="res://scripts/level_bgm.gd" id="10_lvlbgm"]
 
 [sub_resource type="RectangleShape2D" id="wall_h"]
 size = Vector2(1280, 16)
@@ -169,3 +170,4 @@ stream = ExtResource("9_bgm")
 autoplay = true
 volume_db = -12.0
 bus = &"Master"
+script = ExtResource("10_lvlbgm")

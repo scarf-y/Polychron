@@ -85,6 +85,7 @@ func _fire_with_telegraph(target: Node2D) -> void:
 	
 	# Muzzle flash
 	modulate = Color(1, 1, 0.5)
+	GameJuice.play_sfx("res://assets/audio/turretShoot.wav", -14.0, randf_range(0.9, 1.1))
 	await get_tree().create_timer(0.05).timeout
 	modulate = Color(1.0, 0.6, 0.0)
 	

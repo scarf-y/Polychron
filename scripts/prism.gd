@@ -52,12 +52,14 @@ func _physics_process(delta: float) -> void:
 				current_state = State.TELEGRAPH
 				_timer = TELEGRAPH_TIME
 				GameJuice.screen_shake(2.0, 0.5)
+				GameJuice.play_sfx("res://assets/audio/chargeBeam.wav", -2.0)
 		State.TELEGRAPH:
 			if _timer <= 0.0:
 				current_state = State.FIRING
 				_timer = FIRING_TIME
 				_laser_area.monitoring = true
 				GameJuice.screen_shake(8.0, 3.0)
+				GameJuice.play_sfx("res://assets/audio/continuousBeam.wav", -4.0)
 		State.FIRING:
 			if _timer <= 0.0:
 				current_state = State.IDLE

@@ -92,6 +92,7 @@ func _perform_lunge(direction: Vector2, player: Node2D) -> void:
 	modulate = Color(1, 0, 0)  # Bright red during attack
 	velocity = direction * LUNGE_SPEED
 	GameJuice.screen_shake(2.0, 1.5)
+	GameJuice.play_sfx("res://assets/audio/stalkerDash.wav", -2.0)
 	
 	await get_tree().create_timer(LUNGE_DURATION).timeout
 	

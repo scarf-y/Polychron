@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/stalker.tscn" id="11_stalker"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/prism.tscn" id="12_prism"]
 [ext_resource type="AudioStream" path="res://assets/audio/chrono stream.mp3" id="13_bgm"]
+[ext_resource type="Script" path="res://scripts/level_bgm.gd" id="14_lvlbgm"]
 
 [sub_resource type="RectangleShape2D" id="wall_h_long"]
 size = Vector2(1280, 16)
@@ -256,3 +257,4 @@ stream = ExtResource("13_bgm")
 autoplay = true
 volume_db = -12.0
 bus = &"Master"
+script = ExtResource("14_lvlbgm")

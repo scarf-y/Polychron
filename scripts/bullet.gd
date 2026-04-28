@@ -96,8 +96,10 @@ func _on_body_entered(body: Node2D) -> void:
 		# Impact effect
 		if is_crit:
 			GameJuice.crit_impact()
+			GameJuice.play_sfx("res://assets/audio/enemyHurt.wav", 2.0, randf_range(1.3, 1.5))
 		else:
 			GameJuice.hit_impact()
+			GameJuice.play_sfx("res://assets/audio/enemyHurt.wav", -6.0, randf_range(0.9, 1.1))
 		
 		queue_free()
 	else:

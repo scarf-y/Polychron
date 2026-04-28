@@ -49,9 +49,11 @@ func _apply_audio_settings() -> void:
 		bgm_player.stop()
 
 func _on_settings_pressed() -> void:
+	GameJuice.play_sfx("res://assets/audio/uiClick.wav")
 	settings_panel.show()
 
 func _on_close_settings() -> void:
+	GameJuice.play_sfx("res://assets/audio/uiClick.wav")
 	settings_panel.hide()
 
 func _on_music_toggled(toggled_on: bool) -> void:
