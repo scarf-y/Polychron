@@ -63,7 +63,8 @@ func hitstop(duration_real: float = 0.08, freeze_scale: float = 0.05) -> void:
 # SCREEN SHAKE
 # =========================
 func screen_shake(intensity: float = 4.0, x_bias: float = 1.5) -> void:
-	if not GlobalSettings.screenshake_enabled:
+	var gs = get_node_or_null("/root/GlobalSettings")
+	if gs and not gs.screenshake_enabled:
 		return
 	_shake_intensity = intensity
 	
