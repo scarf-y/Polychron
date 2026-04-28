@@ -63,6 +63,7 @@ func reset_fracture(reset_hp: bool = false) -> void:
 	time_gauge = GAUGE_MAX
 	current_state = TimeState.NORMAL
 	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
 	fracture_changed.emit(fracture_level)
 	lockdown_changed.emit(false)
 	time_gauge_changed.emit(time_gauge)
@@ -183,14 +184,19 @@ func change_time_state(new_state: TimeState) -> void:
 	match current_state:
 		TimeState.NORMAL:
 			Engine.time_scale = 1.0
+			AudioServer.playback_speed_scale = 1.0
 		TimeState.STOPPED:
 			# We keep Engine.time_scale at 1.0 so player can still move.
 			# Enemies check TimeManager.current_state themselves.
 			Engine.time_scale = 1.0
+			AudioServer.playback_speed_scale = 1.0
 		TimeState.SLOWED:
 			Engine.time_scale = 0.2  # World slows to 20%
+			# Audio slows down, but 0.2 pitch is too garbled, 0.5 sounds thick and warped.
+			AudioServer.playback_speed_scale = 0.5
 		TimeState.ERASED:
 			Engine.time_scale = 1.0
+			AudioServer.playback_speed_scale = 1.0
 	
 	time_state_changed.emit(new_state)
 
