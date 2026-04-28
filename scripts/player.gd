@@ -394,7 +394,7 @@ func _update_modulate() -> void:
 # SHOOTING
 # =========================
 func _handle_shooting() -> void:
-	if Input.is_action_just_pressed("shoot") and can_shoot:
+	if Input.is_action_pressed("shoot") and can_shoot:
 		_shoot()
 
 func _shoot() -> void:
