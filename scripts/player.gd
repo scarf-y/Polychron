@@ -295,8 +295,7 @@ func _handle_time_abilities() -> void:
 		_active_ability = TimeManager.TimeState.STOPPED
 		TimeManager.change_time_state(TimeManager.TimeState.STOPPED)
 		GameJuice.time_stop_impact()
-		GameJuice.play_sfx("res://assets/audio/timeStopBassDrop.wav", 0.0, 1.0, "TimeAbility")
-		GameJuice.play_sfx("res://assets/audio/timeStopHighPing.wav", -2.0, 1.0, "TimeAbility")
+		GameJuice.play_sfx("res://assets/audio/timeStopBassDrop.wav", 6.0, 1.0, "TimeAbility")
 		_update_modulate()
 	
 	# TIME SLOW — Hold Shift
