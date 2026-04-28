@@ -59,18 +59,22 @@ func _physics_process(delta: float) -> void:
 		var direction: Vector2 = (target_pos - global_position).normalized()
 		var distance: float = global_position.distance_to(target_pos)
 		
+		# --- Movement & Attack Trigger ---
 		if distance <= ATTACK_RANGE and _attack_cooldown_timer <= 0.0 and not _is_attacking:
-			# Telegraph: flash bright yellow before lunging
 			_perform_lunge(direction, player)
 		elif distance > 20.0 and not _is_attacking:
 			velocity = direction * speed
-		else:
-			if not _is_attacking:
-				velocity = Vector2.ZERO
-				# Contact damage handled naturally, since Time Erase disables damage inside player anyway
-				if _damage_timer <= 0.0 and global_position.distance_to(player.global_position) <= 20.0 and player.has_method("take_damage"):
-					player.take_damage(CONTACT_DAMAGE)
-					_damage_timer = CONTACT_DAMAGE_COOLDOWN
+		elif not _is_attacking:
+			velocity = Vector2.ZERO
+			
+		# --- Continuous Damage Check ---
+		if _damage_timer <= 0.0 and player.has_method("take_damage"):
+			var damage_dist: float = 24.0 if not _is_attacking else 32.0 # Slightly larger during lunge
+			if global_position.distance_to(player.global_position) <= damage_dist:
+				player.take_damage(CONTACT_DAMAGE)
+				_damage_timer = CONTACT_DAMAGE_COOLDOWN
+				if _is_attacking:
+					GameJuice.screen_shake(4.0, 2.0)
 		
 		move_and_slide()
 
@@ -95,13 +99,6 @@ func _perform_lunge(direction: Vector2, player: Node2D) -> void:
 	GameJuice.play_sfx("res://assets/audio/stalkerDash.wav", -2.0)
 	
 	await get_tree().create_timer(LUNGE_DURATION).timeout
-	
-	# Check if we hit the player during lunge
-	if player and is_instance_valid(player):
-		var dist: float = global_position.distance_to(player.global_position)
-		if dist < 24.0 and player.has_method("take_damage"):
-			player.take_damage(CONTACT_DAMAGE)
-			GameJuice.screen_shake(4.0, 2.0)
 	
 	_is_attacking = false
 	modulate = Color(1.0, 0.2, 0.2)
