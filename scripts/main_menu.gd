@@ -39,19 +39,19 @@ func _ready() -> void:
 	main_hbox.offset_left = 60
 	main_hbox.offset_right = -60
 	main_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	main_hbox.set_theme_constant_override("separation", 100)
+	main_hbox.add_theme_constant_override("separation", 100)
 	add_child(main_hbox)
 	
 	var left_vbox := VBoxContainer.new()
 	left_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	left_vbox.set_theme_constant_override("separation", 10)
+	left_vbox.add_theme_constant_override("separation", 10)
 	main_hbox.add_child(left_vbox)
 	
 	var right_vbox := VBoxContainer.new()
 	right_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	right_vbox.set_theme_constant_override("separation", 20)
+	right_vbox.add_theme_constant_override("separation", 20)
 	main_hbox.add_child(right_vbox)
 	
 	# 2. Populate Left Side (Title + Buttons)
