@@ -136,7 +136,11 @@ func _next_step_delayed(delay: float) -> void:
 
 func _on_lockdown_changed(is_lockdown: bool) -> void:
 	if has_node("Dummy"):
-		$Dummy.is_invincible = not is_lockdown
+		# Dummy ONLY becomes vulnerable during step 5 AND when lockdown is active
+		if current_step == 5:
+			$Dummy.is_invincible = not is_lockdown
+		else:
+			$Dummy.is_invincible = true
 		
 	if is_lockdown and current_step == 5:
 		# Show extra info about how to clear it
