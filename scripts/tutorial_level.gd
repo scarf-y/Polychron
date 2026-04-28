@@ -9,6 +9,7 @@ extends Node2D
 @onready var info_label = $CanvasLayer/Instructions/InfoLabel
 
 var current_step: int = 0
+var _pending_step: bool = false
 var steps = [
 	{
 		"title": "MOVEMENT",
@@ -56,16 +57,20 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	match current_step:
 		0: # Movement
-			if Input.is_action_just_pressed("move_right") or Input.is_action_just_pressed("move_left"):
+			if not _pending_step and (Input.is_action_just_pressed("move_right") or Input.is_action_just_pressed("move_left")):
+				_pending_step = true
 				_next_step_delayed(2.0)
 		1: # Slow
-			if Input.is_action_just_pressed("time_slow"):
+			if not _pending_step and Input.is_action_just_pressed("time_slow"):
+				_pending_step = true
 				_next_step_delayed(3.0)
 		2: # Stop
-			if Input.is_action_just_pressed("time_stop"):
+			if not _pending_step and Input.is_action_just_pressed("time_stop"):
+				_pending_step = true
 				_next_step_delayed(3.0)
 		3: # Erase
-			if Input.is_action_just_pressed("time_erase"):
+			if not _pending_step and Input.is_action_just_pressed("time_erase"):
+				_pending_step = true
 				_next_step_delayed(4.0)
 		4: # Kill/Fracture
 			# This might be triggered by a dummy death or just waiting
@@ -75,6 +80,7 @@ func _process(_delta: float) -> void:
 				GameJuice.transition_to_scene("res://scenes/ui/main_menu.tscn")
 
 func _update_step_ui() -> void:
+	_pending_step = false
 	var step = steps[current_step]
 	step_label.text = step.title
 	info_label.text = step.info
@@ -90,8 +96,9 @@ func _next_step_delayed(delay: float) -> void:
 	# Use a one-shot timer to wait before moving to next step
 	var t = get_tree().create_timer(delay)
 	t.timeout.connect(func(): 
-		current_step += 1
-		_update_step_ui()
+		if current_step < steps.size() - 1:
+			current_step += 1
+			_update_step_ui()
 	)
 
 func _on_lockdown_changed(is_lockdown: bool) -> void:
@@ -100,5 +107,6 @@ func _on_lockdown_changed(is_lockdown: bool) -> void:
 		info_label.text += "\n\nLOCKDOWN ACTIVE! Kill the dummy to clear it!"
 
 func _on_dummy_killed() -> void:
-	if current_step == 4:
+	if current_step == 4 and not _pending_step:
+		_pending_step = true
 		_next_step_delayed(1.0)
