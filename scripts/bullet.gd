@@ -95,7 +95,10 @@ func _on_body_entered(body: Node2D) -> void:
 			body.take_damage(damage)
 		
 		# Spawn floating damage number
-		GameJuice.spawn_damage_number(damage, body.global_position, is_crit)
+		if TimeManager.current_state == TimeManager.TimeState.SLOWED:
+			GameJuice.spawn_damage_number(damage, body.global_position, is_crit, Color(1.0, 0.85, 0.3), 1.2)
+		else:
+			GameJuice.spawn_damage_number(damage, body.global_position, is_crit)
 		
 		# Impact effect
 		if is_crit:

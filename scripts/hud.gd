@@ -82,10 +82,10 @@ func _build_hud() -> void:
 	# --- HP SECTION (Vertical Left) ---
 	var hp_vbox := VBoxContainer.new()
 	hp_vbox.set_anchors_preset(Control.PRESET_LEFT_WIDE)
-	hp_vbox.offset_left = 12.0
+	hp_vbox.offset_left = 16.0
 	hp_vbox.offset_top = 80.0
 	hp_vbox.offset_bottom = -80.0
-	hp_vbox.offset_right = 32.0
+	hp_vbox.offset_right = 44.0
 	hp_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(hp_vbox)
 	
@@ -94,7 +94,7 @@ func _build_hud() -> void:
 	hp_bar.max_value = 100.0
 	hp_bar.value = 100.0
 	hp_bar.show_percentage = false
-	hp_bar.custom_minimum_size = Vector2(10, 0)
+	hp_bar.custom_minimum_size = Vector2(16, 0) # Made wider
 	hp_bar.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	# Style the fill
 	var hp_fill := StyleBoxFlat.new()
@@ -105,7 +105,12 @@ func _build_hud() -> void:
 	hp_fill.corner_radius_bottom_right = 2
 	hp_bar.add_theme_stylebox_override("fill", hp_fill)
 	var hp_bg := StyleBoxFlat.new()
-	hp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.7)
+	hp_bg.bg_color = Color(0.05, 0.05, 0.05, 0.9) # Darker, more visible loss space
+	hp_bg.border_width_left = 1
+	hp_bg.border_width_right = 1
+	hp_bg.border_width_top = 1
+	hp_bg.border_width_bottom = 1
+	hp_bg.border_color = Color(0.2, 0.2, 0.2, 0.5)
 	hp_bg.corner_radius_top_left = 2
 	hp_bg.corner_radius_top_right = 2
 	hp_bg.corner_radius_bottom_left = 2
@@ -124,23 +129,33 @@ func _build_hud() -> void:
 	fracture_vbox.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	fracture_vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	fracture_vbox.offset_top = 10.0
-	fracture_vbox.offset_left = -100.0
-	fracture_vbox.offset_right = 100.0
+	fracture_vbox.offset_left = -150.0
+	fracture_vbox.offset_right = 150.0
 	fracture_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(fracture_vbox)
+	
+	var fracture_header_hbox := HBoxContainer.new()
+	fracture_header_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	fracture_header_hbox.add_theme_constant_override("separation", 15)
+	fracture_vbox.add_child(fracture_header_hbox)
+	
+	fracture_debuff_label = Label.new()
+	fracture_debuff_label.text = "[ NOMINAL ]"
+	fracture_debuff_label.add_theme_font_size_override("font_size", 9)
+	fracture_debuff_label.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0, 0.8))
+	fracture_header_hbox.add_child(fracture_debuff_label)
 	
 	fracture_label = Label.new()
 	fracture_label.text = "FRACTURE: 0%"
 	fracture_label.add_theme_font_size_override("font_size", 10)
 	fracture_label.add_theme_color_override("font_color", Color(0.5, 0.7, 1.0))
-	fracture_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	fracture_vbox.add_child(fracture_label)
+	fracture_header_hbox.add_child(fracture_label)
 	
 	fracture_bar = ProgressBar.new()
 	fracture_bar.max_value = 100.0
 	fracture_bar.value = 0.0
 	fracture_bar.show_percentage = false
-	fracture_bar.custom_minimum_size = Vector2(160, 8)
+	fracture_bar.custom_minimum_size = Vector2(200, 10) # Synchronized size
 	var frac_fill := StyleBoxFlat.new()
 	frac_fill.bg_color = Color(0.3, 0.5, 1.0)
 	frac_fill.corner_radius_top_left = 2
@@ -190,7 +205,7 @@ func _build_hud() -> void:
 	gauge_bar.max_value = 100.0
 	gauge_bar.value = 100.0
 	gauge_bar.show_percentage = false
-	gauge_bar.custom_minimum_size = Vector2(200, 10)
+	gauge_bar.custom_minimum_size = Vector2(200, 10) # Synchronized size
 	var gauge_fill := StyleBoxFlat.new()
 	gauge_fill.bg_color = Color(0.3, 0.7, 1.0)
 	gauge_fill.corner_radius_top_left = 2
@@ -325,31 +340,31 @@ func _update_fracture_stage(value: float) -> void:
 		fracture_stage_label.text = "STAGE V — LOCKDOWN"
 		fracture_stage_label.add_theme_color_override("font_color", Color(1.0, 0.1, 0.1, 1.0))
 		if fracture_debuff_label:
-			fracture_debuff_label.text = "[ TIME ABILITIES DISABLED ]"
+			fracture_debuff_label.text = "[ ABILITIES LOCKED ]"
 			fracture_debuff_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3))
 	elif value > 75.0:
 		fracture_stage_label.text = "STAGE IV — CRITICAL"
 		fracture_stage_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.2, 0.9))
 		if fracture_debuff_label:
-			fracture_debuff_label.text = "[ +50% DMG Taken | -20% Speed | x2 Dash CD ]"
+			fracture_debuff_label.text = "[ +50% DMG | -20% SPD | x2 DASH CD ]"
 			fracture_debuff_label.add_theme_color_override("font_color", Color(1.0, 0.5, 0.4))
 	elif value > 50.0:
 		fracture_stage_label.text = "STAGE III — TEMPORAL DECAY"
 		fracture_stage_label.add_theme_color_override("font_color", Color(1.0, 0.5, 0.2, 0.8))
 		if fracture_debuff_label:
-			fracture_debuff_label.text = "[ -20% Speed | x2 Dash CD | -50% Crit Chance ]"
+			fracture_debuff_label.text = "[ -20% SPD | x2 DASH CD | -50% CRIT ]"
 			fracture_debuff_label.add_theme_color_override("font_color", Color(1.0, 0.7, 0.4))
 	elif value > 25.0:
 		fracture_stage_label.text = "STAGE II — INSTABILITY"
 		fracture_stage_label.add_theme_color_override("font_color", Color(0.9, 0.7, 0.3, 0.7))
 		if fracture_debuff_label:
-			fracture_debuff_label.text = "[ -50% Crit Chance ]"
+			fracture_debuff_label.text = "[ -50% CRIT ]"
 			fracture_debuff_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.5))
 	else:
 		fracture_stage_label.text = "STAGE I — STABLE"
 		fracture_stage_label.add_theme_color_override("font_color", Color(0.5, 0.7, 1.0, 0.7))
 		if fracture_debuff_label:
-			fracture_debuff_label.text = "[ All Systems Nominal ]"
+			fracture_debuff_label.text = "[ NOMINAL ]"
 			fracture_debuff_label.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0, 0.8))
 
 func _on_lockdown_changed(is_lockdown: bool) -> void:
