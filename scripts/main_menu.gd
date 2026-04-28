@@ -3,10 +3,10 @@ extends Control
 ## POLYCHRON — Entry point for the game.
 ## Title, Start, and Quit buttons.
 
-@onready var start_button: Button = $VBoxContainer/StartButton
-@onready var tutorial_button: Button = $VBoxContainer/TutorialButton
-@onready var settings_button: Button = $VBoxContainer/SettingsButton
-@onready var quit_button: Button = $VBoxContainer/QuitButton
+@onready var start_button: Button = $MainHBox/LeftVBox/VBoxContainer/StartButton
+@onready var tutorial_button: Button = $MainHBox/LeftVBox/VBoxContainer/TutorialButton
+@onready var settings_button: Button = $MainHBox/LeftVBox/VBoxContainer/SettingsButton
+@onready var quit_button: Button = $MainHBox/LeftVBox/VBoxContainer/QuitButton
 
 @onready var settings_panel: ColorRect = $SettingsPanel
 @onready var close_settings_btn: Button = $SettingsPanel/VBox/CloseSettings
@@ -16,8 +16,10 @@ extends Control
 
 @onready var bgm_player: AudioStreamPlayer = $BGMPlayer
 
-@onready var title_label: Label = $TitleLabel
-@onready var subtitle_label: Label = $SubtitleLabel
+@onready var title_label: Label = $MainHBox/LeftVBox/TitleLabel
+@onready var subtitle_label: Label = $MainHBox/LeftVBox/SubtitleLabel
+@onready var best_time_label: Label = $MainHBox/RightVBox/BestTimeLabel
+@onready var player_poly: Polygon2D = $MainHBox/RightVBox/PlayerPreviewContainer/PlayerPoly
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
@@ -33,88 +35,20 @@ func _ready() -> void:
 	_load_settings()
 	_animate_title()
 	
-	# 1. Create Layout Structure
-	var main_hbox := HBoxContainer.new()
-	main_hbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	main_hbox.offset_left = 60
-	main_hbox.offset_right = -60
-	main_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	main_hbox.add_theme_constant_override("separation", 100)
-	add_child(main_hbox)
+	# Update Best Time Display
+	var has_best = TimeManager.best_game_time > 0.0
+	if has_best:
+		best_time_label.text = "FASTEST CLEAR: " + _format_time(TimeManager.best_game_time)
+		best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))
+	else:
+		best_time_label.text = "FASTEST CLEAR: NONE"
+		best_time_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
 	
-	var left_vbox := VBoxContainer.new()
-	left_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	left_vbox.add_theme_constant_override("separation", 10)
-	main_hbox.add_child(left_vbox)
-	
-	var right_vbox := VBoxContainer.new()
-	right_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	right_vbox.add_theme_constant_override("separation", 20)
-	main_hbox.add_child(right_vbox)
-	
-	# 2. Populate Left Side (Title + Buttons)
-	if title_label:
-		title_label.reparent(left_vbox)
-		title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		
-	if subtitle_label:
-		subtitle_label.reparent(left_vbox)
-		subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		# Spacer below subtitle
-		var sub_spacer := Control.new()
-		sub_spacer.custom_minimum_size = Vector2(0, 30)
-		left_vbox.add_child(sub_spacer)
-		
-	# Move the original button container's buttons into the left_vbox
-	var old_vbox = get_node("VBoxContainer")
-	if old_vbox:
-		var buttons = old_vbox.get_children()
-		for b in buttons:
-			if b is Button:
-				b.reparent(left_vbox)
-				b.custom_minimum_size = Vector2(180, 0)
-		old_vbox.queue_free()
-		
-	# 3. Populate Right Side (Player Preview + Best Time + Controls)
-	
-	# Player Preview Container
-	var player_container := Control.new()
-	player_container.custom_minimum_size = Vector2(100, 100)
-	right_vbox.add_child(player_container)
-	
-	# Simple Player Visual (Diamond Shape)
-	var player_poly := Polygon2D.new()
-	player_poly.polygon = PackedVector2Array([
-		Vector2(0, -25), Vector2(20, 0), Vector2(0, 25), Vector2(-20, 0)
-	])
-	player_poly.color = Color(0.3, 0.5, 1.0)
-	player_poly.position = Vector2(50, 50)
-	player_container.add_child(player_poly)
-	
-	# Glow effect for player preview
+	# Animate Player Preview
 	var tween = player_poly.create_tween().set_loops()
 	tween.tween_property(player_poly, "scale", Vector2(1.1, 1.1), 1.0)
 	tween.tween_property(player_poly, "scale", Vector2(1.0, 1.0), 1.0)
 	
-	# Best Time
-	var best_time_label := Label.new()
-	var has_best = TimeManager.best_game_time > 0.0
-	best_time_label.text = "FASTEST CLEAR: " + (_format_time(TimeManager.best_game_time) if has_best else "NONE")
-	best_time_label.add_theme_font_size_override("font_size", 12)
-	best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2) if has_best else Color(0.5, 0.5, 0.5))
-	best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	right_vbox.add_child(best_time_label)
-	
-	# Controls
-	var controls = get_node_or_null("ControlsLabel")
-	if controls:
-		controls.reparent(right_vbox)
-		controls.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		controls.add_theme_font_size_override("font_size", 10)
-		controls.text = controls.text.replace("  |  ", "\n") # Stack them for the side view
-		
 	# Ensure time is normal when returning to menu
 	Engine.time_scale = 1.0
 	TimeManager.game_is_active = false

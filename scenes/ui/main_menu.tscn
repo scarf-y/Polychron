@@ -44,86 +44,93 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.05, 0.02, 0.08, 0.5)
 
-[node name="TitleLabel" type="Label" parent="."]
+[node name="MainHBox" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -200.0
-offset_top = 40.0
-offset_right = 200.0
-offset_bottom = 90.0
-horizontal_alignment = 1
-vertical_alignment = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_right = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="LeftVBox" type="VBoxContainer" parent="MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainHBox/LeftVBox"]
+layout_mode = 2
 text = "POLYCHRON"
 label_settings = SubResource("LabelSettings_title")
 
-[node name="SubtitleLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -160.0
-offset_top = 95.0
-offset_right = 160.0
-offset_bottom = 115.0
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="SubtitleLabel" type="Label" parent="MainHBox/LeftVBox"]
+layout_mode = 2
 text = "SEQUENCE-0 INITIALIZED"
 label_settings = SubResource("LabelSettings_sub")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -45.0
-offset_right = 80.0
-offset_bottom = 65.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Spacer" type="Control" parent="MainHBox/LeftVBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainHBox/LeftVBox"]
+layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="StartButton" type="Button" parent="VBoxContainer"]
+[node name="StartButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 text = "INITIALIZE POLYCHRON"
 
-[node name="TutorialButton" type="Button" parent="VBoxContainer"]
+[node name="TutorialButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
 layout_mode = 2
 text = "INITIATE TUTORIAL"
 
-[node name="SettingsButton" type="Button" parent="VBoxContainer"]
+[node name="SettingsButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
 layout_mode = 2
 text = "SETTINGS"
 
-[node name="QuitButton" type="Button" parent="VBoxContainer"]
+[node name="QuitButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
 layout_mode = 2
 text = "TERMINATE"
 
-[node name="ControlsLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -80.0
-offset_right = 200.0
-offset_bottom = -10.0
+[node name="RightVBox" type="VBoxContainer" parent="MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PlayerPreviewContainer" type="Control" parent="MainHBox/RightVBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="PlayerPoly" type="Polygon2D" parent="MainHBox/RightVBox/PlayerPreviewContainer"]
+position = Vector2(50, 50)
+color = Color(0.3, 0.5, 1, 1)
+polygon = PackedVector2Array(0, -25, 20, 0, 0, 25, -20, 0)
+
+[node name="BestTimeLabel" type="Label" parent="MainHBox/RightVBox"]
+layout_mode = 2
+text = "FASTEST CLEAR: NONE"
 horizontal_alignment = 1
-text = "WASD - Move  |  LMB - Shoot  |  Q - Phase Dash
-SPACE - Time Stop  |  SHIFT - Time Slow
+
+[node name="ControlsLabel" type="Label" parent="MainHBox/RightVBox"]
+layout_mode = 2
+text = "WASD - Move
+LMB - Shoot
+Q - Phase Dash
+SPACE - Time Stop
+SHIFT - Time Slow
 E - Time Erase"
 label_settings = SubResource("LabelSettings_controls")
+horizontal_alignment = 1
 
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_audio")
 autoplay = true
-bus = &"Master"
 
 [node name="SettingsPanel" type="ColorRect" parent="."]
 visible = false
@@ -144,6 +151,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 border_color = Color(0, 1, 0.8, 1)
 editor_only = false
 
@@ -156,6 +165,8 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = -20.0
 offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="SettingsPanel/VBox"]
