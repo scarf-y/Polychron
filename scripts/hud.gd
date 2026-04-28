@@ -21,6 +21,9 @@ var game_timer_label: Label = null
 var _lockdown_pulse_tween: Tween = null
 var _player_ref: Node = null
 
+var pause_menu_scene: PackedScene = preload("res://scenes/ui/pause_menu.tscn")
+var pause_menu_instance: Node = null
+
 # State display colors
 const STATE_COLORS := {
 	"NORMAL": Color(1, 1, 1),
@@ -51,6 +54,10 @@ func _ready() -> void:
 		fracture_bar.value = TimeManager.fracture_level
 	_update_state_display(TimeManager.current_state)
 	
+	# Setup Pause Menu
+	pause_menu_instance = pause_menu_scene.instantiate()
+	add_child(pause_menu_instance)
+	
 	# Find player and connect signals
 	await get_tree().process_frame
 	_player_ref = get_tree().get_first_node_in_group("player")
@@ -59,6 +66,12 @@ func _ready() -> void:
 		_update_health(_player_ref.health)
 	if _player_ref and _player_ref.has_signal("player_died"):
 		_player_ref.player_died.connect(_on_player_died)
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
+		if pause_menu_instance:
+			pause_menu_instance.toggle_pause()
+			get_viewport().set_input_as_handled()
 
 func _build_hud() -> void:
 	# Remove any existing HUDContainer from the .tscn

@@ -4,6 +4,7 @@ extends AudioStreamPlayer
 ## Routes through "Gameplay" bus so it gets muffled/silenced by time abilities.
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	bus = "Gameplay"
 	var gs = get_node_or_null("/root/GlobalSettings")
 	if gs and not gs.music_enabled:

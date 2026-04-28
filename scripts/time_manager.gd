@@ -106,14 +106,16 @@ func start_new_run() -> void:
 
 # --- Process ---
 func _process(delta: float) -> void:
+	if not game_is_active or get_tree().paused:
+		return
+		
 	# We use unscaled delta for gauge management so slowing time
 	# doesn't also slow the gauge drain
 	var real_delta: float = delta
 	if Engine.time_scale > 0.0:
 		real_delta = delta / Engine.time_scale
-	
-	if game_is_active:
-		game_time += real_delta
+		
+	game_time += real_delta
 	
 	# --- Time Gauge Logic ---
 	match current_state:
