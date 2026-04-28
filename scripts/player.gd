@@ -270,6 +270,22 @@ func deal_damage() -> Array:
 # TIME ABILITIES
 # =========================
 func _handle_time_abilities() -> void:
+	# ALWAYS check for releases to prevent sticking, regardless of cooldown
+	if Input.is_action_just_released("time_stop") and _active_ability == TimeManager.TimeState.STOPPED:
+		GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
+		_return_to_normal()
+	elif Input.is_action_just_released("time_slow") and _active_ability == TimeManager.TimeState.SLOWED:
+		GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
+		_return_to_normal()
+	elif Input.is_action_just_released("time_erase") and _active_ability == TimeManager.TimeState.ERASED:
+		set_collision_mask_value(3, true)
+		set_collision_layer_value(2, true)
+		if is_instance_valid(_erase_decoy):
+			_erase_decoy.queue_free()
+		GameJuice.play_sfx("res://assets/audio/timeEraseRip.wav", 0.0, 1.0, "TimeAbility")
+		_return_to_normal()
+	
+	# Only return for ACTIVATION if cooldown is active
 	if _ability_cooldown_timer > 0.0:
 		return
 		
@@ -282,9 +298,6 @@ func _handle_time_abilities() -> void:
 		GameJuice.play_sfx("res://assets/audio/timeStopBassDrop.wav", 0.0, 1.0, "TimeAbility")
 		GameJuice.play_sfx("res://assets/audio/timeStopHighPing.wav", -2.0, 1.0, "TimeAbility")
 		_update_modulate()
-	elif Input.is_action_just_released("time_stop") and _active_ability == TimeManager.TimeState.STOPPED:
-		GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
-		_return_to_normal()
 	
 	# TIME SLOW — Hold Shift
 	if Input.is_action_just_pressed("time_slow") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
@@ -293,9 +306,6 @@ func _handle_time_abilities() -> void:
 		TimeManager.change_time_state(TimeManager.TimeState.SLOWED)
 		GameJuice.play_sfx("res://assets/audio/timeSlow.wav", 0.0, 1.0, "TimeAbility")
 		_update_modulate()
-	elif Input.is_action_just_released("time_slow") and _active_ability == TimeManager.TimeState.SLOWED:
-		GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
-		_return_to_normal()
 	
 	# TIME ERASE — Hold E
 	if Input.is_action_just_pressed("time_erase") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
@@ -317,13 +327,6 @@ func _handle_time_abilities() -> void:
 		get_tree().current_scene.add_child(_erase_decoy)
 		
 		_update_modulate()
-	elif Input.is_action_just_released("time_erase") and _active_ability == TimeManager.TimeState.ERASED:
-		set_collision_mask_value(3, true)
-		set_collision_layer_value(2, true)
-		if is_instance_valid(_erase_decoy):
-			_erase_decoy.queue_free()
-		GameJuice.play_sfx("res://assets/audio/timeEraseRip.wav", 0.0, 1.0, "TimeAbility")
-		_return_to_normal()
 	
 	# Visual feedback when ability use is blocked
 	if _active_ability == TimeManager.TimeState.NORMAL:
