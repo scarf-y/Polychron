@@ -146,6 +146,6 @@ func _on_lockdown_changed(is_lockdown: bool) -> void:
 		info_label.text = steps[current_step].info
 
 func _on_dummy_killed() -> void:
-	if current_step == 5 and not _pending_step:
-		_pending_step = true
-		_next_step_delayed(1.0)
+	if current_step == 5:
+		current_step = 6 # Transition to TUTORIAL COMPLETE
+		_update_step_ui()
