@@ -236,7 +236,6 @@ func _spawn_bombs(player: Node2D) -> void:
 		spawned_positions.append(spawn_pos)
 		bomb.global_position = spawn_pos
 		get_tree().current_scene.add_child(bomb)
-		GameJuice.play_sfx("res://assets/audio/timeBomb.wav", -4.0)
 
 var _cone_direction: Vector2 = Vector2.ZERO
 

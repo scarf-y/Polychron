@@ -70,6 +70,7 @@ func _explode() -> void:
 	# Visual effects
 	GameJuice.screen_shake(15.0, 1.0)
 	GameJuice.spawn_death_particles(global_position, Color(1.0, 0.2, 0.2), 40)
+	GameJuice.play_sfx("res://assets/audio/timeBomb.wav", -2.0)
 	
 	# Flash and fade out
 	var tween := create_tween()

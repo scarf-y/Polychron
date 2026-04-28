@@ -274,22 +274,28 @@ func _handle_time_abilities() -> void:
 		_active_ability = TimeManager.TimeState.STOPPED
 		TimeManager.change_time_state(TimeManager.TimeState.STOPPED)
 		GameJuice.time_stop_impact()
+		GameJuice.play_sfx("res://assets/audio/timeStopBassDrop.wav", 0.0, 1.0, "TimeAbility")
+		GameJuice.play_sfx("res://assets/audio/timeStopHighPing.wav", -2.0, 1.0, "TimeAbility")
 		_update_modulate()
 	elif Input.is_action_just_released("time_stop") and _active_ability == TimeManager.TimeState.STOPPED:
+		GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
 		_return_to_normal()
 	
 	# TIME SLOW — Hold Shift
 	if Input.is_action_just_pressed("time_slow") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
 		_active_ability = TimeManager.TimeState.SLOWED
 		TimeManager.change_time_state(TimeManager.TimeState.SLOWED)
+		GameJuice.play_sfx("res://assets/audio/timeSlow.wav", 0.0, 1.0, "TimeAbility")
 		_update_modulate()
 	elif Input.is_action_just_released("time_slow") and _active_ability == TimeManager.TimeState.SLOWED:
+		GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
 		_return_to_normal()
 	
 	# TIME ERASE — Hold E
 	if Input.is_action_just_pressed("time_erase") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
 		_active_ability = TimeManager.TimeState.ERASED
 		TimeManager.change_time_state(TimeManager.TimeState.ERASED)
+		GameJuice.play_sfx("res://assets/audio/timeErase.wav", 0.0, 1.0, "TimeAbility")
 		set_collision_mask_value(3, false)
 		set_collision_layer_value(2, false)
 		
@@ -309,6 +315,7 @@ func _handle_time_abilities() -> void:
 		set_collision_layer_value(2, true)
 		if is_instance_valid(_erase_decoy):
 			_erase_decoy.queue_free()
+		GameJuice.play_sfx("res://assets/audio/timeEraseRip.wav", 0.0, 1.0, "TimeAbility")
 		_return_to_normal()
 	
 	# Visual feedback when ability use is blocked
@@ -319,11 +326,15 @@ func _handle_time_abilities() -> void:
 	
 	# Auto-return when gauge depletes
 	if TimeManager.time_gauge <= 0.0 and _active_ability != TimeManager.TimeState.NORMAL:
-		if _active_ability == TimeManager.TimeState.ERASED:
+		var was_erased := _active_ability == TimeManager.TimeState.ERASED
+		if was_erased:
 			set_collision_mask_value(3, true)
 			set_collision_layer_value(2, true)
 			if is_instance_valid(_erase_decoy):
 				_erase_decoy.queue_free()
+			GameJuice.play_sfx("res://assets/audio/timeEraseRip.wav", 0.0, 1.0, "TimeAbility")
+		else:
+			GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
 		_active_ability = TimeManager.TimeState.NORMAL
 		_update_modulate()
 
@@ -342,11 +353,15 @@ func _show_ability_blocked_feedback() -> void:
 
 func force_cancel_ability() -> void:
 	if _active_ability != TimeManager.TimeState.NORMAL:
-		if _active_ability == TimeManager.TimeState.ERASED:
+		var was_erased := _active_ability == TimeManager.TimeState.ERASED
+		if was_erased:
 			set_collision_mask_value(3, true)
 			set_collision_layer_value(2, true)
 			if is_instance_valid(_erase_decoy):
 				_erase_decoy.queue_free()
+			GameJuice.play_sfx("res://assets/audio/timeEraseRip.wav", 0.0, 1.0, "TimeAbility")
+		else:
+			GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
 		_return_to_normal()
 
 func _return_to_normal() -> void:

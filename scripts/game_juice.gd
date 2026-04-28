@@ -19,7 +19,7 @@ func _process(delta: float) -> void:
 # =========================
 # AUDIO SFX
 # =========================
-func play_sfx(stream_path: String, volume_db: float = 0.0, pitch: float = 1.0) -> void:
+func play_sfx(stream_path: String, volume_db: float = 0.0, pitch: float = 1.0, bus: String = "Master") -> void:
 	var stream = load(stream_path)
 	if not stream:
 		return
@@ -27,7 +27,7 @@ func play_sfx(stream_path: String, volume_db: float = 0.0, pitch: float = 1.0) -
 	player.stream = stream
 	player.volume_db = volume_db
 	player.pitch_scale = pitch
-	player.bus = "Master"
+	player.bus = bus
 	add_child(player)
 	player.play()
 	player.finished.connect(player.queue_free)

@@ -51,6 +51,28 @@ var best_game_time: float = -1.0
 var game_is_active: bool = false
 var death_count: int = 0
 
+# --- Audio Bus ---
+var _master_bus_idx: int = 0
+var _lowpass_effect_idx: int = -1
+var _timeability_bus_idx: int = -1
+
+func _ready() -> void:
+	_master_bus_idx = AudioServer.get_bus_index("Master")
+	
+	# Create LowPass filter on Master bus (disabled by default)
+	var lowpass = AudioEffectLowPassFilter.new()
+	lowpass.cutoff_hz = 800.0
+	lowpass.resonance = 0.5
+	AudioServer.add_bus_effect(_master_bus_idx, lowpass)
+	_lowpass_effect_idx = AudioServer.get_bus_effect_count(_master_bus_idx) - 1
+	AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, false)
+	
+	# Create TimeAbility bus (routed to Master, but unaffected by Master's LowPass)
+	AudioServer.add_bus()
+	_timeability_bus_idx = AudioServer.get_bus_count() - 1
+	AudioServer.set_bus_name(_timeability_bus_idx, "TimeAbility")
+	AudioServer.set_bus_send(_timeability_bus_idx, "Master")
+
 ## Reset all fracture state — call on scene reload / respawn
 func reset_fracture(reset_hp: bool = false) -> void:
 	if reset_hp:
@@ -159,6 +181,7 @@ func _exit_lockdown() -> void:
 	fracture_level = 75.0
 	fracture_changed.emit(fracture_level)
 	lockdown_changed.emit(false)
+	GameJuice.play_sfx("res://assets/audio/resyncTime.wav", 0.0, 1.0, "TimeAbility")
 
 ## Called when any enemy dies — reduces fracture and can exit lockdown
 func on_enemy_killed() -> void:
@@ -185,20 +208,42 @@ func change_time_state(new_state: TimeState) -> void:
 		TimeState.NORMAL:
 			Engine.time_scale = 1.0
 			AudioServer.playback_speed_scale = 1.0
+			_set_audio_normal()
 		TimeState.STOPPED:
 			# We keep Engine.time_scale at 1.0 so player can still move.
 			# Enemies check TimeManager.current_state themselves.
 			Engine.time_scale = 1.0
 			AudioServer.playback_speed_scale = 1.0
+			_set_audio_muffled()
 		TimeState.SLOWED:
 			Engine.time_scale = 0.2  # World slows to 20%
 			# Audio slows down, but 0.2 pitch is too garbled, 0.5 sounds thick and warped.
 			AudioServer.playback_speed_scale = 0.5
+			_set_audio_normal()  # No extra effect beyond pitch
 		TimeState.ERASED:
 			Engine.time_scale = 1.0
 			AudioServer.playback_speed_scale = 1.0
+			_set_audio_silent()
 	
 	time_state_changed.emit(new_state)
+
+## Muffled: LowPass enabled on Master (underwater / dampened)
+func _set_audio_muffled() -> void:
+	if _lowpass_effect_idx >= 0:
+		AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, true)
+	AudioServer.set_bus_volume_db(_master_bus_idx, 0.0)
+
+## Silent: Master bus volume to -80dB (total silence for gameplay audio)
+func _set_audio_silent() -> void:
+	if _lowpass_effect_idx >= 0:
+		AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, false)
+	AudioServer.set_bus_volume_db(_master_bus_idx, -80.0)
+
+## Normal: Disable all effects, restore volume
+func _set_audio_normal() -> void:
+	if _lowpass_effect_idx >= 0:
+		AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, false)
+	AudioServer.set_bus_volume_db(_master_bus_idx, 0.0)
 
 func _force_normal() -> void:
 	time_gauge_depleted.emit()
