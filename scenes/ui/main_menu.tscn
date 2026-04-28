@@ -1,10 +1,10 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://djcjxkbgia7eo"]
 
-[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_script"]
-[ext_resource type="AudioStream" path="res://assets/audio/chrono break.mp3" id="2_audio"]
+[ext_resource type="Script" uid="uid://cpw7enw6285ac" path="res://scripts/main_menu.gd" id="1_script"]
+[ext_resource type="AudioStream" uid="uid://ftwk6tlyyofm" path="res://assets/audio/chrono break.mp3" id="2_audio"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
-font_size = 32
+font_size = 72
 font_color = Color(1, 0.2, 0.6, 1)
 outline_size = 3
 outline_color = Color(0.3, 0, 0.2, 1)
@@ -17,7 +17,7 @@ font_color = Color(0, 1, 0.8, 1)
 font_size = 10
 font_color = Color(0.5, 0.5, 0.6, 1)
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=1411845638]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,7 +26,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=740767742]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,7 +35,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.02, 0.01, 0.05, 1)
 
-[node name="ParticleOverlay" type="ColorRect" parent="."]
+[node name="ParticleOverlay" type="ColorRect" parent="." unique_id=1024946292]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,7 +44,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.05, 0.02, 0.08, 0.5)
 
-[node name="MainHBox" type="HBoxContainer" parent="."]
+[node name="MainHBox" type="HBoxContainer" parent="." unique_id=1161423647]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,68 +56,66 @@ grow_vertical = 2
 theme_override_constants/separation = 100
 alignment = 1
 
-[node name="LeftVBox" type="VBoxContainer" parent="MainHBox"]
+[node name="LeftVBox" type="VBoxContainer" parent="MainHBox" unique_id=373370158]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainHBox/LeftVBox"]
+[node name="TitleLabel" type="Label" parent="MainHBox/LeftVBox" unique_id=301491411]
 layout_mode = 2
 text = "POLYCHRON"
 label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
 
-[node name="SubtitleLabel" type="Label" parent="MainHBox/LeftVBox"]
+[node name="SubtitleLabel" type="Label" parent="MainHBox/LeftVBox" unique_id=647368057]
 layout_mode = 2
 text = "SEQUENCE-0 INITIALIZED"
 label_settings = SubResource("LabelSettings_sub")
+horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="MainHBox/LeftVBox"]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainHBox/LeftVBox"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainHBox/LeftVBox" unique_id=73189673]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="StartButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
+[node name="StartButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer" unique_id=2064109758]
 custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 text = "INITIALIZE POLYCHRON"
 
-[node name="TutorialButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
+[node name="TutorialButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer" unique_id=1657290049]
 layout_mode = 2
 text = "INITIATE TUTORIAL"
 
-[node name="SettingsButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
+[node name="SettingsButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer" unique_id=832325446]
 layout_mode = 2
 text = "SETTINGS"
 
-[node name="QuitButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="MainHBox/LeftVBox/VBoxContainer" unique_id=1140944457]
 layout_mode = 2
 text = "TERMINATE"
 
-[node name="RightVBox" type="VBoxContainer" parent="MainHBox"]
+[node name="RightVBox" type="VBoxContainer" parent="MainHBox" unique_id=53612658]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PlayerPreviewContainer" type="Control" parent="MainHBox/RightVBox"]
+[node name="PlayerPreviewContainer" type="Control" parent="MainHBox/RightVBox" unique_id=1922670660]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 
-[node name="PlayerPoly" type="Polygon2D" parent="MainHBox/RightVBox/PlayerPreviewContainer"]
-position = Vector2(50, 50)
+[node name="PlayerPoly" type="Polygon2D" parent="MainHBox/RightVBox/PlayerPreviewContainer" unique_id=1170953560]
+position = Vector2(98, 52)
 color = Color(0.3, 0.5, 1, 1)
-polygon = PackedVector2Array(0, -25, 20, 0, 0, 25, -20, 0)
+polygon = PackedVector2Array(0, -25, 20, -38, 34, -8, 1, 28, -21, 29, -23, -24)
 
-[node name="BestTimeLabel" type="Label" parent="MainHBox/RightVBox"]
+[node name="BestTimeLabel" type="Label" parent="MainHBox/RightVBox" unique_id=122374007]
 layout_mode = 2
 text = "FASTEST CLEAR: NONE"
 horizontal_alignment = 1
 
-[node name="ControlsLabel" type="Label" parent="MainHBox/RightVBox"]
+[node name="ControlsLabel" type="Label" parent="MainHBox/RightVBox" unique_id=1412860406]
 layout_mode = 2
 text = "WASD - Move
 LMB - Shoot
@@ -128,11 +126,11 @@ E - Time Erase"
 label_settings = SubResource("LabelSettings_controls")
 horizontal_alignment = 1
 
-[node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=2004583594]
 stream = ExtResource("2_audio")
 autoplay = true
 
-[node name="SettingsPanel" type="ColorRect" parent="."]
+[node name="SettingsPanel" type="ColorRect" parent="." unique_id=1380991097]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -144,9 +142,11 @@ offset_left = -150.0
 offset_top = -120.0
 offset_right = 150.0
 offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.05, 0.05, 0.1, 0.95)
 
-[node name="Border" type="ReferenceRect" parent="SettingsPanel"]
+[node name="Border" type="ReferenceRect" parent="SettingsPanel" unique_id=1731754498]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -156,7 +156,7 @@ grow_vertical = 2
 border_color = Color(0, 1, 0.8, 1)
 editor_only = false
 
-[node name="VBox" type="VBoxContainer" parent="SettingsPanel"]
+[node name="VBox" type="VBoxContainer" parent="SettingsPanel" unique_id=128975200]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -169,31 +169,31 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="SettingsPanel/VBox"]
+[node name="Title" type="Label" parent="SettingsPanel/VBox" unique_id=390081996]
 layout_mode = 2
 text = "SETTINGS"
 horizontal_alignment = 1
 
-[node name="MusicCheck" type="CheckBox" parent="SettingsPanel/VBox"]
+[node name="MusicCheck" type="CheckBox" parent="SettingsPanel/VBox" unique_id=760812123]
 layout_mode = 2
+button_pressed = true
 text = "Enable Music"
-button_pressed = true
 
-[node name="ShakeCheck" type="CheckBox" parent="SettingsPanel/VBox"]
+[node name="ShakeCheck" type="CheckBox" parent="SettingsPanel/VBox" unique_id=663469349]
 layout_mode = 2
-text = "Enable Screenshake"
 button_pressed = true
+text = "Enable Screenshake"
 
-[node name="VolLabel" type="Label" parent="SettingsPanel/VBox"]
+[node name="VolLabel" type="Label" parent="SettingsPanel/VBox" unique_id=625364899]
 layout_mode = 2
 text = "Master Volume"
 
-[node name="VolSlider" type="HSlider" parent="SettingsPanel/VBox"]
+[node name="VolSlider" type="HSlider" parent="SettingsPanel/VBox" unique_id=1855912381]
 layout_mode = 2
 max_value = 1.0
 step = 0.05
 value = 1.0
 
-[node name="CloseSettings" type="Button" parent="SettingsPanel/VBox"]
+[node name="CloseSettings" type="Button" parent="SettingsPanel/VBox" unique_id=964895843]
 layout_mode = 2
 text = "CLOSE"

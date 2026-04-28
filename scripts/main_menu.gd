@@ -20,6 +20,19 @@ extends Control
 @onready var subtitle_label: Label = $MainHBox/LeftVBox/SubtitleLabel
 @onready var best_time_label: Label = $MainHBox/RightVBox/BestTimeLabel
 @onready var player_poly: Polygon2D = $MainHBox/RightVBox/PlayerPreviewContainer/PlayerPoly
+@onready var cube_container: Control = $MainHBox/RightVBox/PlayerPreviewContainer
+
+# --- Cube Data ---
+var _cube_rotation: Vector3 = Vector3.ZERO
+var _cube_vertices: Array[Vector3] = [
+	Vector3(-1, -1, -1), Vector3(1, -1, -1), Vector3(1, 1, -1), Vector3(-1, 1, -1),
+	Vector3(-1, -1, 1), Vector3(1, -1, 1), Vector3(1, 1, 1), Vector3(-1, 1, 1)
+]
+var _cube_edges: Array[Array] = [
+	[0, 1], [1, 2], [2, 3], [3, 0],
+	[4, 5], [5, 6], [6, 7], [7, 4],
+	[0, 4], [1, 5], [2, 6], [3, 7]
+]
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
@@ -44,14 +57,59 @@ func _ready() -> void:
 		best_time_label.text = "FASTEST CLEAR: NONE"
 		best_time_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
 	
-	# Animate Player Preview
-	var tween = player_poly.create_tween().set_loops()
-	tween.tween_property(player_poly, "scale", Vector2(1.1, 1.1), 1.0)
-	tween.tween_property(player_poly, "scale", Vector2(1.0, 1.0), 1.0)
+	# Hide static poly, we use custom draw
+	if player_poly:
+		player_poly.visible = false
+	
+	# Connect draw signal
+	cube_container.draw.connect(_on_cube_draw)
 	
 	# Ensure time is normal when returning to menu
 	Engine.time_scale = 1.0
 	TimeManager.game_is_active = false
+
+func _process(delta: float) -> void:
+	# Rotate the cube
+	_cube_rotation.x += delta * 1.0
+	_cube_rotation.y += delta * 1.5
+	_cube_rotation.z += delta * 0.5
+	cube_container.queue_redraw()
+
+func _on_cube_draw() -> void:
+	var center = cube_container.size / 2.0
+	var scale = 35.0
+	
+	var projected_points: Array[Vector2] = []
+	for v in _cube_vertices:
+		# Rotate around X
+		var p = v
+		var x1 = p.x
+		var y1 = p.y * cos(_cube_rotation.x) - p.z * sin(_cube_rotation.x)
+		var z1 = p.y * sin(_cube_rotation.x) + p.z * cos(_cube_rotation.x)
+		p = Vector3(x1, y1, z1)
+		
+		# Rotate around Y
+		var x2 = p.x * cos(_cube_rotation.y) + p.z * sin(_cube_rotation.y)
+		var y2 = p.y
+		var z2 = -p.x * sin(_cube_rotation.y) + p.z * cos(_cube_rotation.y)
+		p = Vector3(x2, y2, z2)
+		
+		# Rotate around Z
+		var x3 = p.x * cos(_cube_rotation.z) - p.y * sin(_cube_rotation.z)
+		var y3 = p.x * sin(_cube_rotation.z) + p.y * cos(_cube_rotation.z)
+		var z3 = p.z
+		
+		projected_points.append(center + Vector2(x3, y3) * scale)
+	
+	# Draw edges
+	for edge in _cube_edges:
+		var p1 = projected_points[edge[0]]
+		var p2 = projected_points[edge[1]]
+		cube_container.draw_line(p1, p2, Color(0.3, 0.7, 1.0), 1.5, true)
+		
+	# Draw vertices (dots)
+	for p in projected_points:
+		cube_container.draw_circle(p, 2.0, Color(0, 1, 1))
 
 func _load_settings() -> void:
 	var gs = get_node_or_null("/root/GlobalSettings")
