@@ -19,7 +19,7 @@ func _process(delta: float) -> void:
 # =========================
 # AUDIO SFX
 # =========================
-func play_sfx(stream_path: String, volume_db: float = 0.0, pitch: float = 1.0, bus: String = "Master") -> void:
+func play_sfx(stream_path: String, volume_db: float = 0.0, pitch: float = 1.0, bus: String = "Gameplay") -> void:
 	var stream = load(stream_path)
 	if not stream:
 		return

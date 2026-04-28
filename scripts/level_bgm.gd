@@ -1,8 +1,10 @@
 extends AudioStreamPlayer
 
 ## Level BGM — respects GlobalSettings music toggle and volume.
+## Routes through "Gameplay" bus so it gets muffled/silenced by time abilities.
 
 func _ready() -> void:
+	bus = "Gameplay"
 	var gs = get_node_or_null("/root/GlobalSettings")
 	if gs and not gs.music_enabled:
 		stop()

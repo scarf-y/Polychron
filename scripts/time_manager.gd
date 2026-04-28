@@ -52,22 +52,28 @@ var game_is_active: bool = false
 var death_count: int = 0
 
 # --- Audio Bus ---
-var _master_bus_idx: int = 0
+var _gameplay_bus_idx: int = -1
 var _lowpass_effect_idx: int = -1
 var _timeability_bus_idx: int = -1
 
 func _ready() -> void:
-	_master_bus_idx = AudioServer.get_bus_index("Master")
+	var master_idx = AudioServer.get_bus_index("Master")
 	
-	# Create LowPass filter on Master bus (disabled by default)
+	# Create "Gameplay" bus (child of Master) — all normal SFX/BGM route here
+	AudioServer.add_bus()
+	_gameplay_bus_idx = AudioServer.get_bus_count() - 1
+	AudioServer.set_bus_name(_gameplay_bus_idx, "Gameplay")
+	AudioServer.set_bus_send(_gameplay_bus_idx, "Master")
+	
+	# Create LowPass filter on Gameplay bus (disabled by default)
 	var lowpass = AudioEffectLowPassFilter.new()
 	lowpass.cutoff_hz = 800.0
 	lowpass.resonance = 0.5
-	AudioServer.add_bus_effect(_master_bus_idx, lowpass)
-	_lowpass_effect_idx = AudioServer.get_bus_effect_count(_master_bus_idx) - 1
-	AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, false)
+	AudioServer.add_bus_effect(_gameplay_bus_idx, lowpass)
+	_lowpass_effect_idx = AudioServer.get_bus_effect_count(_gameplay_bus_idx) - 1
+	AudioServer.set_bus_effect_enabled(_gameplay_bus_idx, _lowpass_effect_idx, false)
 	
-	# Create TimeAbility bus (routed to Master, but unaffected by Master's LowPass)
+	# Create "TimeAbility" bus (child of Master directly — bypasses Gameplay effects)
 	AudioServer.add_bus()
 	_timeability_bus_idx = AudioServer.get_bus_count() - 1
 	AudioServer.set_bus_name(_timeability_bus_idx, "TimeAbility")
@@ -227,23 +233,23 @@ func change_time_state(new_state: TimeState) -> void:
 	
 	time_state_changed.emit(new_state)
 
-## Muffled: LowPass enabled on Master (underwater / dampened)
+## Muffled: LowPass enabled on Gameplay bus (underwater / dampened)
 func _set_audio_muffled() -> void:
 	if _lowpass_effect_idx >= 0:
-		AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, true)
-	AudioServer.set_bus_volume_db(_master_bus_idx, 0.0)
+		AudioServer.set_bus_effect_enabled(_gameplay_bus_idx, _lowpass_effect_idx, true)
+	AudioServer.set_bus_volume_db(_gameplay_bus_idx, 0.0)
 
-## Silent: Master bus volume to -80dB (total silence for gameplay audio)
+## Silent: Gameplay bus volume to -80dB (total silence for gameplay audio)
 func _set_audio_silent() -> void:
 	if _lowpass_effect_idx >= 0:
-		AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, false)
-	AudioServer.set_bus_volume_db(_master_bus_idx, -80.0)
+		AudioServer.set_bus_effect_enabled(_gameplay_bus_idx, _lowpass_effect_idx, false)
+	AudioServer.set_bus_volume_db(_gameplay_bus_idx, -80.0)
 
 ## Normal: Disable all effects, restore volume
 func _set_audio_normal() -> void:
 	if _lowpass_effect_idx >= 0:
-		AudioServer.set_bus_effect_enabled(_master_bus_idx, _lowpass_effect_idx, false)
-	AudioServer.set_bus_volume_db(_master_bus_idx, 0.0)
+		AudioServer.set_bus_effect_enabled(_gameplay_bus_idx, _lowpass_effect_idx, false)
+	AudioServer.set_bus_volume_db(_gameplay_bus_idx, 0.0)
 
 func _force_normal() -> void:
 	time_gauge_depleted.emit()
