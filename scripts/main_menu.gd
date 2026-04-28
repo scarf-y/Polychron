@@ -34,23 +34,34 @@ func _ready() -> void:
 	_animate_title()
 	
 	# Display Best Time
-	if TimeManager.best_game_time > 0.0:
-		var best_time_label := Label.new()
-		best_time_label.text = "FASTEST CLEAR: " + _format_time(TimeManager.best_game_time)
-		best_time_label.add_theme_font_size_override("font_size", 11)
-		best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))
-		best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var best_time_label := Label.new()
+	var has_best = TimeManager.best_game_time > 0.0
+	best_time_label.text = "FASTEST CLEAR: " + (_format_time(TimeManager.best_game_time) if has_best else "NONE")
+	best_time_label.add_theme_font_size_override("font_size", 11)
+	best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2) if has_best else Color(0.5, 0.5, 0.5))
+	best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	
+	# Add to the top of the button container
+	var vbox = get_node("VBoxContainer")
+	if vbox:
+		vbox.add_child(best_time_label)
+		vbox.move_child(best_time_label, 0)
+		# Add a small spacer below it
+		var spacer := Control.new()
+		spacer.custom_minimum_size = Vector2(0, 10)
+		vbox.add_child(spacer)
+		vbox.move_child(spacer, 1)
 		
-		# Add to the top of the button container
-		var vbox = get_node("VBoxContainer")
-		if vbox:
-			vbox.add_child(best_time_label)
-			vbox.move_child(best_time_label, 0)
-			# Add a small spacer below it
-			var spacer := Control.new()
-			spacer.custom_minimum_size = Vector2(0, 10)
-			vbox.add_child(spacer)
-			vbox.move_child(spacer, 1)
+		# Move ControlsLabel to the bottom of the VBox
+		var controls = get_node_or_null("ControlsLabel")
+		if controls:
+			controls.reparent(vbox)
+			controls.add_theme_font_size_override("font_size", 9)
+			# Add spacer above controls
+			var ctrl_spacer := Control.new()
+			ctrl_spacer.custom_minimum_size = Vector2(0, 15)
+			vbox.add_child(ctrl_spacer)
+			vbox.add_child(controls)
 	
 	# Ensure time is normal when returning to menu
 	Engine.time_scale = 1.0

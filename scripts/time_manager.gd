@@ -18,7 +18,7 @@ signal lockdown_changed(is_lockdown: bool)
 const GAUGE_MAX: float = 100.0
 const DRAIN_RATE_STOPPED: float = 25.0   # per second
 const DRAIN_RATE_SLOWED: float = 15.0    # per second
-const DRAIN_RATE_ERASED: float = 33.0    # per second
+const DRAIN_RATE_ERASED: float = 25.0    # Reduced from 33.0
 const RECHARGE_RATE: float = 10.0        # per second in NORMAL state
 
 var time_gauge: float = GAUGE_MAX

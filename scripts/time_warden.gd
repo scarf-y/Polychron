@@ -7,8 +7,8 @@ extends CharacterBody2D
 # --- Stats ---
 @export var health: float = 800.0
 @export var max_health: float = 800.0
-@export var normal_speed: float = 40.0
-@export var timestop_speed: float = 15.0
+@export var normal_speed: float = 60.0
+@export var timestop_speed: float = 60.0
 @export var charge_speed: float = 140.0
 var is_dead: bool = false
 var is_active_in_room: bool = true
@@ -203,8 +203,10 @@ func _spawn_minions() -> void:
 		var dist = randf_range(80.0, 200.0)
 		stalker.global_position = global_position + Vector2(cos(angle), sin(angle)) * dist
 		
-		if "is_active_in_room" in stalker:
-			stalker.is_active_in_room = true
+		if "health" in stalker:
+			stalker.health = 40.0 # Half HP nerf
+		if "speed" in stalker:
+			stalker.speed = 45.0 # 0.75x speed nerf
 			
 		get_tree().current_scene.add_child(stalker)
 		GameJuice.spawn_death_particles(stalker.global_position, Color(0.8, 0.2, 0.2), 15)
