@@ -175,7 +175,7 @@ func _die() -> void:
 	
 	# GameJuice glitch particles
 	GameJuice.spawn_death_particles(global_position, Color(0, 1.0, 0.8))
-	GameJuice.screen_shake(2.0, 0.15)
+	GameJuice.death_impact()
 	
 	# Score
 	var hud: CanvasLayer = get_tree().get_first_node_in_group("hud")

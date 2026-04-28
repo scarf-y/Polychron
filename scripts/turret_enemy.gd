@@ -107,7 +107,7 @@ var _health_core_scene: PackedScene = preload("res://scenes/effects/health_core.
 
 func _die() -> void:
 	is_dead = true
-	GameJuice.big_impact()
+	GameJuice.death_impact()
 	GameJuice.spawn_death_particles(global_position, Color(1.0, 0.6, 0.0), 10)
 	
 	# Fracture reduction / lockdown exit
