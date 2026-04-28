@@ -211,6 +211,7 @@ func _perform_dash() -> void:
 	velocity = move_dir * dash_speed_val
 	
 	GameJuice.screen_shake(2.5, 1.3)
+	GameJuice.play_sfx("res://assets/audio/phaseDash.wav")
 	
 	# Ghost trail
 	_spawn_ghost_trail(dash_time)
@@ -384,6 +385,8 @@ func _handle_shooting() -> void:
 func _shoot() -> void:
 	can_shoot = false
 	
+	GameJuice.play_sfx("res://assets/audio/laserShoot.wav", -4.0, randf_range(0.95, 1.05))
+	
 	var bullet := bullet_scene.instantiate()
 	bullet.global_position = global_position
 	
@@ -416,6 +419,7 @@ func take_damage(amount: float = 10.0) -> void:
 	
 	# Screen shake and hitstop via GameJuice
 	GameJuice.hit_impact()
+	GameJuice.play_sfx("res://assets/audio/hitHurt.wav")
 	
 	player_damaged.emit(health)
 	
@@ -446,6 +450,7 @@ func heal(amount: float) -> void:
 	health = minf(health + amount, max_health)
 	TimeManager.player_health = health
 	player_damaged.emit(health)
+	GameJuice.play_sfx("res://assets/audio/heal.wav")
 
 func _die() -> void:
 	is_dead = true

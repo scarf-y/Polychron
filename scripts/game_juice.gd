@@ -17,6 +17,22 @@ func _process(delta: float) -> void:
 	_process_shake(delta)
 
 # =========================
+# AUDIO SFX
+# =========================
+func play_sfx(stream_path: String, volume_db: float = 0.0, pitch: float = 1.0) -> void:
+	var stream = load(stream_path)
+	if not stream:
+		return
+	var player = AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch
+	player.bus = "Master"
+	add_child(player)
+	player.play()
+	player.finished.connect(player.queue_free)
+
+# =========================
 # HITSTOP
 # =========================
 func hitstop(duration_real: float = 0.08, freeze_scale: float = 0.05) -> void:
@@ -194,8 +210,9 @@ func time_stop_impact() -> void:
 	screen_shake(5.0, 1.8)
 
 func death_impact() -> void:
-	hitstop(0.15, 0.01)
-	screen_shake(8.0, 2.0)
+	hitstop(0.1, 0.01)
+	screen_shake(6.0, 2.0)
+	play_sfx("res://assets/audio/deathExplosion.wav", -4.0, randf_range(0.9, 1.1))
 
 # =========================
 # LOCKDOWN FLICKER
