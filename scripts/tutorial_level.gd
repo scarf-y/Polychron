@@ -138,14 +138,14 @@ func _on_lockdown_changed(is_lockdown: bool) -> void:
 	if has_node("Dummy"):
 		$Dummy.is_invincible = not is_lockdown
 		
-	if is_lockdown and current_step == 4:
+	if is_lockdown and current_step == 5:
 		# Show extra info about how to clear it
 		info_label.text = "LOCKDOWN ACTIVE!\nAbility use disabled.\nKill the dummy to RE-SYNC and clear Fracture!"
-	elif not is_lockdown and current_step == 4:
-		# If they managed to clear it without killing the dummy (e.g. time passed, though unlikely in tutorial)
+	elif not is_lockdown and current_step == 5:
+		# If they managed to clear it without killing the dummy
 		info_label.text = steps[current_step].info
 
 func _on_dummy_killed() -> void:
-	if current_step == 4 and not _pending_step:
+	if current_step == 5 and not _pending_step:
 		_pending_step = true
 		_next_step_delayed(1.0)

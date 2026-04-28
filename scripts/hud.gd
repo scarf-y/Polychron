@@ -185,8 +185,8 @@ func _build_hud() -> void:
 	bottom_container.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	bottom_container.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	bottom_container.offset_bottom = -12.0
-	bottom_container.offset_left = -200.0
-	bottom_container.offset_right = 200.0
+	bottom_container.offset_left = -100.0
+	bottom_container.offset_right = 100.0
 	bottom_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(bottom_container)
 	
@@ -196,16 +196,11 @@ func _build_hud() -> void:
 	state_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	bottom_container.add_child(state_label)
 	
-	var chrono_hbox := HBoxContainer.new()
-	chrono_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	chrono_hbox.add_theme_constant_override("separation", 10)
-	bottom_container.add_child(chrono_hbox)
-	
 	gauge_bar = ProgressBar.new()
 	gauge_bar.max_value = 100.0
 	gauge_bar.value = 100.0
 	gauge_bar.show_percentage = false
-	gauge_bar.custom_minimum_size = Vector2(200, 10) # Synchronized size
+	gauge_bar.custom_minimum_size = Vector2(200, 10) # 200px as requested
 	var gauge_fill := StyleBoxFlat.new()
 	gauge_fill.bg_color = Color(0.3, 0.7, 1.0)
 	gauge_fill.corner_radius_top_left = 2
@@ -220,13 +215,21 @@ func _build_hud() -> void:
 	gauge_bg.corner_radius_bottom_left = 2
 	gauge_bg.corner_radius_bottom_right = 2
 	gauge_bar.add_theme_stylebox_override("background", gauge_bg)
-	chrono_hbox.add_child(gauge_bar)
+	bottom_container.add_child(gauge_bar)
 	
+	# Timer at bottom right (independent)
 	game_timer_label = Label.new()
 	game_timer_label.text = "00:00.00"
 	game_timer_label.add_theme_font_size_override("font_size", 14)
 	game_timer_label.add_theme_color_override("font_color", Color(0.8, 1.0, 0.9))
-	chrono_hbox.add_child(game_timer_label)
+	game_timer_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	game_timer_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	game_timer_label.offset_left = -100.0
+	game_timer_label.offset_top = -30.0
+	game_timer_label.offset_right = -16.0
+	game_timer_label.offset_bottom = -12.0
+	game_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	add_child(game_timer_label)
 	
 	# === LOCKDOWN WARNING ===
 	lockdown_warning = Label.new()
