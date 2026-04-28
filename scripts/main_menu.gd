@@ -4,6 +4,7 @@ extends Control
 ## Title, Start, and Quit buttons.
 
 @onready var start_button: Button = $VBoxContainer/StartButton
+@onready var tutorial_button: Button = $VBoxContainer/TutorialButton
 @onready var settings_button: Button = $VBoxContainer/SettingsButton
 @onready var quit_button: Button = $VBoxContainer/QuitButton
 
@@ -20,6 +21,7 @@ extends Control
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
+	tutorial_button.pressed.connect(_on_tutorial_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	
@@ -98,6 +100,10 @@ func _on_volume_changed(value: float) -> void:
 func _on_start_pressed() -> void:
 	TimeManager.start_new_run()
 	get_tree().change_scene_to_file("res://scenes/levels/level_01.tscn")
+
+func _on_tutorial_pressed() -> void:
+	GameJuice.play_sfx("res://assets/audio/uiClick.wav")
+	get_tree().change_scene_to_file("res://scenes/levels/tutorial_level.tscn")
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

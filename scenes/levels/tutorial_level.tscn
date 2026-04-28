@@ -1,0 +1,137 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/tutorial_level.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://scenes/effects/world_environment.tscn" id="4_world_env"]
+[ext_resource type="AudioStream" path="res://assets/audio/chrono stream.mp3" id="5_audio"]
+[ext_resource type="Script" path="res://scripts/level_bgm.gd" id="6_lvlbgm"]
+[ext_resource type="Script" path="res://scripts/tutorial_dummy.gd" id="7_dummy_script"]
+
+[sub_resource type="RectangleShape2D" id="wall_h"]
+size = Vector2(1000, 20)
+
+[sub_resource type="RectangleShape2D" id="wall_v"]
+size = Vector2(20, 600)
+
+[sub_resource type="CircleShape2D" id="dummy_shape"]
+radius = 15.0
+
+[node name="TutorialLevel" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" parent="." instance=ExtResource("4_world_env")]
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = -300.0
+offset_right = 1500.0
+offset_bottom = 1000.0
+color = Color(0.01, 0.0, 0.03, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(320, 0)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("wall_h")
+[node name="ColorRect" type="ColorRect" parent="Walls/Top"]
+offset_left = -500.0
+offset_top = -10.0
+offset_right = 500.0
+offset_bottom = 10.0
+color = Color(0.1, 0.2, 0.5, 1)
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(320, 360)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("wall_h")
+[node name="ColorRect" type="ColorRect" parent="Walls/Bottom"]
+offset_left = -500.0
+offset_top = -10.0
+offset_right = 500.0
+offset_bottom = 10.0
+color = Color(0.1, 0.2, 0.5, 1)
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 180)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("wall_v")
+[node name="ColorRect" type="ColorRect" parent="Walls/Left"]
+offset_left = -10.0
+offset_top = -300.0
+offset_right = 10.0
+offset_bottom = 300.0
+color = Color(0.1, 0.2, 0.5, 1)
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(640, 180)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("wall_v")
+[node name="ColorRect" type="ColorRect" parent="Walls/Right"]
+offset_left = -10.0
+offset_top = -300.0
+offset_right = 10.0
+offset_bottom = 300.0
+color = Color(0.1, 0.2, 0.5, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(100, 180)
+
+[node name="Dummy" type="CharacterBody2D" parent="."]
+position = Vector2(500, 180)
+collision_layer = 4
+collision_mask = 11
+script = ExtResource("7_dummy_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Dummy"]
+shape = SubResource("dummy_shape")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Instructions" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="StepLabel" type="Label" parent="CanvasLayer/Instructions"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 40.0
+offset_right = 150.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 1, 0.8, 1)
+theme_override_font_sizes/font_size = 24
+text = "STEP TITLE"
+horizontal_alignment = 1
+
+[node name="InfoLabel" type="Label" parent="CanvasLayer/Instructions"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 60.0
+offset_right = 200.0
+offset_bottom = 120.0
+theme_override_font_sizes/font_size = 14
+text = "Instruction text goes here.
+Explain what to do."
+horizontal_alignment = 1
+
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("3_hud")]
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_audio")
+autoplay = true
+bus = &"Gameplay"
+script = ExtResource("6_lvlbgm")
