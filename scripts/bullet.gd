@@ -94,11 +94,19 @@ func _on_body_entered(body: Node2D) -> void:
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
 		
+		# Determine damage number color
+		var hit_color := Color.WHITE
+		var is_slowed := TimeManager.current_state == TimeManager.TimeState.SLOWED
+		
+		if is_slowed and is_crit:
+			hit_color = Color(1.0, 0.5, 0.1) # Electric Orange (Super Hit)
+		elif is_slowed:
+			hit_color = Color(1.0, 0.85, 0.3) # Gold (Time Slow Buff)
+		elif is_crit:
+			hit_color = Color(0.8, 0.2, 1.0) # Neon Purple (Critical)
+		
 		# Spawn floating damage number
-		if TimeManager.current_state == TimeManager.TimeState.SLOWED:
-			GameJuice.spawn_damage_number(damage, body.global_position, is_crit, Color(1.0, 0.85, 0.3), 1.2)
-		else:
-			GameJuice.spawn_damage_number(damage, body.global_position, is_crit)
+		GameJuice.spawn_damage_number(damage, body.global_position, is_crit, hit_color, 1.2 if is_slowed else 1.0)
 		
 		# Impact effect
 		if is_crit:
