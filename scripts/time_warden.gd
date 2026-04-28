@@ -7,9 +7,9 @@ extends CharacterBody2D
 # --- Stats ---
 @export var health: float = 800.0
 @export var max_health: float = 800.0
-@export var normal_speed: float = 60.0
-@export var timestop_speed: float = 60.0
-@export var charge_speed: float = 140.0
+@export var normal_speed: float = 90.0
+@export var timestop_speed: float = 90.0
+@export var charge_speed: float = 220.0
 var is_dead: bool = false
 var is_active_in_room: bool = true
 
@@ -19,7 +19,7 @@ var current_boss_state: BossState = BossState.IDLE
 
 # --- Timers ---
 var _attack_timer: float = 0.0
-const ATTACK_INTERVAL: float = 1.2
+const ATTACK_INTERVAL: float = 0.8
 const CHARGE_DURATION: float = 0.8
 const STUN_DURATION: float = 1.0
 var _state_timer: float = 0.0
