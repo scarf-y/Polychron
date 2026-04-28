@@ -181,6 +181,7 @@ func _handle_laser_telegraph(delta: float, player: Node2D) -> void:
 		_state_timer = LASER_DURATION
 		_laser_line.default_color = Color(1, 0.3, 0.3, 1.0)
 		_laser_line.width = 4.0
+		GameJuice.play_sfx("res://assets/audio/sentinelLaser.wav", 0.0, 1.0, "Gameplay")
 
 func _handle_laser_firing(delta: float, player: Node2D) -> void:
 	_state_timer -= delta

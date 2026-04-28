@@ -79,6 +79,10 @@ func _on_body_entered(body: Node2D) -> void:
 			var result: Array = player.deal_damage()
 			damage = result[0]
 			is_crit = result[1]
+			
+			# Time Slow Damage Buff: 1.25x
+			if TimeManager.current_state == TimeManager.TimeState.SLOWED:
+				damage *= 1.25
 		
 		# Check if enemy has damage reduction (Data Shield from Dampener)
 		if body.has_method("get_damage_reduction"):

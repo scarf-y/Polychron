@@ -79,68 +79,23 @@ func _build_hud() -> void:
 	if old_container:
 		old_container.queue_free()
 	
-	# === TOP BAR (HP + Fracture + State) ===
-	var top_bar := HBoxContainer.new()
-	top_bar.name = "TopBar"
-	top_bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	top_bar.offset_left = 8.0
-	top_bar.offset_right = -8.0
-	top_bar.offset_top = 6.0
-	top_bar.offset_bottom = 50.0
-	top_bar.add_theme_constant_override("separation", 12)
-	add_child(top_bar)
-	
-	# Game Timer Label
-	game_timer_label = Label.new()
-	game_timer_label.text = "00:00.00"
-	game_timer_label.add_theme_font_size_override("font_size", 16)
-	game_timer_label.add_theme_color_override("font_color", Color(0.8, 1.0, 0.9))
-	game_timer_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	game_timer_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	game_timer_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	game_timer_label.offset_left = -120.0
-	game_timer_label.offset_top = -40.0
-	game_timer_label.offset_right = -16.0
-	game_timer_label.offset_bottom = -16.0
-	game_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	add_child(game_timer_label)
-	
-	# --- HP Section ---
+	# --- HP SECTION (Vertical Left) ---
 	var hp_vbox := VBoxContainer.new()
-	hp_vbox.add_theme_constant_override("separation", 1)
-	hp_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top_bar.add_child(hp_vbox)
-	
-	# HP Header
-	hp_label = Label.new()
-	hp_label.text = "HP: 100/100"
-	hp_label.add_theme_font_size_override("font_size", 10)
-	hp_label.add_theme_color_override("font_color", Color(0.8, 1.0, 0.85))
-	hp_vbox.add_child(hp_label)
-	
-	# HP Bar with background
-	hp_panel = PanelContainer.new()
-	hp_panel.custom_minimum_size = Vector2(160, 14)
-	var hp_style := StyleBoxFlat.new()
-	hp_style.bg_color = Color(0.1, 0.1, 0.12, 0.9)
-	hp_style.corner_radius_top_left = 3
-	hp_style.corner_radius_top_right = 3
-	hp_style.corner_radius_bottom_left = 3
-	hp_style.corner_radius_bottom_right = 3
-	hp_style.border_color = Color(0.3, 0.8, 0.4, 0.5)
-	hp_style.border_width_left = 1
-	hp_style.border_width_right = 1
-	hp_style.border_width_top = 1
-	hp_style.border_width_bottom = 1
-	hp_panel.add_theme_stylebox_override("panel", hp_style)
-	hp_vbox.add_child(hp_panel)
+	hp_vbox.set_anchors_preset(Control.PRESET_LEFT_WIDE)
+	hp_vbox.offset_left = 12.0
+	hp_vbox.offset_top = 80.0
+	hp_vbox.offset_bottom = -80.0
+	hp_vbox.offset_right = 32.0
+	hp_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	add_child(hp_vbox)
 	
 	hp_bar = ProgressBar.new()
+	hp_bar.fill_mode = ProgressBar.FILL_BOTTOM_TO_TOP
 	hp_bar.max_value = 100.0
 	hp_bar.value = 100.0
 	hp_bar.show_percentage = false
-	hp_bar.custom_minimum_size = Vector2(160, 14)
-	hp_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hp_bar.custom_minimum_size = Vector2(10, 0)
+	hp_bar.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	# Style the fill
 	var hp_fill := StyleBoxFlat.new()
 	hp_fill.bg_color = Color(0.2, 0.9, 0.35)
@@ -150,19 +105,29 @@ func _build_hud() -> void:
 	hp_fill.corner_radius_bottom_right = 2
 	hp_bar.add_theme_stylebox_override("fill", hp_fill)
 	var hp_bg := StyleBoxFlat.new()
-	hp_bg.bg_color = Color(0.15, 0.05, 0.05, 0.8)
+	hp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.7)
 	hp_bg.corner_radius_top_left = 2
 	hp_bg.corner_radius_top_right = 2
 	hp_bg.corner_radius_bottom_left = 2
 	hp_bg.corner_radius_bottom_right = 2
 	hp_bar.add_theme_stylebox_override("background", hp_bg)
-	hp_panel.add_child(hp_bar)
+	hp_vbox.add_child(hp_bar)
 	
-	# --- Fracture Section (Center) ---
+	hp_label = Label.new()
+	hp_label.text = "HP"
+	hp_label.add_theme_font_size_override("font_size", 10)
+	hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hp_vbox.add_child(hp_label)
+	
+	# --- FRACTURE SECTION (Top Middle) ---
 	var fracture_vbox := VBoxContainer.new()
-	fracture_vbox.add_theme_constant_override("separation", 1)
-	fracture_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top_bar.add_child(fracture_vbox)
+	fracture_vbox.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	fracture_vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	fracture_vbox.offset_top = 10.0
+	fracture_vbox.offset_left = -100.0
+	fracture_vbox.offset_right = 100.0
+	fracture_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	add_child(fracture_vbox)
 	
 	fracture_label = Label.new()
 	fracture_label.text = "FRACTURE: 0%"
@@ -175,7 +140,7 @@ func _build_hud() -> void:
 	fracture_bar.max_value = 100.0
 	fracture_bar.value = 0.0
 	fracture_bar.show_percentage = false
-	fracture_bar.custom_minimum_size = Vector2(140, 10)
+	fracture_bar.custom_minimum_size = Vector2(160, 8)
 	var frac_fill := StyleBoxFlat.new()
 	frac_fill.bg_color = Color(0.3, 0.5, 1.0)
 	frac_fill.corner_radius_top_left = 2
@@ -199,43 +164,27 @@ func _build_hud() -> void:
 	fracture_stage_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	fracture_vbox.add_child(fracture_stage_label)
 	
-	fracture_debuff_label = Label.new()
-	fracture_debuff_label.text = "[ All Systems Nominal ]"
-	fracture_debuff_label.add_theme_font_size_override("font_size", 8)
-	fracture_debuff_label.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0, 0.8))
-	fracture_debuff_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	fracture_vbox.add_child(fracture_debuff_label)
-	
-	# --- State Label (Right) ---
-	var state_vbox := VBoxContainer.new()
-	state_vbox.add_theme_constant_override("separation", 2)
-	state_vbox.size_flags_horizontal = Control.SIZE_SHRINK_END
-	top_bar.add_child(state_vbox)
+	# --- BOTTOM SECTION (Chrono + State + Timer) ---
+	var bottom_container := VBoxContainer.new()
+	bottom_container.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	bottom_container.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	bottom_container.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	bottom_container.offset_bottom = -12.0
+	bottom_container.offset_left = -150.0
+	bottom_container.offset_right = 150.0
+	bottom_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	add_child(bottom_container)
 	
 	state_label = Label.new()
 	state_label.text = "[ NORMAL ]"
-	state_label.add_theme_font_size_override("font_size", 14)
-	state_label.add_theme_color_override("font_color", Color.WHITE)
-	state_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	state_vbox.add_child(state_label)
+	state_label.add_theme_font_size_override("font_size", 12)
+	state_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	bottom_container.add_child(state_label)
 	
-	# === BOTTOM BAR (Gauge) ===
-	var bottom_bar := VBoxContainer.new()
-	bottom_bar.name = "BottomBar"
-	bottom_bar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	bottom_bar.offset_left = 100.0
-	bottom_bar.offset_right = -100.0
-	bottom_bar.offset_top = -30.0
-	bottom_bar.offset_bottom = -6.0
-	bottom_bar.add_theme_constant_override("separation", 1)
-	add_child(bottom_bar)
-	
-	gauge_label = Label.new()
-	gauge_label.text = "CHRONO: 100%"
-	gauge_label.add_theme_font_size_override("font_size", 10)
-	gauge_label.add_theme_color_override("font_color", Color(0.5, 0.8, 1.0))
-	gauge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	bottom_bar.add_child(gauge_label)
+	var chrono_hbox := HBoxContainer.new()
+	chrono_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	chrono_hbox.add_theme_constant_override("separation", 10)
+	bottom_container.add_child(chrono_hbox)
 	
 	gauge_bar = ProgressBar.new()
 	gauge_bar.max_value = 100.0
@@ -256,19 +205,23 @@ func _build_hud() -> void:
 	gauge_bg.corner_radius_bottom_left = 2
 	gauge_bg.corner_radius_bottom_right = 2
 	gauge_bar.add_theme_stylebox_override("background", gauge_bg)
-	bottom_bar.add_child(gauge_bar)
+	chrono_hbox.add_child(gauge_bar)
 	
-	# === LOCKDOWN WARNING (Center of screen, hidden by default) ===
+	game_timer_label = Label.new()
+	game_timer_label.text = "00:00.00"
+	game_timer_label.add_theme_font_size_override("font_size", 14)
+	game_timer_label.add_theme_color_override("font_color", Color(0.8, 1.0, 0.9))
+	chrono_hbox.add_child(game_timer_label)
+	
+	# === LOCKDOWN WARNING ===
 	lockdown_warning = Label.new()
-	lockdown_warning.name = "LockdownWarning"
-	lockdown_warning.text = "⚠ LOCKDOWN — KILL TO RE-SYNC ⚠"
+	lockdown_warning.text = "⚠ LOCKDOWN ⚠"
 	lockdown_warning.set_anchors_preset(Control.PRESET_CENTER)
 	lockdown_warning.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	lockdown_warning.grow_vertical = Control.GROW_DIRECTION_BOTH
-	lockdown_warning.add_theme_font_size_override("font_size", 16)
-	lockdown_warning.add_theme_color_override("font_color", Color(1.0, 0.15, 0.15))
+	lockdown_warning.add_theme_font_size_override("font_size", 18)
+	lockdown_warning.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2))
 	lockdown_warning.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lockdown_warning.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	lockdown_warning.visible = false
 	add_child(lockdown_warning)
 
@@ -442,24 +395,13 @@ func _update_health(hp: float) -> void:
 			else:
 				fill_style.bg_color = Color(1.0, 0.2, 0.2)
 		
-		# Border glow on HP panel
-		if hp_panel:
-			var panel_style: StyleBoxFlat = hp_panel.get_theme_stylebox("panel") as StyleBoxFlat
-			if panel_style:
-				if ratio > 0.5:
-					panel_style.border_color = Color(0.3, 0.8, 0.4, 0.5)
-				elif ratio > 0.25:
-					panel_style.border_color = Color(1.0, 0.85, 0.2, 0.6)
-				else:
-					panel_style.border_color = Color(1.0, 0.2, 0.2, 0.8)
-		
 		# Flash on damage
 		var tween := create_tween()
 		tween.tween_property(hp_bar, "modulate:a", 0.5, 0.05)
 		tween.tween_property(hp_bar, "modulate:a", 1.0, 0.1)
 	
 	if hp_label:
-		hp_label.text = "HP: %d/100" % int(hp)
+		hp_label.text = "%d" % int(hp)
 		# Color the label too
 		var ratio: float = hp / 100.0
 		if ratio > 0.5:

@@ -20,12 +20,12 @@ var steps = [
 	},
 	{
 		"title": "TIME SLOW",
-		"info": "Hold SHIFT to Slow Time\nDrains the CHRONO BAR (Blue Bar)",
+		"info": "Hold SHIFT to Slow Time\nDrains the CHRONO BAR (Blue Bar)\nBullets deal 1.25x DAMAGE while slowed!",
 		"condition": "slow"
 	},
 	{
 		"title": "TIME STOP",
-		"info": "Hold SPACE to Stop Time\nDrains the CHRONO BAR quickly",
+		"info": "Hold SPACE to Stop Time\nDrains the CHRONO BAR quickly\nDashing (Q) is faster and covers more distance!",
 		"condition": "stop"
 	},
 	{
@@ -35,7 +35,7 @@ var steps = [
 	},
 	{
 		"title": "FRACTURE & LOCKDOWN",
-		"info": "Abilities build FRACTURE (Red/Purple Bar)\nReach 100% Fracture to trigger LOCKDOWN\n(Use abilities until the bar is full!)",
+		"info": "Abilities build FRACTURE (Red/Purple Bar)\nHigh Fracture causes DEBUFFS (Slower, less Crits)\nReach 100% to trigger LOCKDOWN (Abilities Locked)",
 		"condition": "kill"
 	},
 	{

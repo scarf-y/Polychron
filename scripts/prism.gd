@@ -32,10 +32,12 @@ func _physics_process(delta: float) -> void:
 	if is_dead or not is_active_in_room:
 		return
 		
-	# Obey time stop for the enemy base
+	# --- Time State Reactions ---
 	if TimeManager.current_state == TimeManager.TimeState.STOPPED:
 		modulate = Color(0.3, 0.3, 0.3)
-		# Pause timer during time stop
+		# Laser still hits player during time stop if it was already firing
+		if current_state == State.FIRING:
+			_check_laser_damage()
 		return
 	elif TimeManager.current_state == TimeManager.TimeState.ERASED:
 		modulate = Color(1.0, 0.5, 0.5, 0.5)
@@ -66,18 +68,20 @@ func _physics_process(delta: float) -> void:
 				_timer = IDLE_TIME
 				_laser_area.monitoring = false
 			else:
-				# Deal continuous damage
-				if _damage_timer <= 0.0:
-					var hit_player = false
-					for body in _laser_area.get_overlapping_bodies():
-						if body.is_in_group("player") and body.has_method("take_damage"):
-							body.take_damage(DAMAGE)
-							hit_player = true
-							GameJuice.screen_shake(4.0, 0.5)
-					if hit_player:
-						_damage_timer = DAMAGE_TICK
+				_check_laser_damage()
 						
 	queue_redraw()
+
+func _check_laser_damage() -> void:
+	if _damage_timer <= 0.0:
+		var hit_player = false
+		for body in _laser_area.get_overlapping_bodies():
+			if body.is_in_group("player") and body.has_method("take_damage"):
+				body.take_damage(DAMAGE)
+				hit_player = true
+				GameJuice.screen_shake(4.0, 0.5)
+		if hit_player:
+			_damage_timer = DAMAGE_TICK
 
 func _draw() -> void:
 	# Draw Core (Diamond)
