@@ -36,6 +36,7 @@ var can_dash: bool = true
 # --- Time Ability State ---
 var _active_ability: TimeManager.TimeState = TimeManager.TimeState.NORMAL
 var _erase_decoy: Node2D = null
+var _ability_cooldown_timer: float = 0.0
 
 # --- I-Frames ---
 var _invincibility_timer: float = 0.0
@@ -73,14 +74,14 @@ func _process(delta: float) -> void:
 		return
 	
 	if _invincibility_timer > 0.0:
-		_invincibility_timer -= delta
-		if _invincibility_timer <= 0.0:
-			_update_modulate()
+		_invincibility_timer = maxf(_invincibility_timer - delta, 0.0)
+	_ability_cooldown_timer = maxf(_ability_cooldown_timer - delta, 0.0)
+	
+	if _invincibility_timer > 0.0:
+		if fmod(_invincibility_timer * 15.0, 1.0) > 0.5:
+			modulate.a = 0.2
 		else:
-			if fmod(_invincibility_timer * 15.0, 1.0) > 0.5:
-				modulate.a = 0.2
-			else:
-				modulate.a = 0.8
+			modulate.a = 0.8
 	
 	_handle_time_abilities()
 	_handle_shooting()
@@ -269,8 +270,12 @@ func deal_damage() -> Array:
 # TIME ABILITIES
 # =========================
 func _handle_time_abilities() -> void:
+	if _ability_cooldown_timer > 0.0:
+		return
+		
 	# TIME STOP — Hold Space
 	if Input.is_action_just_pressed("time_stop") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
+		_ability_cooldown_timer = 0.2
 		_active_ability = TimeManager.TimeState.STOPPED
 		TimeManager.change_time_state(TimeManager.TimeState.STOPPED)
 		GameJuice.time_stop_impact()
@@ -283,6 +288,7 @@ func _handle_time_abilities() -> void:
 	
 	# TIME SLOW — Hold Shift
 	if Input.is_action_just_pressed("time_slow") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
+		_ability_cooldown_timer = 0.2
 		_active_ability = TimeManager.TimeState.SLOWED
 		TimeManager.change_time_state(TimeManager.TimeState.SLOWED)
 		GameJuice.play_sfx("res://assets/audio/timeSlow.wav", 0.0, 1.0, "TimeAbility")
@@ -293,6 +299,7 @@ func _handle_time_abilities() -> void:
 	
 	# TIME ERASE — Hold E
 	if Input.is_action_just_pressed("time_erase") and TimeManager.can_use_ability() and _active_ability == TimeManager.TimeState.NORMAL:
+		_ability_cooldown_timer = 0.2
 		_active_ability = TimeManager.TimeState.ERASED
 		TimeManager.change_time_state(TimeManager.TimeState.ERASED)
 		GameJuice.play_sfx("res://assets/audio/timeErase.wav", 0.0, 1.0, "TimeAbility")

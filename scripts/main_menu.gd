@@ -37,13 +37,20 @@ func _ready() -> void:
 	if TimeManager.best_game_time > 0.0:
 		var best_time_label := Label.new()
 		best_time_label.text = "FASTEST CLEAR: " + _format_time(TimeManager.best_game_time)
-		best_time_label.add_theme_font_size_override("font_size", 10)
+		best_time_label.add_theme_font_size_override("font_size", 11)
 		best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))
 		best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		best_time_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-		best_time_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
-		best_time_label.offset_bottom = -16.0
-		add_child(best_time_label)
+		
+		# Add to the top of the button container
+		var vbox = get_node("VBoxContainer")
+		if vbox:
+			vbox.add_child(best_time_label)
+			vbox.move_child(best_time_label, 0)
+			# Add a small spacer below it
+			var spacer := Control.new()
+			spacer.custom_minimum_size = Vector2(0, 10)
+			vbox.add_child(spacer)
+			vbox.move_child(spacer, 1)
 	
 	# Ensure time is normal when returning to menu
 	Engine.time_scale = 1.0
