@@ -35,18 +35,21 @@ func _ready() -> void:
 	TimeManager.game_is_active = false
 
 func _load_settings() -> void:
-	music_check.set_pressed_no_signal(GlobalSettings.music_enabled)
-	shake_check.set_pressed_no_signal(GlobalSettings.screenshake_enabled)
-	vol_slider.set_value_no_signal(GlobalSettings.master_volume)
+	var gs = get_node_or_null("/root/GlobalSettings")
+	if gs:
+		music_check.set_pressed_no_signal(gs.music_enabled)
+		shake_check.set_pressed_no_signal(gs.screenshake_enabled)
+		vol_slider.set_value_no_signal(gs.master_volume)
 	_apply_audio_settings()
 
 func _apply_audio_settings() -> void:
-	if GlobalSettings.music_enabled:
+	var gs = get_node_or_null("/root/GlobalSettings")
+	if gs and gs.music_enabled:
 		if bgm_player.stream is AudioStreamMP3:
 			bgm_player.stream.loop = true
 		if not bgm_player.playing:
 			bgm_player.play()
-		bgm_player.volume_db = GlobalSettings.get_volume_db()
+		bgm_player.volume_db = gs.get_volume_db()
 	else:
 		bgm_player.stop()
 
@@ -59,14 +62,20 @@ func _on_close_settings() -> void:
 	settings_panel.hide()
 
 func _on_music_toggled(toggled_on: bool) -> void:
-	GlobalSettings.music_enabled = toggled_on
+	var gs = get_node_or_null("/root/GlobalSettings")
+	if gs:
+		gs.music_enabled = toggled_on
 	_apply_audio_settings()
 
 func _on_shake_toggled(toggled_on: bool) -> void:
-	GlobalSettings.screenshake_enabled = toggled_on
+	var gs = get_node_or_null("/root/GlobalSettings")
+	if gs:
+		gs.screenshake_enabled = toggled_on
 
 func _on_volume_changed(value: float) -> void:
-	GlobalSettings.master_volume = value
+	var gs = get_node_or_null("/root/GlobalSettings")
+	if gs:
+		gs.master_volume = value
 	_apply_audio_settings()
 	
 	# Animate title
