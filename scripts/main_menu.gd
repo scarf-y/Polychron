@@ -32,34 +32,53 @@ func _ready() -> void:
 	
 	_load_settings()
 	_animate_title()
-	
-	# Display Best Time
-	var best_time_label := Label.new()
-	var has_best = TimeManager.best_game_time > 0.0
-	best_time_label.text = "FASTEST CLEAR: " + (_format_time(TimeManager.best_game_time) if has_best else "NONE")
-	best_time_label.add_theme_font_size_override("font_size", 11)
-	best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2) if has_best else Color(0.5, 0.5, 0.5))
-	best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	
-	# Add to the top of the button container
 	var vbox = get_node("VBoxContainer")
 	if vbox:
+		# 1. Reparent Title and Subtitle to the central container
+		if title_label:
+			title_label.reparent(vbox)
+			vbox.move_child(title_label, 0)
+			title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			# Add spacer after title
+			var title_spacer := Control.new()
+			title_spacer.custom_minimum_size = Vector2(0, 5)
+			vbox.add_child(title_spacer)
+			vbox.move_child(title_spacer, 1)
+			
+		if subtitle_label:
+			subtitle_label.reparent(vbox)
+			vbox.move_child(subtitle_label, 2)
+			subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			# Add large spacer after subtitle
+			var sub_spacer := Control.new()
+			sub_spacer.custom_minimum_size = Vector2(0, 25)
+			vbox.add_child(sub_spacer)
+			vbox.move_child(sub_spacer, 3)
+			
+		# 2. Add Best Time (below subtitle spacer)
+		var best_time_label := Label.new()
+		var has_best = TimeManager.best_game_time > 0.0
+		best_time_label.text = "FASTEST CLEAR: " + (_format_time(TimeManager.best_game_time) if has_best else "NONE")
+		best_time_label.add_theme_font_size_override("font_size", 11)
+		best_time_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2) if has_best else Color(0.5, 0.5, 0.5))
+		best_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(best_time_label)
-		vbox.move_child(best_time_label, 0)
-		# Add a small spacer below it
-		var spacer := Control.new()
-		spacer.custom_minimum_size = Vector2(0, 10)
-		vbox.add_child(spacer)
-		vbox.move_child(spacer, 1)
+		vbox.move_child(best_time_label, 4)
 		
-		# Move ControlsLabel to the bottom of the VBox
+		# Add small spacer below best time
+		var bt_spacer := Control.new()
+		bt_spacer.custom_minimum_size = Vector2(0, 15)
+		vbox.add_child(bt_spacer)
+		vbox.move_child(bt_spacer, 5)
+		
+		# 3. Move ControlsLabel to the bottom
 		var controls = get_node_or_null("ControlsLabel")
 		if controls:
 			controls.reparent(vbox)
 			controls.add_theme_font_size_override("font_size", 9)
 			# Add spacer above controls
 			var ctrl_spacer := Control.new()
-			ctrl_spacer.custom_minimum_size = Vector2(0, 15)
+			ctrl_spacer.custom_minimum_size = Vector2(0, 20)
 			vbox.add_child(ctrl_spacer)
 			vbox.add_child(controls)
 	
