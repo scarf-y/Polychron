@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" path="res://assets/audio/chrono stream.mp3" id="5_audio"]
 [ext_resource type="Script" path="res://scripts/level_bgm.gd" id="6_lvlbgm"]
 [ext_resource type="Script" path="res://scripts/tutorial_dummy.gd" id="7_dummy_script"]
+[ext_resource type="PackedScene" path="res://scenes/effects/time_effect.tscn" id="8_time_fx"]
 
 [sub_resource type="RectangleShape2D" id="wall_h"]
 size = Vector2(1000, 20)
@@ -87,6 +88,8 @@ script = ExtResource("7_dummy_script")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Dummy"]
 shape = SubResource("dummy_shape")
 
+[node name="TimeEffect" parent="." instance=ExtResource("8_time_fx")]
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Instructions" type="Control" parent="CanvasLayer"]
@@ -104,9 +107,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -150.0
-offset_top = 40.0
+offset_top = 80.0
 offset_right = 150.0
-offset_bottom = 70.0
+offset_bottom = 110.0
 theme_override_colors/font_color = Color(0, 1, 0.8, 1)
 theme_override_font_sizes/font_size = 24
 text = "STEP TITLE"
@@ -120,9 +123,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -200.0
-offset_top = 60.0
+offset_top = 100.0
 offset_right = 200.0
-offset_bottom = 120.0
+offset_bottom = 160.0
 theme_override_font_sizes/font_size = 14
 text = "Instruction text goes here.
 Explain what to do."
