@@ -12,11 +12,17 @@ var current_step: int = 0
 var _pending_step: bool = false
 var _has_moved: bool = false
 var _has_dashed: bool = false
+var _has_shot: bool = false
 var steps = [
 	{
 		"title": "MOVEMENT",
 		"info": "WASD to Move\nQ to Phase Dash (Invincibility)",
 		"condition": "move"
+	},
+	{
+		"title": "BASIC COMBAT",
+		"info": "LMB to Shoot (Hold for Auto-Fire)\nBullets can critically hit (Purple Numbers)",
+		"condition": "shoot"
 	},
 	{
 		"title": "TIME SLOW",
@@ -58,6 +64,11 @@ func _ready() -> void:
 	TimeManager.lockdown_changed.connect(_on_lockdown_changed)
 
 func _process(_delta: float) -> void:
+	# Cap fracture in tutorial until the final combat phase
+	if current_step < 5: 
+		if TimeManager.fracture_level > 95.0:
+			TimeManager.fracture_level = 95.0
+
 	match current_step:
 		0: # Movement
 			if not _has_moved:
@@ -71,22 +82,29 @@ func _process(_delta: float) -> void:
 			if not _pending_step and _has_moved and _has_dashed:
 				_pending_step = true
 				_next_step_delayed(2.0)
-		1: # Slow
+		1: # Shooting
+			if not _has_shot and Input.is_action_just_pressed("shoot"):
+				_has_shot = true
+			
+			if not _pending_step and _has_shot:
+				_pending_step = true
+				_next_step_delayed(2.0)
+		2: # Slow
 			if not _pending_step and Input.is_action_just_pressed("time_slow"):
 				_pending_step = true
 				_next_step_delayed(3.0)
-		2: # Stop
+		3: # Stop
 			if not _pending_step and Input.is_action_just_pressed("time_stop"):
 				_pending_step = true
 				_next_step_delayed(3.0)
-		3: # Erase
+		4: # Erase
 			if not _pending_step and Input.is_action_just_pressed("time_erase"):
 				_pending_step = true
 				_next_step_delayed(4.0)
-		4: # Kill/Fracture
-			# This might be triggered by a dummy death or just waiting
+		5: # Kill/Fracture
+			# This is triggered by dummy death or signal
 			pass
-		5: # Finish
+		6: # Finish
 			if Input.is_key_pressed(KEY_ENTER):
 				GameJuice.transition_to_scene("res://scenes/ui/main_menu.tscn")
 
@@ -97,7 +115,7 @@ func _update_step_ui() -> void:
 	info_label.text = step.info
 	
 	# If we are in the kill step, make sure dummy exists and is initially invincible
-	if current_step == 4 and has_node("Dummy"):
+	if current_step == 5 and has_node("Dummy"):
 		$Dummy.is_invincible = not TimeManager.is_lockdown
 	
 	# Animate UI

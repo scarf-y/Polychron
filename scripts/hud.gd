@@ -185,8 +185,8 @@ func _build_hud() -> void:
 	bottom_container.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	bottom_container.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	bottom_container.offset_bottom = -12.0
-	bottom_container.offset_left = -150.0
-	bottom_container.offset_right = 150.0
+	bottom_container.offset_left = -200.0
+	bottom_container.offset_right = 200.0
 	bottom_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(bottom_container)
 	
