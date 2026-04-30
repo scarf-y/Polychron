@@ -121,7 +121,6 @@ func _apply_audio_settings() -> void:
 			bgm_player.stream.loop = true
 		if not bgm_player.playing:
 			bgm_player.play()
-		bgm_player.volume_db = gs.get_volume_db()
 	else:
 		bgm_player.stop()
 
@@ -156,6 +155,7 @@ func _on_start_pressed() -> void:
 
 func _on_tutorial_pressed() -> void:
 	GameJuice.play_sfx("res://assets/audio/uiClick.wav")
+	TimeManager.start_new_run()
 	get_tree().change_scene_to_file("res://scenes/levels/tutorial_level.tscn")
 
 func _on_quit_pressed() -> void:

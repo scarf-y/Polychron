@@ -9,7 +9,6 @@ func _ready() -> void:
 	# Setup BGM
 	var gs = get_node_or_null("/root/GlobalSettings")
 	if gs and gs.music_enabled:
-		bgm_player.volume_db = gs.get_volume_db()
 		var stream = load("res://assets/audio/chrono savior.mp3")
 		if stream is AudioStreamMP3:
 			stream.loop = true

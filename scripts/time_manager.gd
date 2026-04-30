@@ -56,7 +56,10 @@ var _gameplay_bus_idx: int = -1
 var _lowpass_effect_idx: int = -1
 var _timeability_bus_idx: int = -1
 
+var _last_ticks_msec: int = 0
+
 func _ready() -> void:
+	_last_ticks_msec = Time.get_ticks_msec()
 	var master_idx = AudioServer.get_bus_index("Master")
 	
 	# Create "Gameplay" bus (child of Master) — all normal SFX/BGM route here
@@ -106,45 +109,44 @@ func start_new_run() -> void:
 
 # --- Process ---
 func _process(delta: float) -> void:
+	var current_ticks = Time.get_ticks_msec()
+	var unscaled_delta: float = (current_ticks - _last_ticks_msec) / 1000.0
+	_last_ticks_msec = current_ticks
+	
 	if not game_is_active or get_tree().paused:
 		return
 		
-	# We use unscaled delta for gauge management so slowing time
-	# doesn't also slow the gauge drain
-	var real_delta: float = delta
-	if Engine.time_scale > 0.0:
-		real_delta = delta / Engine.time_scale
-		
-	game_time += real_delta
+	# Use true unscaled real-life time, immune to Engine.time_scale and hitstop math explosions
+	game_time += unscaled_delta
 	
 	# --- Time Gauge Logic ---
 	match current_state:
 		TimeState.NORMAL:
 			# Recharge gauge (blocked inside Null Zone)
 			if time_gauge < GAUGE_MAX and not null_zone_active:
-				time_gauge = minf(time_gauge + RECHARGE_RATE * real_delta, GAUGE_MAX)
+				time_gauge = minf(time_gauge + RECHARGE_RATE * unscaled_delta, GAUGE_MAX)
 				time_gauge_changed.emit(time_gauge)
 		TimeState.STOPPED:
-			time_gauge -= DRAIN_RATE_STOPPED * real_delta
+			time_gauge -= DRAIN_RATE_STOPPED * unscaled_delta
 			time_gauge_changed.emit(time_gauge)
 			if time_gauge <= 0.0:
 				time_gauge = 0.0
 				_force_normal()
 		TimeState.SLOWED:
-			time_gauge -= DRAIN_RATE_SLOWED * real_delta
+			time_gauge -= DRAIN_RATE_SLOWED * unscaled_delta
 			time_gauge_changed.emit(time_gauge)
 			if time_gauge <= 0.0:
 				time_gauge = 0.0
 				_force_normal()
 		TimeState.ERASED:
-			time_gauge -= DRAIN_RATE_ERASED * real_delta
+			time_gauge -= DRAIN_RATE_ERASED * unscaled_delta
 			time_gauge_changed.emit(time_gauge)
 			if time_gauge <= 0.0:
 				time_gauge = 0.0
 				_force_normal()
 	
 	# --- Fracture Logic ---
-	_process_fracture(real_delta)
+	_process_fracture(unscaled_delta)
 
 func _process_fracture(real_delta: float) -> void:
 	if is_lockdown:
