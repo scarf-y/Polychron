@@ -16,7 +16,7 @@ var _has_shot: bool = false
 var steps = [
 	{
 		"title": "MOVEMENT",
-		"info": "WASD to Move\nQ to Phase Dash (Invincibility)",
+		"info": "%s/%s/%s/%s to Move\n%s to Phase Dash (Invincibility)",
 		"condition": "move"
 	},
 	{
@@ -26,17 +26,17 @@ var steps = [
 	},
 	{
 		"title": "TIME SLOW",
-		"info": "Hold SHIFT to Slow Time\nDrains the CHRONO BAR (Blue Bar)\nDeal 1.25x DMG if you hit while time is slowed!\n(Gold ! = Slow | Purple !! = Crit | Orange !!! = Both)",
+		"info": "Hold %s to Slow Time\nDrains the CHRONO BAR (Blue Bar)\nDeal 1.25x DMG if you hit while time is slowed!\n(Gold ! = Slow | Purple !! = Crit | Orange !!! = Both)",
 		"condition": "slow"
 	},
 	{
 		"title": "TIME STOP",
-		"info": "Hold SPACE to Stop Time\nDrains the CHRONO BAR quickly\nDashing (Q) is faster and covers more distance!",
+		"info": "Hold %s to Stop Time\nDrains the CHRONO BAR quickly\nDashing (%s) is faster and covers more distance!",
 		"condition": "stop"
 	},
 	{
 		"title": "TIME ERASE",
-		"info": "Hold E to Erase Time\nYou become intangible and leave a DECOY\nEnemies target the decoy while you move freely",
+		"info": "Hold %s to Erase Time\nYou become intangible and leave a DECOY\nEnemies target the decoy while you move freely",
 		"condition": "erase"
 	},
 	{
@@ -108,11 +108,26 @@ func _process(_delta: float) -> void:
 			if Input.is_key_pressed(KEY_ENTER):
 				GameJuice.transition_to_scene("res://scenes/ui/main_menu.tscn")
 
+func _get_key_name(action: String) -> String:
+	for event in InputMap.action_get_events(action):
+		if event is InputEventKey:
+			var keyname = OS.get_keycode_string(event.physical_keycode)
+			if keyname == "":
+				keyname = OS.get_keycode_string(event.keycode)
+			return keyname
+	return "None"
+
 func _update_step_ui() -> void:
 	_pending_step = false
 	var step = steps[current_step]
 	step_label.text = step.title
-	info_label.text = step.info
+	
+	match current_step:
+		0: info_label.text = step.info % [_get_key_name("move_up"), _get_key_name("move_left"), _get_key_name("move_down"), _get_key_name("move_right"), _get_key_name("dash")]
+		2: info_label.text = step.info % _get_key_name("time_slow")
+		3: info_label.text = step.info % [_get_key_name("time_stop"), _get_key_name("dash")]
+		4: info_label.text = step.info % _get_key_name("time_erase")
+		_: info_label.text = step.info
 	
 	# If we are in the kill step, make sure dummy exists and is initially invincible
 	if current_step == 5 and has_node("Dummy"):

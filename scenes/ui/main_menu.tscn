@@ -134,10 +134,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -120.0
-offset_right = 150.0
-offset_bottom = 120.0
+offset_left = -200.0
+offset_top = -180.0
+offset_right = 200.0
+offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.05, 0.05, 0.1, 0.95)
@@ -152,44 +152,52 @@ grow_vertical = 2
 border_color = Color(0, 1, 0.8, 1)
 editor_only = false
 
-[node name="VBox" type="VBoxContainer" parent="SettingsPanel" unique_id=128975200]
+[node name="MarginContainer" type="MarginContainer" parent="SettingsPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="SettingsPanel/MarginContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="VBox" type="VBoxContainer" parent="SettingsPanel/MarginContainer/ScrollContainer" unique_id=128975200]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="SettingsPanel/VBox" unique_id=390081996]
+[node name="Title" type="Label" parent="SettingsPanel/MarginContainer/ScrollContainer/VBox" unique_id=390081996]
 layout_mode = 2
 text = "SETTINGS"
 horizontal_alignment = 1
 
-[node name="MusicCheck" type="CheckBox" parent="SettingsPanel/VBox" unique_id=760812123]
+[node name="MusicCheck" type="CheckBox" parent="SettingsPanel/MarginContainer/ScrollContainer/VBox" unique_id=760812123]
 layout_mode = 2
 button_pressed = true
 text = "Enable Music"
 
-[node name="ShakeCheck" type="CheckBox" parent="SettingsPanel/VBox" unique_id=663469349]
+[node name="ShakeCheck" type="CheckBox" parent="SettingsPanel/MarginContainer/ScrollContainer/VBox" unique_id=663469349]
 layout_mode = 2
 button_pressed = true
 text = "Enable Screenshake"
 
-[node name="VolLabel" type="Label" parent="SettingsPanel/VBox" unique_id=625364899]
+[node name="VolLabel" type="Label" parent="SettingsPanel/MarginContainer/ScrollContainer/VBox" unique_id=625364899]
 layout_mode = 2
 text = "Master Volume"
 
-[node name="VolSlider" type="HSlider" parent="SettingsPanel/VBox" unique_id=1855912381]
+[node name="VolSlider" type="HSlider" parent="SettingsPanel/MarginContainer/ScrollContainer/VBox" unique_id=1855912381]
 layout_mode = 2
 max_value = 1.0
 step = 0.05
 value = 1.0
 
-[node name="CloseSettings" type="Button" parent="SettingsPanel/VBox" unique_id=964895843]
+[node name="CloseSettings" type="Button" parent="SettingsPanel/MarginContainer/ScrollContainer/VBox" unique_id=964895843]
 layout_mode = 2
 text = "CLOSE"
